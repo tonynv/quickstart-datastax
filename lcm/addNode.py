@@ -20,8 +20,7 @@ def setupArgs():
     required.add_argument('--nodeid', required=True, type=str, help='Unique node id.')
     required.add_argument('--privip', required=True, type=str, help='Private ip of node.')
     required.add_argument('--pubip', required=True, type=str, help='Public ip of node.')
-    parser.add_argument('--dcsize', type=int, default=3,
-                        help='Number of nodes in datacenter, default 3.')
+    required.add_argument('--dcsize', required=True, type=int, help='Number of nodes in datacenter, default 3.')
     parser.add_argument('--verbose',
                         action='store_true',
                         help='Verbose flag, right now a NO-OP.' )
