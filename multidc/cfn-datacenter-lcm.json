@@ -270,14 +270,7 @@
                   " --dcname ", { "Ref" : "DataCenterName" },
                   " --pubip $pubip",
                   " --privip $privip",
-                  " --nodeid $nodeid \n",
-                  "echo \"WARNING: agent config yaml generation to be removed\" \n",
-                  "cd ../util/ \n",
-                  "dir=/var/lib/datastax-agent \n",
-                  "mkdir -p $dir/conf \n",
-                  "./gen_address_yaml.sh $privip $pubip > $dir/conf/address.yaml \n",
-                  "cp $dir/conf/address.yaml $dir/conf/address.yaml.auto \n"
-                  "chown -R ubuntu:ubuntu $dir"
+                  " --nodeid $nodeid \n"
                   ]]}
               }
             }
