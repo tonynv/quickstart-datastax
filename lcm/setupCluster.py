@@ -29,6 +29,7 @@ def main():
     with open(keypath, 'r') as keyfile:
         privkey=keyfile.read()
 
+    print "Create cluster {c} at {u} with keypath {k}".format(c=clustername, u=lcm.opsc_url, k=keypath)
 # Yay globals!
 # These should move to a config file, passed as arg maybe ?
     dserepo = json.dumps({

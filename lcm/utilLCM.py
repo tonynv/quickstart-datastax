@@ -87,7 +87,7 @@ def addRepo(repo):
 def waitForOpsC():
     # Constants that should go elsewhere?
     maxtrys = 100 #connection attempts
-    timeout = 0.1 # connection timeout in sec
+    timeout = 1 # connection timeout in sec
     pause = 6 # sleep between attempts in sec
     # maxtrys * pause = 600 sec or 10 min, should be enough time for
     # OpsC instance to come up.
@@ -98,6 +98,7 @@ def waitForOpsC():
             print("Error: OpsC connection failed after {n} trys".format(n=maxtrys))
             return
         try:
+            print "Trying:  http://{url}/meta".format(url=opsc_url)
             meta = requests.get("http://{url}/meta".format(url=opsc_url), timeout=timeout)
         except requests.exceptions.Timeout as e:
             print("Request {c} to OpsC timeout, wait {p} sec...".format(c=count,p=pause))
