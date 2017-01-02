@@ -276,7 +276,8 @@
               "./setupCluster.py ",
               "--opsc-ip $pubip ",
               "--clustername ",{ "Ref" : "ClusterName" }, " ",
-              "--privkey $privkey "
+              "--privkey $privkey ",
+              "--user ubuntu "
               ]]}
           }
         }

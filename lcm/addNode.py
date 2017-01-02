@@ -21,6 +21,8 @@ def setupArgs():
     required.add_argument('--privip', required=True, type=str, help='Private ip of node.')
     required.add_argument('--pubip', required=True, type=str, help='Public ip of node.')
     required.add_argument('--dcsize', required=True, type=int, help='Number of nodes in datacenter, default 3.')
+    parser.add_argument('--pause',type=int, default=6, help="pause time (sec) between attempts to contact OpsCenter, default 6")
+    parser.add_argument('--trys',type=int, default=100, help="number of times to attempt to contact OpsCenter, default 100")
     parser.add_argument('--verbose',
                         action='store_true',
                         help='Verbose flag, right now a NO-OP.' )
@@ -33,7 +35,8 @@ def writepubkey(pubkey):
 def main():
     parser = setupArgs()
     args = parser.parse_args()
-
+    pause = args.pause
+    trys = args.trys
     clustername = args.clustername
     lcm.opsc_url = args.opsc_ip+':8888'
     #datacenters = ['dc0','dc1','dc2']
@@ -44,7 +47,7 @@ def main():
     privateip = args.privip
     publicip = args.pubip
 
-    lcm.waitForOpsC()  # Block waiting for OpsC to spin up
+    lcm.waitForOpsC(pause=pause,trys=trys)  # Block waiting for OpsC to spin up
 
     #writepubkey(pubkey)
     # ^^^ no-op, should happen up in the IaaS?
