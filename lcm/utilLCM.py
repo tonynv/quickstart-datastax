@@ -85,20 +85,20 @@ def addRepo(repo):
         # Do something?
         raise
 
-def waitForOpsC():
+def waitForOpsC(pause, trys):
     # Constants that should go elsewhere?
-    maxtrys = 100 #connection attempts
-    timeout = 0.1 # connection timeout in sec
-    pause = 6 # sleep between attempts in sec
+    timeout = 1 # connection timeout in sec
     # maxtrys * pause = 600 sec or 10 min, should be enough time for
     # OpsC instance to come up.
     count = 0
     while(True):
         count += 1
-        if (count > maxtrys):
+        if (count > trys):
             print("Error: OpsC connection failed after {n} trys".format(n=maxtrys))
-            return
+            print("Exiting...")
+            exit(1)
         try:
+            print "Trying:  http://{url}/meta".format(url=opsc_url)
             meta = requests.get("http://{url}/meta".format(url=opsc_url), timeout=timeout)
         except requests.exceptions.Timeout as e:
             print("Request {c} to OpsC timeout, wait {p} sec...".format(c=count,p=pause))
@@ -164,7 +164,7 @@ def addDC(dcname, cid):
             "spark-enabled": True})
         dcconf = requests.post("http://{url}/api/v1/lcm/datacenters/".format(url=opsc_url),data=dc).json()
         if 'code' in dcconf and ( dcconf['code'] == 409 ):
-            print("Error {c} - {t} : {m}".format(c=dcconf['code'],m=dconf['msg'],t=dcconf['t']))
+            print("Error {c} - {t} : {m}".format(c=dcconf['code'],m=dcconf['msg'],t=dcconf['type']))
             print("Finding id for dcname='{n}'".format(n=dcname))
             alldcs = requests.get("http://{url}/api/v1/lcm/datacenters/".format(url=opsc_url)).json()
             for r in alldcs['results']:

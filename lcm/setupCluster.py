@@ -15,6 +15,10 @@ def setupArgs():
                           help='Name of cluster.')
     required.add_argument('--privkey', required=True, type=str,
                           help='abs path to private key (public key on all nodes) to be used by OpsCenter')
+    required.add_argument('--username', required=True, type=str,
+                          help='username LCM uses when ssh-ing to nodes for install/config')
+    parser.add_argument('--pause',type=int, default=6, help="pause time (sec) between attempts to contact OpsCenter, default 6")
+    parser.add_argument('--trys',type=int, default=100, help="number of times to attempt to contact OpsCenter, default 100")
     parser.add_argument('--verbose',
                         action='store_true',
                         help='verbose flag, right now a NO-OP' )
@@ -25,10 +29,14 @@ def main():
     args = parser.parse_args()
     clustername = args.clustername
     lcm.opsc_url = args.opsc_ip+':8888'
+    pause = args.pause
+    trys = args.trys
+    user = args.username
     keypath = os.path.abspath(args.privkey)
     with open(keypath, 'r') as keyfile:
         privkey=keyfile.read()
 
+    print "Create cluster {c} at {u} with keypath {k}".format(c=clustername, u=lcm.opsc_url, k=keypath)
 # Yay globals!
 # These should move to a config file, passed as arg maybe ?
     dserepo = json.dumps({
@@ -40,7 +48,7 @@ def main():
         "become-mode":"sudo",
         "use-ssh-keys":True,
         "name":"DSE creds",
-        "login-user":"ubuntu",
+        "login-user":user,
         "ssh-private-key":privkey,
         "become-user":None})
 
@@ -55,7 +63,7 @@ def main():
            }
         }})
 
-    lcm.waitForOpsC()  # Block waiting for OpsC to spin up
+    lcm.waitForOpsC(pause=pause,trys=trys)  # Block waiting for OpsC to spin up
 
     # return config instead of bool?
     c = lcm.checkForCluster(clustername)
