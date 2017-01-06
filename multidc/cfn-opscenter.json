@@ -273,6 +273,7 @@
               "cd amazon-cloudformation-dse-master/lcm/ \n",
               "pubip=$(curl http://169.254.169.254/latest/meta-data/public-ipv4) \n",
               "privkey=$(readlink -f ~ubuntu/.ssh/lcm.pem) \n",
+              "sleep 1m \n",
               "./setupCluster.py ",
               "--opsc-ip $pubip ",
               "--clustername ",{ "Ref" : "ClusterName" }, " ",
