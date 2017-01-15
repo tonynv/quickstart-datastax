@@ -185,6 +185,56 @@
       }
     },
 
+    "TaskcatRole" : {
+        "Type"  : "AWS::IAM::Role",
+        "Properties" : {
+            "AssumeRolePolicyDocument" : {
+                "Statement" : [ {
+                    "Effect" : "Allow",
+                    "Principal" : {
+                        "Service" : [ "ec2.amazonaws.com" ]
+                    },
+                    "Action" : [ "sts:AssumeRole" ]
+                } ]
+            },
+            "Path" : "/"
+        }
+    },
+
+    "TaskcatRolePolicies" : {
+        "Type" : "AWS::IAM::Policy",
+        "Properties" : {
+            "PolicyName" : "s3access",
+            "PolicyDocument" : {
+                "Statement" : [ {
+                    "Effect" : "Allow",
+                    "Action" : [
+                      "s3:*",
+                      "cloudformation:CreateStack",
+                      "cloudformation:DeleteStack",
+                      "cloudformation:DescribeStack",
+                      "cloudformation:EstimateTemplateCost",
+                      "cloudformation:ValidateTemplate",
+                      "cloudformation:DescribeStackEvents",
+                      "cloudformation:DescribeStackResource",
+                      "cloudformation:DescribeStackResources",
+                      "cloudformation:DescribeStacks"
+                    ],
+                    "Resource" : "*"
+                }]
+            },
+            "Roles" : [ { "Ref" : "TaskcatRole" } ]
+        }
+    },
+
+    "TaskcatProfile" : {
+           "Type" : "AWS::IAM::InstanceProfile",
+           "Properties" : {
+             "Path" : "/",
+             "Roles" : [{ "Ref" : "TaskcatRole" }]
+           }
+         },
+
     "OpsCenterInstance": {
       "Type": "AWS::EC2::Instance",
 
@@ -235,12 +285,11 @@
                 "command" : { "Fn::Join" : ["", [
                   "#!/usr/bin/env bash -e \n",
                   "cloud_type=\"aws\" \n",
-                  "apt-get -y install unzip \n",
                   "cd ~ubuntu \n",
                   "apt-get -y install unzip \n",
-                  "wget https://github.com/DSPN/install-datastax-ubuntu/archive/aws-testing.zip \n",
-                  "unzip aws-testing.zip \n",
-                  "cd install-datastax-ubuntu-aws-testing/bin \n",
+                  "wget https://github.com/DSPN/install-datastax-ubuntu/archive/lcm.zip \n",
+                  "unzip lcm.zip \n",
+                  "cd install-datastax-ubuntu-lcm/bin \n",
                   "./os/install_java.sh \n",
                   "./opscenter/install.sh $cloud_type \n",
                   "./opscenter/start.sh"
@@ -268,9 +317,7 @@
               "#!/usr/bin/env bash -e \n",
               "cd ~ubuntu \n",
               "pip install requests \n",
-              "wget https://github.com/DSPN/amazon-cloudformation-dse/archive/master.zip \n",
-              "unzip master.zip \n",
-              "cd amazon-cloudformation-dse-master/lcm/ \n",
+              "cd install-datastax-ubuntu-lcm/bin/lcm \n",
               "pubip=$(curl http://169.254.169.254/latest/meta-data/public-ipv4) \n",
               "privkey=$(readlink -f ~ubuntu/.ssh/lcm.pem) \n",
               "sleep 1m \n",
@@ -290,6 +337,7 @@
         "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
                           { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
         "InstanceType"   : { "Ref" : "InstanceType" },
+        "IamInstanceProfile" : {"Ref" : "TaskcatProfile"},
         "SecurityGroups" : [ {"Ref" : "DSESecurityGroup"} ],
         "KeyName"        : { "Ref" : "KeyName" },
         "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [

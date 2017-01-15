@@ -11,6 +11,7 @@ stack="opscenter-stack"
 aws cloudformation create-stack \
 --stack-name $stack \
 --template-body file://$template \
+--capabilities CAPABILITY_IAM \
 --parameters \
 ParameterKey=KeyName,ParameterValue=$keyname \
 ParameterKey=ClusterName,ParameterValue=$clustername
