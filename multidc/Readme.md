@@ -93,7 +93,7 @@ Using stack name: dc-us-west-stack
 ```
 # Teardown
 
-The deploy scripts write the stack name and region to the tempfile `teardown.txt`. Running `teardown.sh` deletes these stacks and then the tempfile.
+The deploy scripts write the stack name and region to the tempfile `teardown.txt`. Running `teardown.sh` deletes these stacks and then the tempfile. Note that if stacks are deleted in the console or CLI their name may appear more then once when running `teardown.sh`. This is not an error. 
 
 ```
 ./teardown.sh
