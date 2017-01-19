@@ -287,9 +287,9 @@
                   "cloud_type=\"aws\" \n",
                   "cd ~ubuntu \n",
                   "apt-get -y install unzip \n",
-                  "wget https://github.com/DSPN/install-datastax-ubuntu/archive/lcm.zip \n",
-                  "unzip lcm.zip \n",
-                  "cd install-datastax-ubuntu-lcm/bin \n",
+                  "wget https://github.com/DSPN/install-datastax-ubuntu/archive/master.zip \n",
+                  "unzip master.zip \n",
+                  "cd install-datastax-ubuntu-master/bin \n",
                   "./os/install_java.sh \n",
                   "./opscenter/install.sh $cloud_type \n",
                   "./opscenter/start.sh"
