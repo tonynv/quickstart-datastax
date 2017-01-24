@@ -210,24 +210,45 @@
     "TaskcatRolePolicies" : {
         "Type" : "AWS::IAM::Policy",
         "Properties" : {
-            "PolicyName" : "s3access",
+            "PolicyName" : "tcat-access",
             "PolicyDocument" : {
-                "Statement" : [ {
-                    "Effect" : "Allow",
-                    "Action" : [
-                      "s3:*",
-                      "cloudformation:CreateStack",
-                      "cloudformation:DeleteStack",
-                      "cloudformation:DescribeStack",
-                      "cloudformation:EstimateTemplateCost",
-                      "cloudformation:ValidateTemplate",
-                      "cloudformation:DescribeStackEvents",
-                      "cloudformation:DescribeStackResource",
-                      "cloudformation:DescribeStackResources",
-                      "cloudformation:DescribeStacks"
-                    ],
-                    "Resource" : "*"
-                }]
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:*",
+                    "ec2:Describe*",
+                    "ec2:AttachNetworkInterface",
+                    "ec2:AttachVolume",
+                    "ec2:CreateTags",
+                    "ec2:CreateVolume",
+                    "ec2:DeleteVolume",
+                    "ec2:RunInstances",
+                    "ec2:StartInstances",
+                    "ec2:CreateSecurityGroup",
+                    "ec2:AuthorizeSecurityGroupIngress",
+                    "ec2:CreatePlacementGroup",
+                    "ec2:CreateSnapshot",
+                    "autoscaling:CreateLaunchConfiguration",
+                    "autoscaling:Describe*",
+                    "autoscaling:DeleteLaunchConfiguration",
+                    "autoscaling:CreateAutoScalingGroup",
+                    "autoscaling:TerminateInstanceInAutoScalingGroup",
+                    "autoscaling:UpdateAutoScalingGroup"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "cloudformation:CreateStack",
+                    "cloudformation:DeleteStack",
+                    "cloudformation:Describe*",
+                    "cloudformation:EstimateTemplateCost",
+                    "cloudformation:ValidateTemplate"
+                  ],
+                  "Resource": "*"
+                  }]
             },
             "Roles" : [ { "Ref" : "TaskcatRole" } ]
         }
@@ -333,7 +354,7 @@
               "#!/usr/bin/env bash -e \n",
               "cd ~ubuntu \n",
               "pip install requests \n",
-              "cd install-datastax-ubuntu-lcm/bin/lcm \n",
+              "cd install-datastax-ubuntu-master/bin/lcm \n",
               "pubip=$(curl http://169.254.169.254/latest/meta-data/public-ipv4) \n",
               "privkey=$(readlink -f ~ubuntu/.ssh/lcm.pem) \n",
               "sleep 1m \n",
