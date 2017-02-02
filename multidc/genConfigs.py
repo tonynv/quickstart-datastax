@@ -11,6 +11,7 @@ import argparse
 def setupArgs():
     parser = argparse.ArgumentParser(description='Split template params into per-region config files.')
     parser.add_argument('--opsc-ip', type=str, help='Public ip of OpsCenter instance.')
+    parser.add_argument('--s3bucket', type=str, help='S3 bucket for taskcat deploy')
     parser.add_argument('--pubkey', type=str, help='Public key corresponding to private key in LCM')
     parser.add_argument('--clustername', type=str, help='Name of cluster.')
     parser.add_argument('--datacenters',type=str, help="List of dc names")
@@ -35,23 +36,23 @@ def checkArgs(lists):
             print "Error: list arguments must be the same length"
             exit(1)
 
-def writeYAML(regions):
+def writeYAML(args):
     conf = {'global': {
               'project': 'dse',
               'owner': 'foo@foo.com',
               'notification': True,
+              'reporting': True,
               'report_email-to-owner': True,
               'report_publish-to-s3': True,
-              'report_s3bucket': 'dse-templates',
-              's3bucket': 'dse-templates',
-              'regions': []
+              'report_s3bucket': args.s3bucket,
+              's3bucket': args.s3bucket,
+              'regions': args.regions
             },
             'tests': {}
            }
-    conf['global']['regions'] = regions
     count = 0
 
-    for r in regions:
+    for r in args.regions:
         count += 1
         name = 'datacenter-'+str(count)
         datacenter = {'parameter_input':name+'.json',
@@ -60,7 +61,7 @@ def writeYAML(regions):
                      }
         conf['tests'][name] = datacenter
 
-    with open('config.yml', 'w') as outfile:
+    with open('config.yaml', 'w') as outfile:
       yaml.dump(conf, outfile, default_flow_style=False)
 
 def writeConfig(params, filename):
@@ -73,29 +74,25 @@ def writeConfig(params, filename):
 def main():
     parser = setupArgs()
     args = parser.parse_args()
-    opsc_ip = args.opsc_ip
-    pubkey = args.pubkey
-    clustername = args.clustername
-    dcs = args.datacenters.split(",")
-    regions = args.regions.split(",")
-    keys = args.keys.split(",")
-    instances = args.instances.split(",")
-    sizes = args.dcsizes.split(",")
-    print "genConfigs.py arguments:", opsc_ip, pubkey, clustername, dcs, keys, regions, instances, sizes
-    checkArgs([dcs,keys,regions,instances,sizes])
+    args.datacenters = args.datacenters.split(",")
+    args.regions = args.regions.split(",")
+    args.keys = args.keys.split(",")
+    args.instances = args.instances.split(",")
+    args.dcsizes = args.dcsizes.split(",")
+    checkArgs([args.datacenters,args.keys,args.regions,args.instances,args.dcsizes])
 
-    writeYAML(regions)
+    writeYAML(args)
     count = 0
-    for i in range(len(regions)):
+    for i in range(len(args.regions)):
         count += 1
         conf = {}
-        conf['OpsCenterPubIP'] = opsc_ip
-        conf['ClusterName'] = clustername
-        conf['PublicKey'] = pubkey
-        conf['KeyName'] = keys[i]
-        conf['InstanceType'] = instances[i]
-        conf['DataCenterName'] = dcs[i]
-        conf['DataCenterSize'] = sizes[i]
+        conf['OpsCenterPubIP'] = args.opsc_ip
+        conf['ClusterName'] = args.clustername
+        conf['PublicKey'] = args.pubkey
+        conf['KeyName'] = args.keys[i]
+        conf['InstanceType'] = args.instances[i]
+        conf['DataCenterName'] = args.datacenters[i]
+        conf['DataCenterSize'] = args.dcsizes[i]
         filename = "datacenter-"+str(count)+".json"
         writeConfig(conf,filename)
 
