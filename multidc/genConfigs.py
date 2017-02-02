@@ -4,6 +4,7 @@ import json
 import yaml
 import time
 import argparse
+import os
 
 # TODO!
 #
@@ -66,9 +67,11 @@ def writeYAML(args):
 
 def writeConfig(params, filename):
     conf = []
+    if not os.path.exists('dse'):
+      os.makedirs('dse')
     for key in params:
         conf.append({"ParameterKey": key, "ParameterValue": params[key]})
-    with open(filename, 'w') as outfile:
+    with open(os.path.join('dse', filename), 'w') as outfile:
       json.dump(conf, outfile, sort_keys=True, indent=4)
 
 def main():
