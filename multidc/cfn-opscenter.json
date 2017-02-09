@@ -39,9 +39,14 @@
       "Type" : "CommaDelimitedList"
     },
 
+    "VolumeSizes" : {
+      "Description" : "List of EBS volume sizes (GB)",
+      "Type" : "List<Number>"
+    },
+
     "DCSizes" : {
       "Description" : "List of number of nodes/datacenter",
-      "Type" : "CommaDelimitedList"
+      "Type" : "List<Number>"
     },
 
     "VpcId" : {

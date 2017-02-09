@@ -19,6 +19,7 @@ def setupArgs():
     parser.add_argument('--regions',type=str, help="List of AWS regions")
     parser.add_argument('--keys',type=str, help="List of key pairs to use")
     parser.add_argument('--instances',type=str, help="List of instances")
+    parser.add_argument('--volsizes',type=str, help="List of volume sizes")
     parser.add_argument('--dcsizes',type=str, help="List of dc sizes")
     parser.add_argument('--verbose',
                         action='store_true',
@@ -82,7 +83,8 @@ def main():
     args.keys = args.keys.split(",")
     args.instances = args.instances.split(",")
     args.dcsizes = args.dcsizes.split(",")
-    checkArgs([args.datacenters,args.keys,args.regions,args.instances,args.dcsizes])
+    args.volsizes = args.volsizes.split(",")
+    checkArgs([args.datacenters, args.keys, args.regions, args.instances, args.volsizes, args.dcsizes])
 
     writeYAML(args)
     count = 0
@@ -94,6 +96,7 @@ def main():
         conf['PublicKey'] = args.pubkey
         conf['KeyName'] = args.keys[i]
         conf['InstanceType'] = args.instances[i]
+        conf['VolumeSize'] = args.volsizes[i]
         conf['DataCenterName'] = args.datacenters[i]
         conf['DataCenterSize'] = args.dcsizes[i]
         filename = "datacenter-"+str(count)+".json"

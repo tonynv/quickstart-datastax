@@ -18,6 +18,7 @@ ParameterKey=DataCenters,ParameterValue=\"dc0,dc1,dc2\" \
 ParameterKey=DCSizes,ParameterValue=\"4,5,5\" \
 ParameterKey=Keys,ParameterValue=\"dse-keypair-us-east-1,dse-keypair-us-east-1,dse-keypair-us-east-1\" \
 ParameterKey=Instances,ParameterValue=\"t2.medium,m4.large,m4.large\" \
+ParameterKey=VolumeSizes,ParameterValue=\"25,25,25\" \
 ParameterKey=KeyName,ParameterValue=$keyname \
 ParameterKey=ClusterName,ParameterValue=$clustername \
 
