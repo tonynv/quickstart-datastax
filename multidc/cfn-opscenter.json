@@ -395,6 +395,7 @@
               "mkdir taskcat_config \n",
               "cd taskcat_config \n",
               "pubip=$(curl http://169.254.169.254/latest/meta-data/public-ipv4) \n",
+              "csize=$( echo ", {"Fn::Join" : [ "+", { "Ref" : "DCSizes" }] }," | bc ) \n"
               "~ubuntu/amazon-cloudformation-dse-dev/multidc/genConfigs.py ",
               "--opsc-ip $pubip ",
               "--pubkey \"$(cat ~ubuntu/.ssh/lcm.pem.pub)\" ",
@@ -406,6 +407,7 @@
               "--instances \"", {"Fn::Join" : [ ",", { "Ref" : "Instances" }] }, "\" ",
               "--volsizes \"", {"Fn::Join" : [ ",", { "Ref" : "VolumeSizes" }] }, "\" ",
               "--dcsizes \"", {"Fn::Join" : [ ",", { "Ref" : "DCSizes" }] }, "\" \n",
+              "--clustersize $csize \n",
               "cp ~ubuntu/amazon-cloudformation-dse-dev/multidc/cfn-datacenter-lcm.json ./dse/ \n",
               "~ubuntu/amazon-cloudformation-dse-dev/multidc/tcat_deploy.py -c config.yaml"
               ]]}

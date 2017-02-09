@@ -21,6 +21,7 @@ def setupArgs():
     parser.add_argument('--instances',type=str, help="List of instances")
     parser.add_argument('--volsizes',type=str, help="List of volume sizes")
     parser.add_argument('--dcsizes',type=str, help="List of dc sizes")
+    parser.add_argument('--clustersize',type=int, default=0, help="Size of cluster")
     parser.add_argument('--verbose',
                         action='store_true',
                         help='Verbose flag, right now a NO-OP.' )
@@ -99,6 +100,7 @@ def main():
         conf['VolumeSize'] = args.volsizes[i]
         conf['DataCenterName'] = args.datacenters[i]
         conf['DataCenterSize'] = args.dcsizes[i]
+        conf['ClusterSize'] = args.clustersize
         filename = "datacenter-"+str(count)+".json"
         writeConfig(conf,filename)
 
