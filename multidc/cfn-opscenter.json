@@ -406,10 +406,10 @@
               "--keys \"", {"Fn::Join" : [ ",", { "Ref" : "Keys" }] }, "\" ",
               "--instances \"", {"Fn::Join" : [ ",", { "Ref" : "Instances" }] }, "\" ",
               "--volsizes \"", {"Fn::Join" : [ ",", { "Ref" : "VolumeSizes" }] }, "\" ",
-              "--dcsizes \"", {"Fn::Join" : [ ",", { "Ref" : "DCSizes" }] }, "\" \n",
+              "--dcsizes \"", {"Fn::Join" : [ ",", { "Ref" : "DCSizes" }] }, "\" ",
               "--clustersize $csize \n",
               "cp ~ubuntu/amazon-cloudformation-dse-dev/multidc/cfn-datacenter-lcm.json ./dse/ \n",
-              "~ubuntu/amazon-cloudformation-dse-dev/multidc/tcat_deploy.py -c config.yaml"
+              "~ubuntu/amazon-cloudformation-dse-dev/multidc/tcat_deploy.py -v -c config.yaml"
               ]]}
           }
         }
