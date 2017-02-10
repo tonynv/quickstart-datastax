@@ -100,7 +100,7 @@ def main():
         conf['VolumeSize'] = args.volsizes[i]
         conf['DataCenterName'] = args.datacenters[i]
         conf['DataCenterSize'] = args.dcsizes[i]
-        conf['ClusterSize'] = args.clustersize
+        conf['ClusterSize'] = str(args.clustersize)
         filename = "datacenter-"+str(count)+".json"
         writeConfig(conf,filename)
 
