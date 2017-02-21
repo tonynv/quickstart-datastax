@@ -14,9 +14,39 @@
     },
 
     "KeyName": {
-      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to OpsCenter",
       "Type": "AWS::EC2::KeyPair::KeyName",
       "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
+    },
+
+    "Regions" : {
+      "Description" : "List of regions to deploy datacenters in",
+      "Type" : "CommaDelimitedList"
+    },
+
+    "DataCenters" : {
+      "Description" : "List of datacenter names",
+      "Type" : "CommaDelimitedList"
+    },
+
+    "Keys" : {
+      "Description" : "List of keypairs for node instances",
+      "Type" : "CommaDelimitedList"
+    },
+
+    "Instances" : {
+      "Description" : "List of instance types",
+      "Type" : "CommaDelimitedList"
+    },
+
+    "VolumeSizes" : {
+      "Description" : "List of EBS volume sizes (GB)",
+      "Type" : "List<Number>"
+    },
+
+    "DCSizes" : {
+      "Description" : "List of number of nodes/datacenter",
+      "Type" : "List<Number>"
     },
 
     "VpcId" : {
@@ -185,6 +215,10 @@
       }
     },
 
+    "S3Bucket" : {
+      "Type" : "AWS::S3::Bucket"
+    },
+
     "TaskcatRole" : {
         "Type"  : "AWS::IAM::Role",
         "Properties" : {
@@ -204,24 +238,45 @@
     "TaskcatRolePolicies" : {
         "Type" : "AWS::IAM::Policy",
         "Properties" : {
-            "PolicyName" : "s3access",
+            "PolicyName" : "tcat-access",
             "PolicyDocument" : {
-                "Statement" : [ {
-                    "Effect" : "Allow",
-                    "Action" : [
-                      "s3:*",
-                      "cloudformation:CreateStack",
-                      "cloudformation:DeleteStack",
-                      "cloudformation:DescribeStack",
-                      "cloudformation:EstimateTemplateCost",
-                      "cloudformation:ValidateTemplate",
-                      "cloudformation:DescribeStackEvents",
-                      "cloudformation:DescribeStackResource",
-                      "cloudformation:DescribeStackResources",
-                      "cloudformation:DescribeStacks"
-                    ],
-                    "Resource" : "*"
-                }]
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:*",
+                    "ec2:Describe*",
+                    "ec2:AttachNetworkInterface",
+                    "ec2:AttachVolume",
+                    "ec2:CreateTags",
+                    "ec2:CreateVolume",
+                    "ec2:DeleteVolume",
+                    "ec2:RunInstances",
+                    "ec2:StartInstances",
+                    "ec2:CreateSecurityGroup",
+                    "ec2:AuthorizeSecurityGroupIngress",
+                    "ec2:CreatePlacementGroup",
+                    "ec2:CreateSnapshot",
+                    "autoscaling:CreateLaunchConfiguration",
+                    "autoscaling:Describe*",
+                    "autoscaling:DeleteLaunchConfiguration",
+                    "autoscaling:CreateAutoScalingGroup",
+                    "autoscaling:TerminateInstanceInAutoScalingGroup",
+                    "autoscaling:UpdateAutoScalingGroup"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "cloudformation:CreateStack",
+                    "cloudformation:DeleteStack",
+                    "cloudformation:Describe*",
+                    "cloudformation:EstimateTemplateCost",
+                    "cloudformation:ValidateTemplate"
+                  ],
+                  "Resource": "*"
+                  }]
             },
             "Roles" : [ { "Ref" : "TaskcatRole" } ]
         }
@@ -241,7 +296,7 @@
       "Metadata" : {
         "AWS::CloudFormation::Init" : {
           "configSets" : {
-            "full_install" : [ "install_cfn", "install_opsc" , "gen_ssh_key", "setup_cluster"]
+            "full_install" : [ "install_cfn", "install_opsc" , "gen_ssh_key", "setup_cluster", "taskcat"]
           },
 
           "install_cfn" : {
@@ -256,7 +311,6 @@
                 "owner"   : "root",
                 "group"   : "root"
               },
-
               "/etc/cfn/hooks.d/cfn-auto-reloader.conf" : {
                 "content": { "Fn::Join" : ["", [
                   "[cfn-auto-reloader-hook]\n",
@@ -271,7 +325,6 @@
                 ]]}
               }
             },
-
             "services" : {
               "sysvinit" : {
                 "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
@@ -287,8 +340,8 @@
                   "cloud_type=\"aws\" \n",
                   "cd ~ubuntu \n",
                   "apt-get -y install unzip \n",
-                  "wget https://github.com/DSPN/install-datastax-ubuntu/archive/master.zip \n",
-                  "unzip master.zip \n",
+                  "wget -O install.zip https://github.com/DSPN/install-datastax-ubuntu/archive/master.zip \n",
+                  "unzip install.zip \n",
                   "cd install-datastax-ubuntu-master/bin \n",
                   "./os/install_java.sh \n",
                   "./opscenter/install.sh $cloud_type \n",
@@ -326,6 +379,37 @@
               "--clustername ",{ "Ref" : "ClusterName" }, " ",
               "--privkey $privkey ",
               "--user ubuntu "
+              ]]}
+          }
+        }
+      },
+      "taskcat" : {
+        "commands" : {
+          "01_setup_taskcat" : {
+            "command" : { "Fn::Join" : ["", [
+              "#!/usr/bin/env bash -e \n",
+              "cd ~ubuntu \n",
+              "pip install pyyaml taskcat \n",
+              "wget -O aws.zip https://github.com/DSPN/amazon-cloudformation-dse/archive/dev.zip \n",
+              "unzip aws.zip \n",
+              "mkdir taskcat_config \n",
+              "cd taskcat_config \n",
+              "pubip=$(curl http://169.254.169.254/latest/meta-data/public-ipv4) \n",
+              "csize=$(( ", {"Fn::Join" : [ "+", { "Ref" : "DCSizes" }] }," )) \n",
+              "~ubuntu/amazon-cloudformation-dse-dev/multidc/genConfigs.py ",
+              "--opsc-ip $pubip ",
+              "--pubkey \"$(cat ~ubuntu/.ssh/lcm.pem.pub)\" ",
+              "--s3bucket ", { "Ref" : "S3Bucket" }, " ",
+              "--clustername ", { "Ref" : "ClusterName" }, " ",
+              "--datacenters \"", {"Fn::Join" : [ ",", { "Ref" : "DataCenters" }] }, "\" ",
+              "--regions \"", {"Fn::Join" : [ ",", { "Ref" : "Regions" }] }, "\" ",
+              "--keys \"", {"Fn::Join" : [ ",", { "Ref" : "Keys" }] }, "\" ",
+              "--instances \"", {"Fn::Join" : [ ",", { "Ref" : "Instances" }] }, "\" ",
+              "--volsizes \"", {"Fn::Join" : [ ",", { "Ref" : "VolumeSizes" }] }, "\" ",
+              "--dcsizes \"", {"Fn::Join" : [ ",", { "Ref" : "DCSizes" }] }, "\" ",
+              "--clustersize $csize \n",
+              "cp ~ubuntu/amazon-cloudformation-dse-dev/multidc/cfn-datacenter-lcm.json ./dse/ \n",
+              "~ubuntu/amazon-cloudformation-dse-dev/multidc/tcat_deploy.py -v -c config.yaml"
               ]]}
           }
         }

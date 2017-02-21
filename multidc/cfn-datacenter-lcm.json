@@ -34,6 +34,12 @@
       "Default" : "6"
     },
 
+    "ClusterSize" : {
+      "Type" : "Number",
+      "Description" : "Number of nodes in cluster, used to trigger LCM install job",
+      "Default" : "0"
+    },
+
     "PublicKey" : {
       "Description" : "Public key matching private key used by LCM",
       "Type" : "String"
@@ -45,6 +51,12 @@
       "Default" : "m4.large",
       "AllowedValues" : [ "t2.medium", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge"],
       "ConstraintDescription" : "must be a valid EC2 instance type."
+    },
+
+    "VolumeSize" : {
+      "Type" : "Number",
+      "Description" : "EBS volume size in GB",
+      "Default" : "50"
     },
 
     "SSHLocation" : {
@@ -267,6 +279,7 @@
                   " --opsc-ip ", { "Ref" : "OpsCenterPubIP" },
                   " --clustername ", { "Ref" : "ClusterName" },
                   " --dcsize ", { "Ref" : "DataCenterSize" },
+                  " --clustersize ", {"Ref" : "ClusterSize"},
                   " --dcname ", { "Ref" : "DataCenterName" },
                   " --pubip $pubip",
                   " --privip $privip",
@@ -284,8 +297,20 @@
         "InstanceType"   : { "Ref" : "InstanceType" },
         "SecurityGroups" : [ {"Ref" : "DSESecurityGroup"} ],
         "KeyName"        : { "Ref" : "KeyName" },
+        "BlockDeviceMappings": [{
+            "DeviceName": "/dev/xvdf",
+            "Ebs": {
+              "VolumeType": "gp2", "VolumeSize": {"Ref" : "VolumeSize"},
+            }
+         }],
         "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
           "#!/bin/bash -xe\n",
+          "mkfs -t ext4 /dev/xvdf \n",
+          "mkdir /mnt/cassandra \n",
+          "mount /dev/xvdf /mnt/cassandra \n",
+          "chown 113:117 /mnt/cassandra \n",
+          "cp /etc/fstab /etc/fstab.bak \n",
+          "echo \"/dev/xvdf       /mnt/cassandra   ext4    defaults,nofail        0       2\" >> /etc/fstab \n",
           "apt-get update\n",
           "apt-get -y install python python-setuptools python-pip\n",
           "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz \n",
