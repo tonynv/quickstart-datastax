@@ -23,6 +23,12 @@
       "Type" : "String"
     },
 
+    "DBPassword" : {
+      "Type" : "String",
+      "Description" : "C* password",
+      "NoEcho" : true
+    },
+
     "DataCenterName" : {
       "Description" : "Name of DSE cluster",
       "Type" : "String"
@@ -283,7 +289,8 @@
                   " --dcname ", { "Ref" : "DataCenterName" },
                   " --pubip $pubip",
                   " --privip $privip",
-                  " --nodeid $nodeid \n"
+                  " --nodeid $nodeid",
+                  " --dbpasswd ", { "Ref" : "DBPassword"}," \n"
                   ]]}
               }
             }
