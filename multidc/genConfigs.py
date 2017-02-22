@@ -42,9 +42,11 @@ def checkArgs(lists):
 def writeYAML(args):
     conf = {'global': {
               'project': 'dse',
+              'qsname': 'datastax',
               'owner': 'foo@foo.com',
               'notification': True,
               'reporting': True,
+              'cleanup': False,
               'report_email-to-owner': True,
               'report_publish-to-s3': True,
               'report_s3bucket': args.s3bucket,

@@ -13,6 +13,12 @@
       "ConstraintDescription": "must be a valid email address."
     },
 
+    "DBPassword" : {
+      "Type" : "String",
+      "Description" : "C* password",
+      "NoEcho" : true
+    },
+
     "KeyName": {
       "Description" : "Name of an existing EC2 KeyPair to enable SSH access to OpsCenter",
       "Type": "AWS::EC2::KeyPair::KeyName",
@@ -290,6 +296,20 @@
            }
          },
 
+    "OpsCenterWaitCondition" : {
+      "Type" : "AWS::CloudFormation::WaitCondition",
+        "Properties" : {
+          "Handle" : { "Ref" : "OpsCenterWaitHandle"},
+          "Timeout" : "1200"
+        }
+    },
+
+    "OpsCenterWaitHandle" : {
+       "Type" : "AWS::CloudFormation::WaitConditionHandle",
+       "Properties" : {
+       }
+    },
+
     "OpsCenterInstance": {
       "Type": "AWS::EC2::Instance",
 
@@ -378,7 +398,8 @@
               "--opsc-ip $pubip ",
               "--clustername ",{ "Ref" : "ClusterName" }, " ",
               "--privkey $privkey ",
-              "--user ubuntu "
+              "--user ubuntu \n",
+              "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete\" \"", { "Ref" : "OpsCenterWaitHandle" }, "\" \n"
               ]]}
           }
         }
@@ -436,10 +457,6 @@
           "         --stack ", { "Ref" : "AWS::StackId" },
           "         --resource OpsCenterInstance ",
           "         --configsets full_install ",
-          "         --region ", { "Ref" : "AWS::Region" }, "\n",
-          "/usr/local/bin/cfn-signal -e 0 ",
-          "         --stack ", { "Ref" : "AWS::StackId" },
-          "         --resource OpsCenterInstance ",
           "         --region ", { "Ref" : "AWS::Region" }, "\n"
         ]]}},
 

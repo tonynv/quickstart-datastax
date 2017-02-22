@@ -4,6 +4,7 @@
 ####################################################
 keyname="dse-keypair-us-east-1"
 clustername="mycluster"
+pw="secretpassword"
 ####################################################
 
 template="$PWD/cfn-opscenter.json"
@@ -21,6 +22,7 @@ ParameterKey=Instances,ParameterValue=\"t2.medium,m4.large,m4.large\" \
 ParameterKey=VolumeSizes,ParameterValue=\"25,25,25\" \
 ParameterKey=KeyName,ParameterValue=$keyname \
 ParameterKey=ClusterName,ParameterValue=$clustername \
+ParameterKey=DBPassword,ParameterValue=$pw
 
 #region=$(aws configure get default.region)
 #echo "$stack $region" >> teardown.txt
