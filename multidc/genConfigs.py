@@ -50,7 +50,6 @@ def writeYAML(args):
               'report_email-to-owner': True,
               'report_publish-to-s3': True,
               'report_s3bucket': args.s3bucket,
-              's3bucket': args.s3bucket,
               'regions': args.regions
             },
             'tests': {}
