@@ -13,6 +13,12 @@
       "ConstraintDescription": "must be a valid email address."
     },
 
+    "DBPassword" : {
+      "Type" : "String",
+      "Description" : "C* password",
+      "NoEcho" : true
+    },
+
     "KeyName": {
       "Description" : "Name of an existing EC2 KeyPair to enable SSH access to OpsCenter",
       "Type": "AWS::EC2::KeyPair::KeyName",
@@ -215,10 +221,6 @@
       }
     },
 
-    "S3Bucket" : {
-      "Type" : "AWS::S3::Bucket"
-    },
-
     "TaskcatRole" : {
         "Type"  : "AWS::IAM::Role",
         "Properties" : {
@@ -289,6 +291,20 @@
              "Roles" : [{ "Ref" : "TaskcatRole" }]
            }
          },
+
+    "OpsCenterWaitCondition" : {
+      "Type" : "AWS::CloudFormation::WaitCondition",
+        "Properties" : {
+          "Handle" : { "Ref" : "OpsCenterWaitHandle"},
+          "Timeout" : "1200"
+        }
+    },
+
+    "OpsCenterWaitHandle" : {
+       "Type" : "AWS::CloudFormation::WaitConditionHandle",
+       "Properties" : {
+       }
+    },
 
     "OpsCenterInstance": {
       "Type": "AWS::EC2::Instance",
@@ -371,14 +387,14 @@
               "cd ~ubuntu \n",
               "pip install requests \n",
               "cd install-datastax-ubuntu-master/bin/lcm \n",
-              "pubip=$(curl http://169.254.169.254/latest/meta-data/public-ipv4) \n",
+              "pubip=\"", {"Ref" : "OpsCenterEIP"}, "\" \n",
               "privkey=$(readlink -f ~ubuntu/.ssh/lcm.pem) \n",
               "sleep 1m \n",
               "./setupCluster.py ",
               "--opsc-ip $pubip ",
               "--clustername ",{ "Ref" : "ClusterName" }, " ",
               "--privkey $privkey ",
-              "--user ubuntu "
+              "--user ubuntu \n"
               ]]}
           }
         }
@@ -394,13 +410,13 @@
               "unzip aws.zip \n",
               "mkdir taskcat_config \n",
               "cd taskcat_config \n",
-              "pubip=$(curl http://169.254.169.254/latest/meta-data/public-ipv4) \n",
+              "pubip=\"", {"Ref" : "OpsCenterEIP"}, "\" \n",
               "csize=$(( ", {"Fn::Join" : [ "+", { "Ref" : "DCSizes" }] }," )) \n",
               "~ubuntu/amazon-cloudformation-dse-dev/multidc/genConfigs.py ",
               "--opsc-ip $pubip ",
               "--pubkey \"$(cat ~ubuntu/.ssh/lcm.pem.pub)\" ",
-              "--s3bucket ", { "Ref" : "S3Bucket" }, " ",
               "--clustername ", { "Ref" : "ClusterName" }, " ",
+              "--dbpasswd ", { "Ref" : "DBPassword" }, " ",
               "--datacenters \"", {"Fn::Join" : [ ",", { "Ref" : "DataCenters" }] }, "\" ",
               "--regions \"", {"Fn::Join" : [ ",", { "Ref" : "Regions" }] }, "\" ",
               "--keys \"", {"Fn::Join" : [ ",", { "Ref" : "Keys" }] }, "\" ",
@@ -409,7 +425,9 @@
               "--dcsizes \"", {"Fn::Join" : [ ",", { "Ref" : "DCSizes" }] }, "\" ",
               "--clustersize $csize \n",
               "cp ~ubuntu/amazon-cloudformation-dse-dev/multidc/cfn-datacenter-lcm.json ./dse/ \n",
-              "~ubuntu/amazon-cloudformation-dse-dev/multidc/tcat_deploy.py -v -c config.yaml"
+              "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete, deploying DC's\" \"", { "Ref" : "OpsCenterWaitHandle" }, "\" \n",
+              "~ubuntu/amazon-cloudformation-dse-dev/multidc/tcatDeploy.py -v -c config.yaml \n",
+              "rm ~ubuntu/taskcat_config/dse/* "
               ]]}
           }
         }
@@ -436,10 +454,6 @@
           "         --stack ", { "Ref" : "AWS::StackId" },
           "         --resource OpsCenterInstance ",
           "         --configsets full_install ",
-          "         --region ", { "Ref" : "AWS::Region" }, "\n",
-          "/usr/local/bin/cfn-signal -e 0 ",
-          "         --stack ", { "Ref" : "AWS::StackId" },
-          "         --resource OpsCenterInstance ",
           "         --region ", { "Ref" : "AWS::Region" }, "\n"
         ]]}},
 

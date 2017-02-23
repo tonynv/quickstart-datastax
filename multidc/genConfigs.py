@@ -12,9 +12,9 @@ import os
 def setupArgs():
     parser = argparse.ArgumentParser(description='Split template params into per-region config files.')
     parser.add_argument('--opsc-ip', type=str, help='Public ip of OpsCenter instance.')
-    parser.add_argument('--s3bucket', type=str, help='S3 bucket for taskcat deploy')
     parser.add_argument('--pubkey', type=str, help='Public key corresponding to private key in LCM')
     parser.add_argument('--clustername', type=str, help='Name of cluster.')
+    parser.add_argument('--dbpasswd', type=str, help='DB password.')
     parser.add_argument('--datacenters',type=str, help="List of dc names")
     parser.add_argument('--regions',type=str, help="List of AWS regions")
     parser.add_argument('--keys',type=str, help="List of key pairs to use")
@@ -42,13 +42,13 @@ def checkArgs(lists):
 def writeYAML(args):
     conf = {'global': {
               'project': 'dse',
+              'qsname': 'dse',
               'owner': 'foo@foo.com',
               'notification': True,
               'reporting': True,
+              'cleanup': False,
               'report_email-to-owner': True,
-              'report_publish-to-s3': True,
-              'report_s3bucket': args.s3bucket,
-              's3bucket': args.s3bucket,
+              'report_publish-to-s3': False,
               'regions': args.regions
             },
             'tests': {}
@@ -94,6 +94,7 @@ def main():
         conf = {}
         conf['OpsCenterPubIP'] = args.opsc_ip
         conf['ClusterName'] = args.clustername
+        conf['DBPassword'] = args.dbpasswd
         conf['PublicKey'] = args.pubkey
         conf['KeyName'] = args.keys[i]
         conf['InstanceType'] = args.instances[i]
