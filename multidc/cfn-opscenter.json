@@ -398,8 +398,7 @@
               "--opsc-ip $pubip ",
               "--clustername ",{ "Ref" : "ClusterName" }, " ",
               "--privkey $privkey ",
-              "--user ubuntu \n",
-              "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete\" \"", { "Ref" : "OpsCenterWaitHandle" }, "\" \n"
+              "--user ubuntu \n"
               ]]}
           }
         }
@@ -431,6 +430,7 @@
               "--dcsizes \"", {"Fn::Join" : [ ",", { "Ref" : "DCSizes" }] }, "\" ",
               "--clustersize $csize \n",
               "cp ~ubuntu/amazon-cloudformation-dse-dev/multidc/cfn-datacenter-lcm.json ./dse/ \n",
+              "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete, deploying DC's\" \"", { "Ref" : "OpsCenterWaitHandle" }, "\" \n"
               "~ubuntu/amazon-cloudformation-dse-dev/multidc/tcat_deploy.py -v -c config.yaml \n",
               "rm ~ubuntu/taskcat_config/dse/* "
               ]]}
