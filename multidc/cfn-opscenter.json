@@ -431,7 +431,7 @@
               "--clustersize $csize \n",
               "cp ~ubuntu/amazon-cloudformation-dse-dev/multidc/cfn-datacenter-lcm.json ./dse/ \n",
               "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete, deploying DC's\" \"", { "Ref" : "OpsCenterWaitHandle" }, "\" \n"
-              "~ubuntu/amazon-cloudformation-dse-dev/multidc/tcat_deploy.py -v -c config.yaml \n",
+              "~ubuntu/amazon-cloudformation-dse-dev/multidc/tcatDeploy.py -v -c config.yaml \n",
               "rm ~ubuntu/taskcat_config/dse/* "
               ]]}
           }
