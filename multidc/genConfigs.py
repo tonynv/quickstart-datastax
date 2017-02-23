@@ -41,8 +41,8 @@ def checkArgs(lists):
 
 def writeYAML(args):
     conf = {'global': {
-              'project': 'datastax',
-              'qsname': 'datastax',
+              'project': 'dse',
+              'qsname': 'dse',
               'owner': 'foo@foo.com',
               'notification': True,
               'reporting': True,
