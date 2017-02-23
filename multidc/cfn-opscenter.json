@@ -422,6 +422,7 @@
               "--pubkey \"$(cat ~ubuntu/.ssh/lcm.pem.pub)\" ",
               "--s3bucket ", { "Ref" : "S3Bucket" }, " ",
               "--clustername ", { "Ref" : "ClusterName" }, " ",
+              "--dbpasswd ", { "Ref" : "DBPassword" }, " ",
               "--datacenters \"", {"Fn::Join" : [ ",", { "Ref" : "DataCenters" }] }, "\" ",
               "--regions \"", {"Fn::Join" : [ ",", { "Ref" : "Regions" }] }, "\" ",
               "--keys \"", {"Fn::Join" : [ ",", { "Ref" : "Keys" }] }, "\" ",
@@ -430,7 +431,8 @@
               "--dcsizes \"", {"Fn::Join" : [ ",", { "Ref" : "DCSizes" }] }, "\" ",
               "--clustersize $csize \n",
               "cp ~ubuntu/amazon-cloudformation-dse-dev/multidc/cfn-datacenter-lcm.json ./dse/ \n",
-              "~ubuntu/amazon-cloudformation-dse-dev/multidc/tcat_deploy.py -v -c config.yaml"
+              "~ubuntu/amazon-cloudformation-dse-dev/multidc/tcat_deploy.py -v -c config.yaml \n",
+              "rm ~ubuntu/taskcat_config/dse/* "
               ]]}
           }
         }
