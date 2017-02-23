@@ -12,7 +12,6 @@ import os
 def setupArgs():
     parser = argparse.ArgumentParser(description='Split template params into per-region config files.')
     parser.add_argument('--opsc-ip', type=str, help='Public ip of OpsCenter instance.')
-    parser.add_argument('--s3bucket', type=str, help='S3 bucket for taskcat deploy')
     parser.add_argument('--pubkey', type=str, help='Public key corresponding to private key in LCM')
     parser.add_argument('--clustername', type=str, help='Name of cluster.')
     parser.add_argument('--dbpasswd', type=str, help='DB password.')
@@ -49,8 +48,7 @@ def writeYAML(args):
               'reporting': True,
               'cleanup': False,
               'report_email-to-owner': True,
-              'report_publish-to-s3': True,
-              'report_s3bucket': args.s3bucket,
+              'report_publish-to-s3': False,
               'regions': args.regions
             },
             'tests': {}

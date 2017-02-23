@@ -221,10 +221,6 @@
       }
     },
 
-    "S3Bucket" : {
-      "Type" : "AWS::S3::Bucket"
-    },
-
     "TaskcatRole" : {
         "Type"  : "AWS::IAM::Role",
         "Properties" : {
@@ -419,7 +415,6 @@
               "~ubuntu/amazon-cloudformation-dse-dev/multidc/genConfigs.py ",
               "--opsc-ip $pubip ",
               "--pubkey \"$(cat ~ubuntu/.ssh/lcm.pem.pub)\" ",
-              "--s3bucket ", { "Ref" : "S3Bucket" }, " ",
               "--clustername ", { "Ref" : "ClusterName" }, " ",
               "--dbpasswd ", { "Ref" : "DBPassword" }, " ",
               "--datacenters \"", {"Fn::Join" : [ ",", { "Ref" : "DataCenters" }] }, "\" ",
