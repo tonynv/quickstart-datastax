@@ -254,9 +254,10 @@
                   "echo seed_node_dns_name $seed_node_dns_name \n",
                   "apt-get -y install unzip \n",
                   "cd ~ubuntu \n",
-                  "wget https://github.com/DSPN/install-datastax-ubuntu/archive/aws-testing.zip \n",
-                  "unzip aws-testing.zip \n",
-                  "cd install-datastax-ubuntu-aws-testing/bin \n",
+                  "wget https://github.com/DSPN/install-datastax-ubuntu/archive/master.zip \n",
+                  "unzip master.zip \n",
+                  "cd install-datastax-ubuntu-master/bin \n",
+                  "export OPSC_VERSION='6.0.5' \n",
                   "./opscenter.sh $cloud_type $seed_node_dns_name $data_center_name &\n"
                   ]]},
               }
@@ -355,9 +356,11 @@
                   "echo seed_node_dns_name $seed_node_dns_name \n",
                   "apt-get -y install unzip \n",
                   "cd ~ubuntu \n",
-                  "wget https://github.com/DSPN/install-datastax-ubuntu/archive/aws-testing.zip \n",
-                  "unzip aws-testing.zip \n",
-                  "cd install-datastax-ubuntu-aws-testing/bin \n",
+                  "wget https://github.com/DSPN/install-datastax-ubuntu/archive/master.zip \n",
+                  "unzip master.zip \n",
+                  "cd install-datastax-ubuntu-master/bin \n",
+                  "export OPSC_VERSION='6.0.5' \n",
+                  "export DSE_VERSION=5.0.3-1 \n",
                   "./dse.sh $cloud_type $seed_node_dns_name $data_center_name ", { "Ref" : "OpsCenterEIP" }
                   ]]}
               }
@@ -508,9 +511,11 @@
                   "echo seed_node_dns_name $seed_node_dns_name \n",
                   "apt-get -y install unzip \n",
                   "cd ~ubuntu \n",
-                  "wget https://github.com/DSPN/install-datastax-ubuntu/archive/aws-testing.zip \n",
-                  "unzip aws-testing.zip \n",
-                  "cd install-datastax-ubuntu-aws-testing/bin \n",
+                  "wget https://github.com/DSPN/install-datastax-ubuntu/archive/master.zip \n",
+                  "unzip master.zip \n",
+                  "cd install-datastax-ubuntu-master/bin \n",
+                  "export OPSC_VERSION='6.0.5' \n",
+                  "export DSE_VERSION=5.0.3-1 \n",
                   "./dse.sh $cloud_type $seed_node_dns_name $data_center_name ", { "Ref" : "OpsCenterEIP" },
                   " \n"
                   ]]}
