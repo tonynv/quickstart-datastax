@@ -62,7 +62,7 @@
     "VolumeSize" : {
       "Type" : "Number",
       "Description" : "EBS volume size in GB",
-      "Default" : "50"
+      "Default" : "128"
     },
 
     "SSHLocation" : {
