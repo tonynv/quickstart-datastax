@@ -359,6 +359,7 @@
                   "wget -O install.zip https://github.com/DSPN/install-datastax-ubuntu/archive/master.zip \n",
                   "unzip install.zip \n",
                   "cd install-datastax-ubuntu-master/bin \n",
+                  "export OPSC_VERSION='6.0.5' \n",
                   "./os/install_java.sh \n",
                   "./opscenter/install.sh $cloud_type \n",
                   "./opscenter/start.sh"
