@@ -1,0 +1,61 @@
+{
+   "AWSTemplateFormatVersion": "2010-09-09",
+   "Description": "XXXXXX",
+   "Parameters" : {
+
+      "KeyName": {
+        "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+        "Type": "AWS::EC2::KeyPair::KeyName",
+        "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
+      }
+
+   },
+   "Resources": {
+       "VPCstack": {
+           "Type": "AWS::CloudFormation::Stack",
+           "Properties": {
+               "TemplateURL": "https://s3.amazonaws.com/quickstart-reference/aws/vpc/latest/templates/aws-vpc.template",
+               "Parameters": {
+                   "AvailabilityZones": "us-east-1a,us-east-1b,us-east-1c",
+                   "NumberOfAZs": 3,
+                   "CreatePrivateSubnets": "true",
+                   "KeyPairName": { "Ref" : "KeyName" }
+            },
+               "TimeoutInMinutes": "30"
+           }
+       },
+
+       "OpsCSecurityGroup" : {
+         "Type" : "AWS::EC2::SecurityGroup",
+         "Properties" : {
+           "GroupDescription" : "Enable SSH access, and OpsCenter port",
+           "VpcId": { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCID" ]},
+           "SecurityGroupIngress" : [
+             {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : "0.0.0.0/0"},
+             {"IpProtocol" : "tcp", "FromPort" : "8888", "ToPort" : "8888", "CidrIp" : "0.0.0.0/0"},
+          ]
+        },
+         "TimeoutInMinutes": "30",
+         "DependsOn" : "VPCstack"
+       },
+
+       "OpsCenterstack": {
+           "Type": "AWS::CloudFormation::Stack",
+           "Properties": {
+               "TemplateURL": "something.template",
+               "Parameters": {
+                   "KeyPairName" : { "Ref" : "KeyName" },
+                   "OpsCenterSecurityGroupId" : ,
+
+            },
+               "TimeoutInMinutes": "30",
+               "DependsOn" : "OpsCSecurityGroup"
+           }
+       }
+   },
+   "Outputs": {
+       "VPCstackRef": {
+           "Value": { "Ref": "VPCstack" }
+       }
+   }
+}
