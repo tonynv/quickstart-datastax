@@ -42,11 +42,13 @@
        "OpsCenterstack": {
            "Type": "AWS::CloudFormation::Stack",
            "Properties": {
-               "TemplateURL": "something.template",
+               "TemplateURL": "https://raw.githubusercontent.com/DSPN/amazon-cloudformation-dse/dev/quickstart-dse/opscenter.template",
                "Parameters": {
                    "KeyPairName" : { "Ref" : "KeyName" },
-                   "OpsCenterSecurityGroupId" : ,
-
+                   "OpsCenterSecurityGroupId" : { "Fn::GetAtt" : [ "OpsCSecurityGroup", "Id" ] },
+                   "SubnetId" : { "Fn::GetAtt": [ "VPCstack", "Outputs.PublicSubnet1ID" ] },
+                   "ClusterName" : "mycluster",
+                   "InstanceType" : "t2.medium"
             },
                "TimeoutInMinutes": "30",
                "DependsOn" : "OpsCSecurityGroup"
