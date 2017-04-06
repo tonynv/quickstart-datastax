@@ -10,6 +10,11 @@
       "Type": "AWS::EC2::KeyPair::KeyName",
       "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
     },
+    "LCMPassword" : {
+      "Type" : "String",
+      "Description" : "Password for 'lcm' user",
+      "NoEcho" : true
+    },
     "OpsCenterSecurityGroupId" : {
       "Type" : "AWS::EC2::SecurityGroup::Id",
       "Description" : "OpsCenter security group id"
@@ -271,8 +276,8 @@
               "./setupCluster.py ",
               "--opsc-ip $pubip ",
               "--clustername \"",{ "Ref" : "ClusterName" }, "\" ",
-              "--privkey $privkey ",
-              "--user ubuntu \n",
+              "--user lcm \n",
+              "--password ",{ "Ref" : "LCMPassword"}, " \n",
               "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete\" \"", { "Ref" : "OpsCenterWaitHandle" }, "\" \n"
               ]]}
           }
