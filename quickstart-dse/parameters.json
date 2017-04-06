@@ -4,7 +4,39 @@
     "ParameterValue": "dse-keypair-us-east-1"
   },
   {
+    "ParameterKey": "NumberOfAZs",
+    "ParameterValue": "3"
+  },
+  {
+    "ParameterKey": "AvailabilityZones",
+    "ParameterValue": "us-east-1a,us-east-1b,us-east-1c"
+  },
+  {
+    "ParameterKey": "ClusterName",
+    "ParameterValue": "foocluster"
+  },
+  {
+    "ParameterKey": "DBPassword",
+    "ParameterValue": "foobar123!"
+  },
+  {
     "ParameterKey": "NumberDCs",
     "ParameterValue": "2"
+  },
+  {
+    "ParameterKey": "DataCenters",
+    "ParameterValue": "foodc,bardc"
+  },
+  {
+    "ParameterKey": "Instances",
+    "ParameterValue": "m4.large,m4.large"
+  },
+  {
+    "ParameterKey": "VolumeSizes",
+    "ParameterValue": "256,512"
+  },
+  {
+    "ParameterKey": "DCSizes",
+    "ParameterValue": "3,5"
   }
 ]

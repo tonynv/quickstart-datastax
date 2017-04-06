@@ -8,18 +8,55 @@
         "Type": "AWS::EC2::KeyPair::KeyName",
         "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
       },
+      "NumberOfAZs" : {
+        "Type" : "Number",
+        "Description" : "Number AvailabilityZones for VPC",
+        "Default" : 3,
+      },
+      "AvailabilityZones" : {
+        "Description" : "List of AvailabilityZones for VPC, Length must match AZs",
+        "Type": "List<AWS::EC2::AvailabilityZone::Name>"
+      },
+      "DBPassword" : {
+        "Type" : "String",
+        "Description" : "C* password",
+        "NoEcho" : true
+      },
       "NumberDCs" : {
         "Type" : "Number",
         "Description" : "Number of nodes in datacenter",
         "Default" : 3,
         "AllowedValues": [1,2,3,4],
         "ConstraintDescription": "Value must be an integer from 1-4"
-      }
+      },
+      "DataCenters" : {
+        "Description" : "List of datacenter names. Length must match NumberofDCs",
+        "Type" : "CommaDelimitedList"
+      },
+      "Instances" : {
+        "Description" : "List of instance types",
+        "Type" : "CommaDelimitedList"
+      },
+      "VolumeSizes" : {
+        "Description" : "List of EBS volume sizes (GB)",
+        "Type" : "List<Number>"
+      },
+      "DCSizes" : {
+        "Description" : "List of number of nodes/datacenter",
+        "Type" : "List<Number>"
+      },
+      "ClusterName" : {
+        "Description" : "Name of DSE cluster",
+        "Type" : "String",
+        "Default" : "DSE Cluster"
+      },
 
    },
 
   "Conditions" : {
-    "CreateDC1" : {"Fn::Equals": [ {"Ref": "NumberDCs"}, 2 ] }
+    "CreateDC1" : {"Fn::Equals": [ {"Ref": "NumberDCs"}, 2 ] },
+    "CreateDC2" : {"Fn::Equals": [ {"Ref": "NumberDCs"}, 3 ] },
+    "CreateDC3" : {"Fn::Equals": [ {"Ref": "NumberDCs"}, 4 ] }
   },
 
    "Resources": {
@@ -28,8 +65,8 @@
            "Properties": {
                "TemplateURL": "https://s3.amazonaws.com/quickstart-reference/aws/vpc/latest/templates/aws-vpc.template",
                "Parameters": {
-                   "AvailabilityZones": "us-east-1a,us-east-1b,us-east-1c",
-                   "NumberOfAZs": 3,
+                   "AvailabilityZones": { "Fn::Join": [ ",", { "Ref" : "AvailabilityZones"} ] },
+                   "NumberOfAZs": { "Ref" : "NumberOfAZs"},
                    "CreatePrivateSubnets": "true",
                    "KeyPairName": { "Ref" : "KeyName" }
             }
@@ -57,7 +94,7 @@
                    "KeyName" : { "Ref" : "KeyName" },
                    "OpsCenterSecurityGroupId" : { "Fn::GetAtt" : [ "OpsCSecurityGroup", "GroupId" ] },
                    "SubnetId" : { "Fn::GetAtt": [ "VPCstack", "Outputs.PublicSubnet1ID" ] },
-                   "ClusterName" : "mycluster",
+                   "ClusterName" : { "Ref" : "ClusterName" },
                    "InstanceType" : "t2.medium"
             }
           },
@@ -71,15 +108,15 @@
                "Parameters": {
                    "KeyName" : { "Ref" : "KeyName" },
                    "OpsCenterPubIP" : { "Fn::GetAtt": [ "OpsCenterstack", "Outputs.OpsCenterPublicIP" ] },
-                   "ClusterName" : "mycluster",
-                   "DBPassword" : "testpw",
+                   "ClusterName" : { "Ref" : "ClusterName" },
+                   "DBPassword" : { "Ref" : "DBPassword" },
                    "PublicKey" : "XXXXXX",
-                   "DataCenterName" : "dc0",
-                   "DataCenterSize": 3,
-                   "InstanceType": "m4.large",
-                   "VolumeSize" : "512",
+                   "DataCenterName" : { "Fn::Select" : [ "0", { "Ref" : "DataCenters" } ] },
+                   "DataCenterSize": { "Fn::Select" : [ "0", { "Ref" : "DCSizes" } ] },
+                   "InstanceType": { "Fn::Select" : [ "0", { "Ref" : "Instances" } ] },
+                   "VolumeSize" : { "Fn::Select" : [ "0", { "Ref" : "VolumeSizes" } ] },
                    "VPC": { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCID"] },
-                   "AvailabilityZones": "us-east-1a,us-east-1b,us-east-1c",
+                   "AvailabilityZones": { "Fn::Join": [ ",", { "Ref" : "AvailabilityZones"} ] },
                    "Subnets": {"Fn::Join" :
                      [ ",", [
                        {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet1AID" ]},
@@ -99,15 +136,15 @@
                  "Parameters": {
                      "KeyName" : { "Ref" : "KeyName" },
                      "OpsCenterPubIP" : { "Fn::GetAtt": [ "OpsCenterstack", "Outputs.OpsCenterPublicIP" ] },
-                     "ClusterName" : "mycluster",
-                     "DBPassword" : "testpw",
+                     "ClusterName" : { "Ref" : "ClusterName" },
+                     "DBPassword" : { "Ref" : "DBPassword" },
                      "PublicKey" : "XXXXXX",
-                     "DataCenterName" : "dc1",
-                     "DataCenterSize": 3,
-                     "InstanceType": "m4.large",
-                     "VolumeSize" : "512",
+                     "DataCenterName" : { "Fn::Select" : [ "1", { "Ref" : "DataCenters" } ] },
+                     "DataCenterSize": { "Fn::Select" : [ "1", { "Ref" : "DCSizes" } ] },
+                     "InstanceType": { "Fn::Select" : [ "1", { "Ref" : "Instances" } ] },
+                     "VolumeSize" : { "Fn::Select" : [ "1", { "Ref" : "VolumeSizes" } ] },
                      "VPC": { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCID"] },
-                     "AvailabilityZones": "us-east-1a,us-east-1b,us-east-1c",
+                     "AvailabilityZones": { "Fn::Join": [ ",", { "Ref" : "AvailabilityZones"} ] },
                      "Subnets": {"Fn::Join" :
                        [ ",", [
                          {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet1AID" ]},
