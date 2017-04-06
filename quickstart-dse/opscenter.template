@@ -273,6 +273,7 @@
               "pubip=$(curl http://169.254.169.254/latest/meta-data/public-ipv4) \n",
               "privkey=$(readlink -f ~ubuntu/.ssh/lcm.pem) \n",
               "sleep 1m \n",
+              "sed -ie 's/5.0.7/5.0.5/g' ./lcm/setupCluster.py \n",
               "./setupCluster.py ",
               "--opsc-ip $pubip ",
               "--clustername \"",{ "Ref" : "ClusterName" }, "\" ",
