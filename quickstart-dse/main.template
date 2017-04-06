@@ -55,7 +55,6 @@
                "TemplateURL": "https://s3.amazonaws.com/qs-dse-test/opscenter.template",
                "Parameters": {
                    "KeyName" : { "Ref" : "KeyName" },
-                   "LCMPassword": "testpw",
                    "OpsCenterSecurityGroupId" : { "Fn::GetAtt" : [ "OpsCSecurityGroup", "GroupId" ] },
                    "SubnetId" : { "Fn::GetAtt": [ "VPCstack", "Outputs.PublicSubnet1ID" ] },
                    "ClusterName" : "mycluster",
@@ -73,7 +72,6 @@
                    "KeyName" : { "Ref" : "KeyName" },
                    "OpsCenterPubIP" : { "Fn::GetAtt": [ "OpsCenterstack", "Outputs.OpsCenterPublicIP" ] },
                    "ClusterName" : "mycluster",
-                   "LCMPassword": "testpw",
                    "DBPassword" : "testpw",
                    "PublicKey" : "XXXXXX",
                    "DataCenterName" : "dc0",
@@ -102,7 +100,6 @@
                      "KeyName" : { "Ref" : "KeyName" },
                      "OpsCenterPubIP" : { "Fn::GetAtt": [ "OpsCenterstack", "Outputs.OpsCenterPublicIP" ] },
                      "ClusterName" : "mycluster",
-                     "LCMPassword": "testpw",
                      "DBPassword" : "testpw",
                      "PublicKey" : "XXXXXX",
                      "DataCenterName" : "dc1",
