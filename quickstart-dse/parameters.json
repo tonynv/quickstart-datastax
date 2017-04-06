@@ -4,10 +4,6 @@
     "ParameterValue": "dse-keypair-us-east-1"
   },
   {
-    "ParameterKey": "NumberOfAZs",
-    "ParameterValue": "3"
-  },
-  {
     "ParameterKey": "AvailabilityZones",
     "ParameterValue": "us-east-1a,us-east-1b,us-east-1c"
   },

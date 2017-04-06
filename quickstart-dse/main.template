@@ -8,13 +8,8 @@
         "Type": "AWS::EC2::KeyPair::KeyName",
         "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
       },
-      "NumberOfAZs" : {
-        "Type" : "Number",
-        "Description" : "Number AvailabilityZones for VPC",
-        "Default" : 3,
-      },
       "AvailabilityZones" : {
-        "Description" : "List of AvailabilityZones for VPC, Length must match AZs",
+        "Description" : "List of 3 AvailabilityZones for VPC, Length must match AZs",
         "Type": "List<AWS::EC2::AvailabilityZone::Name>"
       },
       "DBPassword" : {
@@ -66,7 +61,7 @@
                "TemplateURL": "https://s3.amazonaws.com/quickstart-reference/aws/vpc/latest/templates/aws-vpc.template",
                "Parameters": {
                    "AvailabilityZones": { "Fn::Join": [ ",", { "Ref" : "AvailabilityZones"} ] },
-                   "NumberOfAZs": { "Ref" : "NumberOfAZs"},
+                   "NumberOfAZs": 3,
                    "CreatePrivateSubnets": "true",
                    "KeyPairName": { "Ref" : "KeyName" }
             }
