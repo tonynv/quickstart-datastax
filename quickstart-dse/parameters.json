@@ -1,0 +1,10 @@
+[
+  {
+    "ParameterKey": "KeyName",
+    "ParameterValue": "dse-keypair-us-east-1"
+  },
+  {
+    "ParameterKey": "NumberDCs",
+    "ParameterValue": "2"
+  }
+]

@@ -7,9 +7,21 @@
         "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance",
         "Type": "AWS::EC2::KeyPair::KeyName",
         "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
+      },
+      "NumberDCs" : {
+        "Type" : "Number",
+        "Description" : "Number of nodes in datacenter",
+        "Default" : 3,
+        "AllowedValues": [1,2,3,4],
+        "ConstraintDescription": "Value must be an integer from 1-4"
       }
 
    },
+
+  "Conditions" : {
+    "CreateDC1" : {"Fn::Equals": [ {"Ref": "NumberDCs"}, 2 ] }
+  },
+
    "Resources": {
        "VPCstack": {
            "Type": "AWS::CloudFormation::Stack",
@@ -20,8 +32,7 @@
                    "NumberOfAZs": 3,
                    "CreatePrivateSubnets": "true",
                    "KeyPairName": { "Ref" : "KeyName" }
-            },
-               "TimeoutInMinutes": "30"
+            }
            }
        },
 
@@ -35,25 +46,79 @@
              {"IpProtocol" : "tcp", "FromPort" : "8888", "ToPort" : "8888", "CidrIp" : "0.0.0.0/0"},
           ]
         },
-         "TimeoutInMinutes": "30",
          "DependsOn" : "VPCstack"
        },
 
        "OpsCenterstack": {
            "Type": "AWS::CloudFormation::Stack",
            "Properties": {
-               "TemplateURL": "https://raw.githubusercontent.com/DSPN/amazon-cloudformation-dse/dev/quickstart-dse/opscenter.template",
+               "TemplateURL": "https://s3.amazonaws.com/qs-dse-test/opscenter.template",
                "Parameters": {
-                   "KeyPairName" : { "Ref" : "KeyName" },
-                   "OpsCenterSecurityGroupId" : { "Fn::GetAtt" : [ "OpsCSecurityGroup", "Id" ] },
+                   "KeyName" : { "Ref" : "KeyName" },
+                   "OpsCenterSecurityGroupId" : { "Fn::GetAtt" : [ "OpsCSecurityGroup", "GroupId" ] },
                    "SubnetId" : { "Fn::GetAtt": [ "VPCstack", "Outputs.PublicSubnet1ID" ] },
                    "ClusterName" : "mycluster",
                    "InstanceType" : "t2.medium"
-            },
-               "TimeoutInMinutes": "30",
-               "DependsOn" : "OpsCSecurityGroup"
-           }
-       }
+            }
+          },
+           "DependsOn" : "VPCstack"
+       },
+
+       "DC0stack": {
+           "Type": "AWS::CloudFormation::Stack",
+           "Properties": {
+               "TemplateURL": "https://s3.amazonaws.com/qs-dse-test/datacenter.template",
+               "Parameters": {
+                   "KeyName" : { "Ref" : "KeyName" },
+                   "OpsCenterPubIP" : { "Fn::GetAtt": [ "OpsCenterstack", "Outputs.OpsCenterPublicIP" ] },
+                   "ClusterName" : "mycluster",
+                   "DBPassword" : "testpw",
+                   "PublicKey" : "XXXXXX",
+                   "DataCenterName" : "dc0",
+                   "DataCenterSize": 3,
+                   "InstanceType": "m4.large",
+                   "VolumeSize" : "512",
+                   "VPC": { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCID"] },
+                   "AvailabilityZones": "us-east-1a,us-east-1b,us-east-1c",
+                   "Subnets": {"Fn::Join" :
+                     [ ",", [
+                       {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet1AID" ]},
+                       {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet2AID" ]},
+                       {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet3AID" ]}
+                       ]]
+                   }
+              }
+           },
+           "DependsOn" : "OpsCenterstack"
+       },
+       "DC1stack": {
+             "Type": "AWS::CloudFormation::Stack",
+             "Condition" : "CreateDC1",
+             "Properties": {
+                 "TemplateURL": "https://s3.amazonaws.com/qs-dse-test/datacenter.template",
+                 "Parameters": {
+                     "KeyName" : { "Ref" : "KeyName" },
+                     "OpsCenterPubIP" : { "Fn::GetAtt": [ "OpsCenterstack", "Outputs.OpsCenterPublicIP" ] },
+                     "ClusterName" : "mycluster",
+                     "DBPassword" : "testpw",
+                     "PublicKey" : "XXXXXX",
+                     "DataCenterName" : "dc1",
+                     "DataCenterSize": 3,
+                     "InstanceType": "m4.large",
+                     "VolumeSize" : "512",
+                     "VPC": { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCID"] },
+                     "AvailabilityZones": "us-east-1a,us-east-1b,us-east-1c",
+                     "Subnets": {"Fn::Join" :
+                       [ ",", [
+                         {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet1AID" ]},
+                         {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet2AID" ]},
+                         {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet3AID" ]}
+                         ]]
+                     }
+                }
+             },
+             "DependsOn" : "OpsCenterstack"
+         }
    },
    "Outputs": {
        "VPCstackRef": {
