@@ -277,7 +277,7 @@
               "./setupCluster.py ",
               "--opsc-ip $pubip ",
               "--clustername \"",{ "Ref" : "ClusterName" }, "\" ",
-              "--user lcm \n",
+              "--user lcm ",
               "--password ",{ "Ref" : "LCMPassword"}, " \n",
               "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete\" \"", { "Ref" : "OpsCenterWaitHandle" }, "\" \n"
               ]]}
