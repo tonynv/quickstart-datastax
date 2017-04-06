@@ -29,11 +29,6 @@
       "NoEcho" : true
     },
 
-    "LCMPassword" : {
-      "Type" : "String",
-      "Description" : "Password for 'lcm' user",
-      "NoEcho" : true
-    },
     "DataCenterName" : {
       "Description" : "Name of DSE cluster",
       "Type" : "String"
