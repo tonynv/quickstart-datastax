@@ -8,6 +8,15 @@
         "Type": "AWS::EC2::KeyPair::KeyName",
         "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
       },
+      "AccessLocation" : {
+        "Description" : " The IP address range that can be used to access the OpsCenter web console, or SSH to the EC2 instance",
+        "Type": "String",
+        "MinLength": "9",
+        "MaxLength": "18",
+        "Default": "0.0.0.0/0",
+        "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+        "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+      },
       "AvailabilityZones" : {
         "Description" : "List of 3 AvailabilityZones for VPC, Length must match AZs",
         "Type": "List<AWS::EC2::AvailabilityZone::Name>"
@@ -74,8 +83,9 @@
            "GroupDescription" : "Enable SSH access, and OpsCenter port",
            "VpcId": { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCID" ]},
            "SecurityGroupIngress" : [
-             {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : "0.0.0.0/0"},
-             {"IpProtocol" : "tcp", "FromPort" : "8888", "ToPort" : "8888", "CidrIp" : "0.0.0.0/0"},
+             {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "AccessLocation"} },
+             {"IpProtocol" : "tcp", "FromPort" : "8888", "ToPort" : "8888", "CidrIp" : { "Ref" : "AccessLocation"} },
+             {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCCIDR" ]}}
           ]
         },
          "DependsOn" : "VPCstack"
@@ -118,7 +128,8 @@
                        {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet2AID" ]},
                        {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet3AID" ]}
                        ]]
-                   }
+                   },
+                   "SecurityCIDR" : { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCCIDR" ]}
               }
            },
            "DependsOn" : "OpsCenterstack"
@@ -146,7 +157,8 @@
                          {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet2AID" ]},
                          {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet3AID" ]}
                          ]]
-                     }
+                     },
+                     "SecurityCIDR" : { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCCIDR" ]}
                 }
              },
              "DependsOn" : "OpsCenterstack"
@@ -174,7 +186,8 @@
                            {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet2AID" ]},
                            {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet3AID" ]}
                            ]]
-                       }
+                       },
+                       "SecurityCIDR" : { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCCIDR" ]}
                   }
                },
                "DependsOn" : "OpsCenterstack"
@@ -202,7 +215,8 @@
                              {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet2AID" ]},
                              {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet3AID" ]}
                              ]]
-                         }
+                         },
+                         "SecurityCIDR" : { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCCIDR" ]}
                     }
                  },
                  "DependsOn" : "OpsCenterstack"
@@ -211,6 +225,12 @@
    "Outputs": {
        "VPCstackRef": {
            "Value": { "Ref": "VPCstack" }
+       },
+       "LCMURL": {
+           "Value": { "Fn::GetAtt": [ "OpsCenterstack", "Outputs.LCMURL" ]}
+       },
+       "OpsCenterURL": {
+           "Value": { "Fn::GetAtt": [ "OpsCenterstack", "Outputs.OpsCenterURL" ]}
        }
    }
 }
