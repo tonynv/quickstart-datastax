@@ -23,7 +23,14 @@
       "Type" : "String",
       "Default" : "DSE Cluster"
     },
-
+    "Profile" : {
+      "Description" : "InstanceProfile for OpsC instance",
+      "Type" : "String",
+    },
+    "S3Bucket" : {
+      "Description" : "S3Bucket for public key passing",
+      "Type" : "String",
+    },
     "InstanceType" : {
       "Description" : "Node EC2 instance type",
       "Type" : "String",
@@ -249,10 +256,12 @@
             "01_gen_ssh_key" : {
               "command" : { "Fn::Join" : ["", [
                 "#!/usr/bin/env bash -e \n",
+                "apt-get -y install awscli \n",
                 "cd ~ubuntu/.ssh/ \n",
                 "ssh-keygen -t rsa -N '' -f lcm.pem \n",
                 "chown ubuntu:ubuntu lcm.pem* \n",
-                "echo 'Generated lcm.pem and lcm.pem.pub'"
+                "echo 'Generated lcm.pem and lcm.pem.pub' \n",
+                "aws s3 cp lcm.pem.pub s3://", { "Ref" : "S3Bucket" }, " \n"
                 ]]}
             }
           }
@@ -286,6 +295,7 @@
         "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
                           { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
         "InstanceType"   : { "Ref" : "InstanceType" },
+        "IamInstanceProfile" : {"Ref" : "Profile"},
         "SecurityGroupIds" : [ {"Ref" : "OpsCenterSecurityGroupId"} ],
         "SubnetId": { "Ref": "SubnetId" },
         "KeyName"        : { "Ref" : "KeyName" },

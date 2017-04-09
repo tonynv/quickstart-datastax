@@ -40,11 +40,14 @@
       "Default" : "3"
     },
 
-    "PublicKey" : {
-      "Description" : "Public key matching private key used by LCM",
-      "Type" : "String"
+    "Profile" : {
+      "Description" : "InstanceProfile for OpsC instance",
+      "Type" : "String",
     },
-
+    "S3Bucket" : {
+      "Description" : "S3Bucket for public key passing",
+      "Type" : "AWS::S3::Bucket::Id",
+    },
     "InstanceType" : {
       "Description" : "Node EC2 instance type",
       "Type" : "String",
@@ -277,10 +280,11 @@
               "01_add_node" : {
                 "command" : { "Fn::Join" : ["", [
                   "#!/usr/bin/env bash -e \n",
+                  "apt-get -y install awscli unzip\n",
                   "pip install requests \n",
                   "cd ~ubuntu \n",
-                  "echo \"", { "Ref" : "PublicKey" }, "\" >> .ssh/authorized_keys \n",
-                  "apt-get -y install unzip \n",
+                  "aws s3 cp s3://", { "Ref" : "S3Bucket" }, "/lcm.pem.pub .ssh/ \n"
+                  "cat .ssh/lcm.pem.pub >> .ssh/authorized_keys \n",
                   "wget https://github.com/DSPN/install-datastax-ubuntu/archive/master.zip \n",
                   "unzip master.zip \n",
                   "cd install-datastax-ubuntu-master/bin/lcm \n",
@@ -308,6 +312,7 @@
         "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
                           { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
         "InstanceType"   : { "Ref" : "InstanceType" },
+        "IamInstanceProfile" : {"Ref" : "Profile"},
         "SecurityGroups" : [ {"Ref" : "DSESecurityGroup"} ],
         "KeyName"        : { "Ref" : "KeyName" },
         "BlockDeviceMappings": [{

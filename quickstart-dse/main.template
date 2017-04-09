@@ -64,6 +64,57 @@
   },
 
    "Resources": {
+
+     "S3Bucket" : {
+       "Type" : "AWS::S3::Bucket",
+       "Properties" : {
+         "AccessControl" : "Private"
+       },
+       "DeletionPolicy" : "Delete"
+    },
+
+   "S3Role" : {
+       "Type"  : "AWS::IAM::Role",
+       "Properties" : {
+           "AssumeRolePolicyDocument" : {
+               "Statement" : [ {
+                   "Effect" : "Allow",
+                   "Principal" : {
+                       "Service" : [ "ec2.amazonaws.com" ]
+                   },
+                   "Action" : [ "sts:AssumeRole" ]
+               } ]
+           },
+           "Path" : "/"
+       }
+   },
+
+   "S3RolePolicies" : {
+       "Type" : "AWS::IAM::Policy",
+       "Properties" : {
+           "PolicyName" : "s3-access",
+           "PolicyDocument" : {
+             "Statement": [
+               {
+                 "Effect": "Allow",
+                 "Action": [
+                   "s3:*"
+                 ],
+                 "Resource": "*"
+               }]
+           },
+           "Roles" : [ { "Ref" : "S3Role" } ]
+       }
+   },
+
+   "S3Profile" : {
+          "Type" : "AWS::IAM::InstanceProfile",
+          "Properties" : {
+            "Path" : "/",
+            "Roles" : [{ "Ref" : "S3Role" }]
+          }
+        },
+
        "VPCstack": {
            "Type": "AWS::CloudFormation::Stack",
            "Properties": {
@@ -100,6 +151,8 @@
                    "OpsCenterSecurityGroupId" : { "Fn::GetAtt" : [ "OpsCSecurityGroup", "GroupId" ] },
                    "SubnetId" : { "Fn::GetAtt": [ "VPCstack", "Outputs.PublicSubnet1ID" ] },
                    "ClusterName" : { "Ref" : "ClusterName" },
+                   "Profile" : {"Ref" : "S3Profile"},
+                   "S3Bucket" : {"Ref" : "S3Bucket"},
                    "InstanceType" : "t2.medium"
             }
           },
@@ -112,6 +165,8 @@
                "TemplateURL": "https://s3.amazonaws.com/qs-dse-test/datacenter.template",
                "Parameters": {
                    "KeyName" : { "Ref" : "KeyName" },
+                   "Profile" : {"Ref" : "S3Profile"},
+                   "S3Bucket" : {"Ref" : "S3Bucket"},
                    "OpsCenterPubIP" : { "Fn::GetAtt": [ "OpsCenterstack", "Outputs.OpsCenterPublicIP" ] },
                    "ClusterName" : { "Ref" : "ClusterName" },
                    "DBPassword" : { "Ref" : "DBPassword" },
@@ -141,6 +196,8 @@
                  "TemplateURL": "https://s3.amazonaws.com/qs-dse-test/datacenter.template",
                  "Parameters": {
                      "KeyName" : { "Ref" : "KeyName" },
+                     "Profile" : {"Ref" : "S3Profile"},
+                     "S3Bucket" : {"Ref" : "S3Bucket"},
                      "OpsCenterPubIP" : { "Fn::GetAtt": [ "OpsCenterstack", "Outputs.OpsCenterPublicIP" ] },
                      "ClusterName" : { "Ref" : "ClusterName" },
                      "DBPassword" : { "Ref" : "DBPassword" },
@@ -170,6 +227,8 @@
                    "TemplateURL": "https://s3.amazonaws.com/qs-dse-test/datacenter.template",
                    "Parameters": {
                        "KeyName" : { "Ref" : "KeyName" },
+                       "Profile" : {"Ref" : "S3Profile"},
+                       "S3Bucket" : {"Ref" : "S3Bucket"},
                        "OpsCenterPubIP" : { "Fn::GetAtt": [ "OpsCenterstack", "Outputs.OpsCenterPublicIP" ] },
                        "ClusterName" : { "Ref" : "ClusterName" },
                        "DBPassword" : { "Ref" : "DBPassword" },
@@ -199,6 +258,8 @@
                      "TemplateURL": "https://s3.amazonaws.com/qs-dse-test/datacenter.template",
                      "Parameters": {
                          "KeyName" : { "Ref" : "KeyName" },
+                         "Profile" : {"Ref" : "S3Profile"},
+                         "S3Bucket" : {"Ref" : "S3Bucket"},
                          "OpsCenterPubIP" : { "Fn::GetAtt": [ "OpsCenterstack", "Outputs.OpsCenterPublicIP" ] },
                          "ClusterName" : { "Ref" : "ClusterName" },
                          "DBPassword" : { "Ref" : "DBPassword" },
