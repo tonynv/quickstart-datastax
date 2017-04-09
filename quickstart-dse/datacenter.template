@@ -42,11 +42,12 @@
 
     "Profile" : {
       "Description" : "InstanceProfile for OpsC instance",
-      "Type" : "String",
+      "Type" : "String"
     },
+
     "S3Bucket" : {
       "Description" : "S3Bucket for public key passing",
-      "Type" : "AWS::S3::Bucket::Id",
+      "Type" : "String"
     },
     "InstanceType" : {
       "Description" : "Node EC2 instance type",
@@ -59,7 +60,7 @@
     "VolumeSize" : {
       "Type" : "Number",
       "Description" : "EBS volume size in GB",
-      "Default" : "50"
+      "Default" : "256"
     },
 
     "SecurityCIDR" : {
@@ -283,7 +284,7 @@
                   "apt-get -y install awscli unzip\n",
                   "pip install requests \n",
                   "cd ~ubuntu \n",
-                  "aws s3 cp s3://", { "Ref" : "S3Bucket" }, "/lcm.pem.pub .ssh/ \n"
+                  "aws s3 cp s3://", { "Ref" : "S3Bucket" }, "/lcm.pem.pub .ssh/ \n",
                   "cat .ssh/lcm.pem.pub >> .ssh/authorized_keys \n",
                   "wget https://github.com/DSPN/install-datastax-ubuntu/archive/master.zip \n",
                   "unzip master.zip \n",

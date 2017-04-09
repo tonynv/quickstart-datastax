@@ -25,11 +25,11 @@
     },
     "Profile" : {
       "Description" : "InstanceProfile for OpsC instance",
-      "Type" : "String",
+      "Type" : "String"
     },
     "S3Bucket" : {
       "Description" : "S3Bucket for public key passing",
-      "Type" : "String",
+      "Type" : "String"
     },
     "InstanceType" : {
       "Description" : "Node EC2 instance type",
