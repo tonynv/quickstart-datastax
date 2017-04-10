@@ -305,9 +305,11 @@
               "cd ~ubuntu/install-datastax-ubuntu-master/bin/lcm \n",
               "privip=$(curl http://169.254.169.254/latest/meta-data/local-ipv4) \n",
               "csize=$(( ", {"Fn::Join" : [ "+", { "Ref" : "DCSizes" }] }," )) \n",
+              "cname=\"",{ "Ref" : "ClusterName" }, "\" \n",
+              "echo \"Calling triggerInstall.py with args:\" $privip $cname $csize \n",
               "./triggerInstall.py ",
               " --opsc-ip $privip ",
-              " --clustername \"",{ "Ref" : "ClusterName" }, "\" ",
+              " --clustername $cname ",
               " --clustersize $csize ",
               " --dbpasswd ", { "Ref" : "DBPassword"}," && ",
               "aws s3 rm s3://", { "Ref" : "S3Bucket" }, "/lcm.pem.pub \n"
