@@ -16,16 +16,25 @@
     },
     "SubnetId" : {
       "Type" : "AWS::EC2::Subnet::Id",
-      "Description" : "SubnetId in existing VPC`",
+      "Description" : "SubnetId in existing VPC`"
     },
     "ClusterName" : {
       "Description" : "Name of DSE cluster",
       "Type" : "String",
       "Default" : "DSE Cluster"
     },
+    "DCSizes" : {
+      "Description" : "List of number of nodes/datacenter",
+      "Type" : "List<Number>"
+    },
     "Profile" : {
       "Description" : "InstanceProfile for OpsC instance",
       "Type" : "String"
+    },
+    "DBPassword" : {
+      "Type" : "String",
+      "Description" : "C* password",
+      "NoEcho" : true
     },
     "S3Bucket" : {
       "Description" : "S3Bucket for public key passing",
@@ -195,7 +204,7 @@
       "Metadata" : {
         "AWS::CloudFormation::Init" : {
           "configSets" : {
-            "full_install" : [ "install_cfn", "install_opsc" , "gen_ssh_key", "setup_cluster"]
+            "full_install" : [ "install_cfn", "install_opsc" , "gen_ssh_key", "setup_cluster", "trigger_install"]
           },
 
           "install_cfn" : {
@@ -285,6 +294,24 @@
               "--user ubuntu \n",
               "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete\" \"", { "Ref" : "OpsCenterWaitHandle" }, "\" \n"
               ]]}
+          }
+        }
+      },
+      "trigger_install" : {
+        "commands" : {
+          "01_trigger_install" : {
+            "command" : { "Fn::Join" : ["", [
+              "#!/usr/bin/env bash -e \n",
+              "cd ~ubuntu/install-datastax-ubuntu-master/bin/lcm \n",
+              "privip=$(curl http://169.254.169.254/latest/meta-data/local-ipv4) \n",
+              "csize=$(( ", {"Fn::Join" : [ "+", { "Ref" : "DCSizes" }] }," )) \n",
+              "./triggerInstall.py ",
+              " --opsc-ip $pubip ",
+              " --clustername \"",{ "Ref" : "ClusterName" }, "\" ",
+              " --clustersize $csize ",
+              " --dbpasswd ", { "Ref" : "DBPassword"}," \n",
+              "aws s3 rm s3://", { "Ref" : "S3Bucket" }, "/lcm.pem.pub \n"
+            ]]}
           }
         }
       }

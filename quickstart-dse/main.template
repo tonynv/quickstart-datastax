@@ -152,6 +152,8 @@
                    "OpsCenterSecurityGroupId" : { "Fn::GetAtt" : [ "OpsCSecurityGroup", "GroupId" ] },
                    "SubnetId" : { "Fn::GetAtt": [ "VPCstack", "Outputs.PublicSubnet1ID" ] },
                    "ClusterName" : { "Ref" : "ClusterName" },
+                   "DCSizes" : { "Ref" : "DCSizes"},
+                   "DBPassword" : { "Ref" : "DBPassword" },
                    "Profile" : {"Ref" : "S3Profile"},
                    "S3Bucket" : {"Ref" : "S3Bucket"},
                    "InstanceType" : "t2.medium"
