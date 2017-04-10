@@ -136,7 +136,8 @@
            "SecurityGroupIngress" : [
              {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "AccessLocation"} },
              {"IpProtocol" : "tcp", "FromPort" : "8888", "ToPort" : "8888", "CidrIp" : { "Ref" : "AccessLocation"} },
-             {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCCIDR" ]}}
+             {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCCIDR" ]}},
+             {"IpProtocol" : "tcp", "FromPort" : "61620", "ToPort" : "22", "CidrIp" : { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCCIDR" ]}}
           ]
         },
          "DependsOn" : "VPCstack"
