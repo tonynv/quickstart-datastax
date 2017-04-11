@@ -9,7 +9,7 @@
   },
   {
     "ParameterKey": "ClusterName",
-    "ParameterValue": "foocluster"
+    "ParameterValue": "mycluster"
   },
   {
     "ParameterKey": "DBPassword",
@@ -17,22 +17,22 @@
   },
   {
     "ParameterKey": "NumberDCs",
-    "ParameterValue": "2"
+    "ParameterValue": "4"
   },
   {
     "ParameterKey": "DataCenters",
-    "ParameterValue": "foodc,bardc"
+    "ParameterValue": "dc0,dc1,dc2,dc3"
   },
   {
     "ParameterKey": "Instances",
-    "ParameterValue": "m4.large,m4.large"
+    "ParameterValue": "m4.large,m4.large,m4.large,m4.large"
   },
   {
     "ParameterKey": "VolumeSizes",
-    "ParameterValue": "256,512"
+    "ParameterValue": "256,256,256,256"
   },
   {
     "ParameterKey": "DCSizes",
-    "ParameterValue": "3,5"
+    "ParameterValue": "5,4,3,2"
   }
 ]
