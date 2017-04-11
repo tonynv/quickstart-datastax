@@ -58,8 +58,8 @@
    },
 
   "Conditions" : {
-    "CreateDC1" : {"Fn::Equals": [ {"Ref": "NumberDCs"}, 2 ] },
-    "CreateDC2" : {"Fn::Equals": [ {"Ref": "NumberDCs"}, 3 ] },
+    "CreateDC1" : { "Fn::Or" : [ {"Fn::Equals": [ {"Ref": "NumberDCs"}, 2 ] },{"Fn::Equals": [ {"Ref": "NumberDCs"}, 3 ] },{"Fn::Equals": [ {"Ref": "NumberDCs"}, 4 ] } ] },
+    "CreateDC2" : { "Fn::Or" : [ {"Fn::Equals": [ {"Ref": "NumberDCs"}, 3 ] },{"Fn::Equals": [ {"Ref": "NumberDCs"}, 4 ] } ] },
     "CreateDC3" : {"Fn::Equals": [ {"Ref": "NumberDCs"}, 4 ] }
   },
 
