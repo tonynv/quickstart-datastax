@@ -407,7 +407,7 @@
               "#!/usr/bin/env bash -e \n",
               "cd ~ubuntu \n",
               "pip install pyyaml taskcat \n",
-              "wget -O aws.zip https://github.com/DSPN/amazon-cloudformation-dse/archive/dev.zip \n",
+              "wget -O aws.zip https://github.com/DSPN/amazon-cloudformation-dse/archive/master.zip \n",
               "unzip aws.zip \n",
               "mkdir taskcat_config \n",
               "cd taskcat_config \n",
