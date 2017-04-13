@@ -413,7 +413,7 @@
               "cd taskcat_config \n",
               "pubip=\"", {"Ref" : "OpsCenterEIP"}, "\" \n",
               "csize=$(( ", {"Fn::Join" : [ "+", { "Ref" : "DCSizes" }] }," )) \n",
-              "~ubuntu/amazon-cloudformation-dse-dev/multidc/genConfigs.py ",
+              "~ubuntu/amazon-cloudformation-dse-master/multidc/genConfigs.py ",
               "--opsc-ip $pubip ",
               "--pubkey \"$(cat ~ubuntu/.ssh/lcm.pem.pub)\" ",
               "--clustername ", { "Ref" : "ClusterName" }, " ",
