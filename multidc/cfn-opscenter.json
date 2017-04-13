@@ -425,9 +425,9 @@
               "--volsizes \"", {"Fn::Join" : [ ",", { "Ref" : "VolumeSizes" }] }, "\" ",
               "--dcsizes \"", {"Fn::Join" : [ ",", { "Ref" : "DCSizes" }] }, "\" ",
               "--clustersize $csize \n",
-              "cp ~ubuntu/amazon-cloudformation-dse-dev/multidc/cfn-datacenter-lcm.json ./dse/ \n",
+              "cp ~ubuntu/amazon-cloudformation-dse-master/multidc/cfn-datacenter-lcm.json ./dse/ \n",
               "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete, deploying DC's\" \"", { "Ref" : "OpsCenterWaitHandle" }, "\" \n",
-              "~ubuntu/amazon-cloudformation-dse-dev/multidc/tcatDeploy.py -v -c config.yaml \n",
+              "~ubuntu/amazon-cloudformation-dse-master/multidc/tcatDeploy.py -v -c config.yaml \n",
               "rm ~ubuntu/taskcat_config/dse/* "
               ]]}
           }
