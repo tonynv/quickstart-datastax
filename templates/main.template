@@ -26,6 +26,11 @@
         "Description" : "C* password",
         "NoEcho" : true
       },
+      "OpsCPassword" : {
+        "Type" : "String",
+        "Description" : "Password for default OpsCenter user 'admin'",
+        "NoEcho" : true
+      },
       "NumberDCs" : {
         "Type" : "Number",
         "Description" : "Number of nodes in datacenter",
@@ -154,6 +159,7 @@
                    "ClusterName" : { "Ref" : "ClusterName" },
                    "DCSizes" : { "Fn::Join": [",", { "Ref" : "DCSizes"}]},
                    "DBPassword" : { "Ref" : "DBPassword" },
+                   "OpsCPassword" : { "Ref" : "OpsCPassword" },
                    "Profile" : {"Ref" : "S3Profile"},
                    "S3Bucket" : {"Ref" : "S3Bucket"},
                    "InstanceType" : "t2.medium"

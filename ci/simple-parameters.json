@@ -16,6 +16,10 @@
     "ParameterValue": "foobar123!"
   },
   {
+    "ParameterKey": "OpsCPassword",
+    "ParameterValue": "asdf456$"
+  },
+  {
     "ParameterKey": "NumberDCs",
     "ParameterValue": "2"
   },

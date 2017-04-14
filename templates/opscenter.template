@@ -36,6 +36,11 @@
       "Description" : "C* password",
       "NoEcho" : true
     },
+    "OpsCPassword" : {
+      "Type" : "String",
+      "Description" : "Password for default OpsCenter user 'admin'",
+      "NoEcho" : true
+    },
     "S3Bucket" : {
       "Description" : "S3Bucket for public key passing",
       "Type" : "String"
@@ -312,7 +317,9 @@
               " --clustername $cname ",
               " --clustersize $csize ",
               " --dbpasswd ", { "Ref" : "DBPassword"}," && ",
-              "aws s3 rm s3://", { "Ref" : "S3Bucket" }, "/lcm.pem.pub \n"
+              "aws s3 rm s3://", { "Ref" : "S3Bucket" }, "/lcm.pem.pub \n",
+              "cd ~ubuntu/install-datastax-ubuntu-master/bin/opscenter/ \n",
+              "./set_opsc_pw.sh '", { "Ref" : "OpsCPassword"}, "' \n"
             ]]}
           }
         }
