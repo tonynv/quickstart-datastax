@@ -1,0 +1,296 @@
+{
+   "AWSTemplateFormatVersion": "2010-09-09",
+   "Description": "XXXXXX",
+   "Parameters" : {
+
+      "KeyName": {
+        "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+        "Type": "AWS::EC2::KeyPair::KeyName",
+        "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
+      },
+      "AccessLocation" : {
+        "Description" : " The IP address range that can be used to access the OpsCenter web console, or SSH to the EC2 instance",
+        "Type": "String",
+        "MinLength": "9",
+        "MaxLength": "18",
+        "Default": "0.0.0.0/0",
+        "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+        "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+      },
+      "AvailabilityZones" : {
+        "Description" : "List of 3 AvailabilityZones for VPC, Length must match AZs",
+        "Type": "List<AWS::EC2::AvailabilityZone::Name>"
+      },
+      "DBPassword" : {
+        "Type" : "String",
+        "Description" : "C* password",
+        "NoEcho" : true
+      },
+      "NumberDCs" : {
+        "Type" : "Number",
+        "Description" : "Number of nodes in datacenter",
+        "Default" : 3,
+        "AllowedValues": [1,2,3,4],
+        "ConstraintDescription": "Value must be an integer from 1-4"
+      },
+      "DataCenters" : {
+        "Description" : "List of datacenter names. Length must match NumberofDCs",
+        "Type" : "CommaDelimitedList"
+      },
+      "Instances" : {
+        "Description" : "List of instance types",
+        "Type" : "CommaDelimitedList"
+      },
+      "VolumeSizes" : {
+        "Description" : "List of EBS volume sizes (GB)",
+        "Type" : "List<Number>"
+      },
+      "DCSizes" : {
+        "Description" : "List of number of nodes/datacenter",
+        "Type" : "List<Number>"
+      },
+      "ClusterName" : {
+        "Description" : "Name of DSE cluster",
+        "Type" : "String",
+        "Default" : "DSE Cluster"
+      },
+
+   },
+
+  "Conditions" : {
+    "CreateDC1" : { "Fn::Or" : [ {"Fn::Equals": [ {"Ref": "NumberDCs"}, 2 ] },{"Fn::Equals": [ {"Ref": "NumberDCs"}, 3 ] },{"Fn::Equals": [ {"Ref": "NumberDCs"}, 4 ] } ] },
+    "CreateDC2" : { "Fn::Or" : [ {"Fn::Equals": [ {"Ref": "NumberDCs"}, 3 ] },{"Fn::Equals": [ {"Ref": "NumberDCs"}, 4 ] } ] },
+    "CreateDC3" : {"Fn::Equals": [ {"Ref": "NumberDCs"}, 4 ] }
+  },
+
+   "Resources": {
+
+     "S3Bucket" : {
+       "Type" : "AWS::S3::Bucket",
+       "Properties" : {
+         "AccessControl" : "Private"
+       },
+       "DeletionPolicy" : "Delete"
+    },
+
+   "S3Role" : {
+       "Type"  : "AWS::IAM::Role",
+       "Properties" : {
+           "AssumeRolePolicyDocument" : {
+               "Statement" : [ {
+                   "Effect" : "Allow",
+                   "Principal" : {
+                       "Service" : [ "ec2.amazonaws.com" ]
+                   },
+                   "Action" : [ "sts:AssumeRole" ]
+               } ]
+           },
+           "Path" : "/"
+       }
+   },
+
+   "S3RolePolicies" : {
+       "Type" : "AWS::IAM::Policy",
+       "Properties" : {
+           "PolicyName" : "s3-access",
+           "PolicyDocument" : {
+             "Statement": [
+               {
+                 "Effect": "Allow",
+                 "Action": [
+                   "s3:*"
+                 ],
+                 "Resource": "*"
+               }]
+           },
+           "Roles" : [ { "Ref" : "S3Role" } ]
+       }
+   },
+
+   "S3Profile" : {
+          "Type" : "AWS::IAM::InstanceProfile",
+          "Properties" : {
+            "Path" : "/",
+            "Roles" : [{ "Ref" : "S3Role" }]
+          }
+        },
+
+       "VPCstack": {
+           "Type": "AWS::CloudFormation::Stack",
+           "Properties": {
+               "TemplateURL": "https://s3.amazonaws.com/quickstart-reference/aws/vpc/latest/templates/aws-vpc.template",
+               "Parameters": {
+                   "AvailabilityZones": { "Fn::Join": [ ",", { "Ref" : "AvailabilityZones"} ] },
+                   "NumberOfAZs": 3,
+                   "CreatePrivateSubnets": "true",
+                   "KeyPairName": { "Ref" : "KeyName" }
+            }
+           }
+       },
+
+       "OpsCSecurityGroup" : {
+         "Type" : "AWS::EC2::SecurityGroup",
+         "Properties" : {
+           "GroupDescription" : "Enable SSH access, and OpsCenter port",
+           "VpcId": { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCID" ]},
+           "SecurityGroupIngress" : [
+             {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "AccessLocation"} },
+             {"IpProtocol" : "tcp", "FromPort" : "8888", "ToPort" : "8888", "CidrIp" : { "Ref" : "AccessLocation"} },
+             {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCCIDR" ]}},
+             {"IpProtocol" : "tcp", "FromPort" : "61620", "ToPort" : "61620", "CidrIp" : { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCCIDR" ]}}
+          ]
+        },
+         "DependsOn" : "VPCstack"
+       },
+
+       "OpsCenterstack": {
+           "Type": "AWS::CloudFormation::Stack",
+           "Properties": {
+               "TemplateURL": "https://s3.amazonaws.com/qs-dse-test/opscenter.template",
+               "Parameters": {
+                   "KeyName" : { "Ref" : "KeyName" },
+                   "OpsCenterSecurityGroupId" : { "Fn::GetAtt" : [ "OpsCSecurityGroup", "GroupId" ] },
+                   "SubnetId" : { "Fn::GetAtt": [ "VPCstack", "Outputs.PublicSubnet1ID" ] },
+                   "ClusterName" : { "Ref" : "ClusterName" },
+                   "DCSizes" : { "Fn::Join": [",", { "Ref" : "DCSizes"}]},
+                   "DBPassword" : { "Ref" : "DBPassword" },
+                   "Profile" : {"Ref" : "S3Profile"},
+                   "S3Bucket" : {"Ref" : "S3Bucket"},
+                   "InstanceType" : "t2.medium"
+            }
+          },
+           "DependsOn" : "VPCstack"
+       },
+
+       "DC0stack": {
+           "Type": "AWS::CloudFormation::Stack",
+           "Properties": {
+               "TemplateURL": "https://s3.amazonaws.com/qs-dse-test/datacenter.template",
+               "Parameters": {
+                   "KeyName" : { "Ref" : "KeyName" },
+                   "Profile" : {"Ref" : "S3Profile"},
+                   "S3Bucket" : {"Ref" : "S3Bucket"},
+                   "OpsCenterPubIP" : { "Fn::GetAtt": [ "OpsCenterstack", "Outputs.OpsCenterPublicIP" ] },
+                   "ClusterName" : { "Ref" : "ClusterName" },
+                   "DBPassword" : { "Ref" : "DBPassword" },
+                   "DataCenterName" : { "Fn::Select" : [ "0", { "Ref" : "DataCenters" } ] },
+                   "DataCenterSize": { "Fn::Select" : [ "0", { "Ref" : "DCSizes" } ] },
+                   "InstanceType": { "Fn::Select" : [ "0", { "Ref" : "Instances" } ] },
+                   "VolumeSize" : { "Fn::Select" : [ "0", { "Ref" : "VolumeSizes" } ] },
+                   "VPC": { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCID"] },
+                   "AvailabilityZones": { "Fn::Join": [ ",", { "Ref" : "AvailabilityZones"} ] },
+                   "Subnets": {"Fn::Join" :
+                     [ ",", [
+                       {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet1AID" ]},
+                       {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet2AID" ]},
+                       {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet3AID" ]}
+                       ]]
+                   },
+                   "SecurityCIDR" : { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCCIDR" ]}
+              }
+           },
+           "DependsOn" : "OpsCenterstack"
+       },
+       "DC1stack": {
+             "Type": "AWS::CloudFormation::Stack",
+             "Condition" : "CreateDC1",
+             "Properties": {
+                 "TemplateURL": "https://s3.amazonaws.com/qs-dse-test/datacenter.template",
+                 "Parameters": {
+                     "KeyName" : { "Ref" : "KeyName" },
+                     "Profile" : {"Ref" : "S3Profile"},
+                     "S3Bucket" : {"Ref" : "S3Bucket"},
+                     "OpsCenterPubIP" : { "Fn::GetAtt": [ "OpsCenterstack", "Outputs.OpsCenterPublicIP" ] },
+                     "ClusterName" : { "Ref" : "ClusterName" },
+                     "DBPassword" : { "Ref" : "DBPassword" },
+                     "DataCenterName" : { "Fn::Select" : [ "1", { "Ref" : "DataCenters" } ] },
+                     "DataCenterSize": { "Fn::Select" : [ "1", { "Ref" : "DCSizes" } ] },
+                     "InstanceType": { "Fn::Select" : [ "1", { "Ref" : "Instances" } ] },
+                     "VolumeSize" : { "Fn::Select" : [ "1", { "Ref" : "VolumeSizes" } ] },
+                     "VPC": { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCID"] },
+                     "AvailabilityZones": { "Fn::Join": [ ",", { "Ref" : "AvailabilityZones"} ] },
+                     "Subnets": {"Fn::Join" :
+                       [ ",", [
+                         {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet1AID" ]},
+                         {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet2AID" ]},
+                         {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet3AID" ]}
+                         ]]
+                     },
+                     "SecurityCIDR" : { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCCIDR" ]}
+                }
+             },
+             "DependsOn" : "OpsCenterstack"
+         },
+         "DC2stack": {
+               "Type": "AWS::CloudFormation::Stack",
+               "Condition" : "CreateDC2",
+               "Properties": {
+                   "TemplateURL": "https://s3.amazonaws.com/qs-dse-test/datacenter.template",
+                   "Parameters": {
+                       "KeyName" : { "Ref" : "KeyName" },
+                       "Profile" : {"Ref" : "S3Profile"},
+                       "S3Bucket" : {"Ref" : "S3Bucket"},
+                       "OpsCenterPubIP" : { "Fn::GetAtt": [ "OpsCenterstack", "Outputs.OpsCenterPublicIP" ] },
+                       "ClusterName" : { "Ref" : "ClusterName" },
+                       "DBPassword" : { "Ref" : "DBPassword" },
+                       "DataCenterName" : { "Fn::Select" : [ "2", { "Ref" : "DataCenters" } ] },
+                       "DataCenterSize": { "Fn::Select" : [ "2", { "Ref" : "DCSizes" } ] },
+                       "InstanceType": { "Fn::Select" : [ "2", { "Ref" : "Instances" } ] },
+                       "VolumeSize" : { "Fn::Select" : [ "2", { "Ref" : "VolumeSizes" } ] },
+                       "VPC": { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCID"] },
+                       "AvailabilityZones": { "Fn::Join": [ ",", { "Ref" : "AvailabilityZones"} ] },
+                       "Subnets": {"Fn::Join" :
+                         [ ",", [
+                           {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet1AID" ]},
+                           {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet2AID" ]},
+                           {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet3AID" ]}
+                           ]]
+                       },
+                       "SecurityCIDR" : { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCCIDR" ]}
+                  }
+               },
+               "DependsOn" : "OpsCenterstack"
+           },
+           "DC3stack": {
+                 "Type": "AWS::CloudFormation::Stack",
+                 "Condition" : "CreateDC3",
+                 "Properties": {
+                     "TemplateURL": "https://s3.amazonaws.com/qs-dse-test/datacenter.template",
+                     "Parameters": {
+                         "KeyName" : { "Ref" : "KeyName" },
+                         "Profile" : {"Ref" : "S3Profile"},
+                         "S3Bucket" : {"Ref" : "S3Bucket"},
+                         "OpsCenterPubIP" : { "Fn::GetAtt": [ "OpsCenterstack", "Outputs.OpsCenterPublicIP" ] },
+                         "ClusterName" : { "Ref" : "ClusterName" },
+                         "DBPassword" : { "Ref" : "DBPassword" },
+                         "DataCenterName" : { "Fn::Select" : [ "3", { "Ref" : "DataCenters" } ] },
+                         "DataCenterSize": { "Fn::Select" : [ "3", { "Ref" : "DCSizes" } ] },
+                         "InstanceType": { "Fn::Select" : [ "3", { "Ref" : "Instances" } ] },
+                         "VolumeSize" : { "Fn::Select" : [ "3", { "Ref" : "VolumeSizes" } ] },
+                         "VPC": { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCID"] },
+                         "AvailabilityZones": { "Fn::Join": [ ",", { "Ref" : "AvailabilityZones"} ] },
+                         "Subnets": {"Fn::Join" :
+                           [ ",", [
+                             {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet1AID" ]},
+                             {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet2AID" ]},
+                             {"Fn::GetAtt": [ "VPCstack", "Outputs.PrivateSubnet3AID" ]}
+                             ]]
+                         },
+                         "SecurityCIDR" : { "Fn::GetAtt": [ "VPCstack", "Outputs.VPCCIDR" ]}
+                    }
+                 },
+                 "DependsOn" : "OpsCenterstack"
+             }
+   },
+   "Outputs": {
+       "VPCstackRef": {
+           "Value": { "Ref": "VPCstack" }
+       },
+       "LCMURL": {
+           "Value": { "Fn::GetAtt": [ "OpsCenterstack", "Outputs.LCMURL" ]}
+       },
+       "OpsCenterURL": {
+           "Value": { "Fn::GetAtt": [ "OpsCenterstack", "Outputs.OpsCenterURL" ]}
+       }
+   }
+}
