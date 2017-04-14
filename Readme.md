@@ -2,7 +2,7 @@
 # Intro
 
 These templates will deploy a nested CFn stack containing:
-- a VPC (note these templates don't contain a VPC template but refereence the AWS QS VPC template)
+- a VPC (note these templates don't contain a VPC template but reference the AWS QS VPC template)
 - an instance of OpsCenter
 - between 1-4 DSE datacenters
 
@@ -16,7 +16,7 @@ jcp@tenkara:quickstart-datastax$ ./deploy.sh
     "StackId": "arn:aws:cloudformation:us-east-1:819041172558:stack/root-stack/99d2bd60-2143-11e7-86f1-503acac41e35"
 }
 ```
-Progess of the seployment can be watched in the CloudFormation web console.
+Progess of the deployment can be watched in the CloudFormation web console.
 
 # Deployment steps
 
@@ -27,7 +27,7 @@ The deployment goes through the following steps:
 - nested `OpsCenterstack` created, contains OpsCenter instance and performs cluster level (eg creation of LCM cluster, repo, ssh creds) setup. Once this stack posts `CREATE_COMPLETE` once can follow the `LCMURL` stack output to observe the progress of DC/node creation. Note: at this point OpsCenter auth is not yet turned on.
 - multiple nested datacenter stacks `DC0-DC3`. Individual nodes post to LCM as they come up.
 - after the last node posts to LCM, an install job is triggered. Its progress can be followed in the LCM web console. After this job completes deployment is finished.
-- Note that while this install job is running there is a backgound task that turns on password auth for OpsCenter, and performs some cleanup.
+- Note that while this install job is running there is a background task that turns on password auth for OpsCenter, and performs some cleanup.
 
 # Parameters
 
