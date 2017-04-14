@@ -6,4 +6,4 @@ aws cloudformation create-stack  \
 --disable-rollback  \
 --capabilities CAPABILITY_IAM  \
 --template-body file://$(pwd)/templates/main.template  \
---parameters file://$(pwd)/ci/parameters.json
+--parameters file://$(pwd)/ci/simple-parameters.json
