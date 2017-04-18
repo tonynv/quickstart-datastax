@@ -284,7 +284,11 @@
                   "mkfs -t ext4 /dev/xvdf \n",
                   "mkdir /mnt/cassandra \n",
                   "mount /dev/xvdf /mnt/cassandra \n",
-                  "chown 113:117 /mnt/cassandra \n",
+                  "mkdir /mnt/cassandra/data \n",
+                  "mkdir /mnt/cassandra/commitlog \n",
+                  "mkdir /mnt/cassandra/saved_caches \n",
+                  "useradd cassandra \n",
+                  "chown -R cassandra:cassandra /mnt/cassandra \n",
                   "cp /etc/fstab /etc/fstab.bak \n",
                   "echo \"/dev/xvdf       /mnt/cassandra   ext4    defaults,nofail        0       2\" >> /etc/fstab \n"
                   ]]}

@@ -296,7 +296,8 @@
               "--opsc-ip $pubip ",
               "--clustername \"",{ "Ref" : "ClusterName" }, "\" ",
               "--privkey $privkey ",
-              "--user ubuntu \n",
+              "--user ubuntu ",
+              "--datapath \"/mnt/cassandra\" \n",
               "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete\" \"", { "Ref" : "OpsCenterWaitHandle" }, "\" \n"
               ]]}
           }
