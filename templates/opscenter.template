@@ -291,7 +291,7 @@
               "pubip=$(curl http://169.254.169.254/latest/meta-data/public-ipv4) \n",
               "privkey=$(readlink -f ~ubuntu/.ssh/lcm.pem) \n",
               "sleep 1m \n",
-              "sed -ie 's/5.0.7/5.0.5/g' ./lcm/setupCluster.py \n",
+              "sed -ie 's/5.1.0/5.0.8/g' ./setupCluster.py \n",
               "./setupCluster.py ",
               "--opsc-ip $pubip ",
               "--clustername \"",{ "Ref" : "ClusterName" }, "\" ",
@@ -320,7 +320,7 @@
               " --dbpasswd ", { "Ref" : "DBPassword"}," && ",
               "aws s3 rm s3://", { "Ref" : "S3Bucket" }, "/lcm.pem.pub \n",
               "cd ~ubuntu/install-datastax-ubuntu-master/bin/opscenter/ \n",
-              "./set_opsc_pw.sh '", { "Ref" : "OpsCPassword"}, "' \n"
+              "#./set_opsc_pw.sh '", { "Ref" : "OpsCPassword"}, "' \n"
             ]]}
           }
         }
