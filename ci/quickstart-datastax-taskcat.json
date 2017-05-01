@@ -3,16 +3,16 @@
   "ParameterValue": "tonynv"
 }, {
   "ParameterKey": "AvailabilityZones",
-  "ParameterValue": "$[alfred_genaz_3]"
+  "ParameterValue": "$[taskcat_genaz_3]"
 }, {
   "ParameterKey": "ClusterName",
   "ParameterValue": "mycluster"
 }, {
   "ParameterKey": "DBPassword",
-  "ParameterValue": "$[alfred_genpass_8S]"
+  "ParameterValue": "$[taskcat_genpass_8S]"
 }, {
   "ParameterKey": "OpsCPassword",
-  "ParameterValue": "$[alfred_genpass_8S]"
+  "ParameterValue": "$[taskcat_genpass_8S]"
 }, {
   "ParameterKey": "NumberDCs",
   "ParameterValue": "4"
