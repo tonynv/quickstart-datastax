@@ -1,0 +1,31 @@
+[{
+  "ParameterKey": "KeyName",
+  "ParameterValue": "tonynv"
+}, {
+  "ParameterKey": "AvailabilityZones",
+  "ParameterValue": "$[alfred_genaz_3]"
+}, {
+  "ParameterKey": "ClusterName",
+  "ParameterValue": "mycluster"
+}, {
+  "ParameterKey": "DBPassword",
+  "ParameterValue": "$[alfred_genpass_8S]"
+}, {
+  "ParameterKey": "OpsCPassword",
+  "ParameterValue": "$[alfred_genpass_8S]"
+}, {
+  "ParameterKey": "NumberDCs",
+  "ParameterValue": "4"
+}, {
+  "ParameterKey": "DataCenters",
+  "ParameterValue": "dc0,dc1,dc2,dc3"
+}, {
+  "ParameterKey": "Instances",
+  "ParameterValue": "m4.large,m4.large,m4.large,m4.large"
+}, {
+  "ParameterKey": "VolumeSizes",
+  "ParameterValue": "256,256,256,256"
+}, {
+  "ParameterKey": "DCSizes",
+  "ParameterValue": "5,4,3,2"
+}]
