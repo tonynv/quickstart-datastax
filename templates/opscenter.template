@@ -418,7 +418,7 @@
       "Metadata": {
         "AWS::CloudFormation::Init": {
           "configSets": {
-            "full_install": ["install_cfn", "install_opsc", "gen_ssh_key", "setup_cluster", "trigger_install"]
+            "full_install": ["install_cfn", "install_opsc", "gen_ssh_key", "setup_cluster", "post_install"]
           },
           "install_cfn": {
             "files": {
@@ -536,30 +536,15 @@
               }
             }
           },
-          "trigger_install": {
+          "post_install": {
             "commands": {
-              "01_trigger_install": {
+              "01_post_install": {
                 "command": {
                   "Fn::Join": ["", [
                     "#!/usr/bin/env bash -e \n",
                     "cd ~ubuntu/install-datastax-ubuntu-master/bin/lcm \n",
-                    "privip=$(curl http://169.254.169.254/latest/meta-data/local-ipv4) \n",
-                    "csize=$(( ", {
-                      "Fn::Join": ["+", {
-                        "Ref": "DCSizes"
-                      }]
-                    }, " )) \n",
-                    "cname=\"", {
-                      "Ref": "ClusterName"
-                    }, "\" \n",
-                    "echo \"Calling triggerInstall.py with args:\" $privip $cname $csize \n",
-                    "./triggerInstall.py ",
-                    " --opsc-ip $privip ",
-                    " --clustername $cname ",
-                    " --clustersize $csize ",
-                    " --dbpasswd ", {
-                      "Ref": "DBPassword"
-                    }, " && ",
+                    "echo 'Blocking execution till LCM jobs finish...' \n",
+                    "./waitForJobs.py \n",
                     "aws s3 rm s3://", {
                       "Ref": "S3Bucket"
                     }, "/lcm.pem.pub \n",
