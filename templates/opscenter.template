@@ -20,9 +20,9 @@
       "Type": "String",
       "Default": "DSE Cluster"
     },
-    "DCSizes": {
-      "Description": "List of number of nodes/datacenter",
-      "Type": "CommaDelimitedList"
+    "NumberDCs": {
+      "Type": "Number",
+      "Description": "Number of datacenters",
     },
     "Profile": {
       "Description": "InstanceProfile for OpsC instance",
@@ -524,6 +524,9 @@
                     "--clustername \"", {
                       "Ref": "ClusterName"
                     }, "\" ",
+                    "--dsever '5.1.0' ",
+                    "--repouser 'collin.poczatek+awstesting@gmail.com' ",
+                    "--repopw 'Cassandra1' ",
                     "--privkey $privkey ",
                     "--user ubuntu ",
                     "--datapath \"/mnt/cassandra\" \n",
@@ -543,7 +546,9 @@
                     "#!/usr/bin/env bash -e \n",
                     "cd ~ubuntu/install-datastax-ubuntu-master/bin/lcm \n",
                     "echo 'Blocking execution till LCM jobs finish...' \n",
-                    "./waitForJobs.py \n",
+                    "./waitForJobs.py --num ", {
+                      "Ref": "NumberDCs"
+                    }," \n",
                     "aws s3 rm s3://", {
                       "Ref": "S3Bucket"
                     }, "/lcm.pem.pub \n",

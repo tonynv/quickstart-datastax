@@ -32,7 +32,7 @@
     },
     "NumberDCs": {
       "Type": "Number",
-      "Description": "Number of nodes in datacenter",
+      "Description": "Number of datacenters",
       "Default": 3,
       "AllowedValues": [1, 2, 3, 4],
       "ConstraintDescription": "Value must be an integer from 1-4"
@@ -268,10 +268,8 @@
           "ClusterName": {
             "Ref": "ClusterName"
           },
-          "DCSizes": {
-            "Fn::Join": [",", {
-              "Ref": "DCSizes"
-            }]
+          "NumberDCs": {
+              "Ref": "NumberDCs"
           },
           "DBPassword": {
             "Ref": "DBPassword"
@@ -402,9 +400,7 @@
           "ClusterName": {
             "Ref": "ClusterName"
           },
-          "DBPassword": {
-            "Ref": "DBPassword"
-          },
+          "DBPassword": "cassandra",
           "DataCenterName": {
             "Fn::Select": ["1", {
               "Ref": "DataCenters"
@@ -482,9 +478,7 @@
           "ClusterName": {
             "Ref": "ClusterName"
           },
-          "DBPassword": {
-            "Ref": "DBPassword"
-          },
+          "DBPassword": "cassandra",
           "DataCenterName": {
             "Fn::Select": ["2", {
               "Ref": "DataCenters"
@@ -562,9 +556,7 @@
           "ClusterName": {
             "Ref": "ClusterName"
           },
-          "DBPassword": {
-            "Ref": "DBPassword"
-          },
+          "DBPassword": "cassandra",
           "DataCenterName": {
             "Fn::Select": ["3", {
               "Ref": "DataCenters"
