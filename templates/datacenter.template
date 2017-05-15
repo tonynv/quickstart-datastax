@@ -7,11 +7,11 @@
       "Type": "AWS::EC2::KeyPair::KeyName",
       "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
     },
-    "OpsCenterPubIP": {
+    "OpsCenterIP": {
       "Description": "Public IP of OpsCenter instance.",
       "Type": "String",
       "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})",
-      "ConstraintDescription": "must be valid and public IP"
+      "ConstraintDescription": "must be valid IP"
     },
     "ClusterName": {
       "Description": "Name of DSE cluster",
@@ -529,9 +529,16 @@
                     "apt-get -y install awscli unzip\n",
                     "pip install requests \n",
                     "cd ~ubuntu \n",
+                    "n=1 \n",
+                    "until [ $n -ge 8 ] \n",
+                    "do \n",
                     "aws s3 cp s3://", {
                       "Ref": "S3Bucket"
-                    }, "/lcm.pem.pub .ssh/ \n",
+                    }, "/lcm.pem.pub .ssh/ && break \n",
+                    "echo \"S3 download try $n failed, sleeping...\" \n",
+                    "n=$[$n+1] \n",
+                    "sleep 15s \n",
+                    "done \n",
                     "cat .ssh/lcm.pem.pub >> .ssh/authorized_keys \n",
                     "wget https://github.com/DSPN/install-datastax-ubuntu/archive/master.zip \n",
                     "unzip master.zip \n",
@@ -542,7 +549,7 @@
                     "echo 'Calling addNode.py...' \n",
                     "./addNode.py ",
                     " --opsc-ip ", {
-                      "Ref": "OpsCenterPubIP"
+                      "Ref": "OpsCenterIP"
                     },
                     " --clustername ", {
                       "Ref": "ClusterName"
@@ -559,7 +566,11 @@
                     " --nodeid $nodeid",
                     " --dbpasswd ", {
                       "Ref": "DBPassword"
-                    }, " \n"
+                    }, " \n",
+                    "./waitForJobs.py ",
+                    " --opsc-ip ", {
+                      "Ref": "OpsCenterIP"
+                    }, " \n",
                   ]]
                 }
               }
@@ -604,7 +615,13 @@
               "#!/bin/bash -xe\n",
               "apt-get update\n",
               "apt-get -y install python python-setuptools python-pip\n",
-              "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz \n",
+              "n=1 \n",
+              "until [ $n -ge 8 ] \n",
+              "do \n",
+              "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz && break \n",
+              "echo \"pip install cfn-bootstrap try $n failed, retry...\" \n",
+              "n=$[$n+1] \n",
+              "done \n",
               "ln -s /usr/local/init/ubuntu/cfn-hup /etc/init.d/cfn-hup \n",
               "chmod 775 /usr/local/init/ubuntu/cfn-hup \n",
               "update-rc.d cfn-hup defaults \n",
