@@ -1,5 +1,15 @@
 # Changelog
 
+- set top level defaults (give 1 DC+3 nodes), add minimal.json as example minimal params
+(doesn't include QSS3 params)
+- add repo credentials as top level parameters
+- literal quoting of string args
+- peg to install scripts release 5.5.4 (not master)
+- re-org Outputs
+- move EBS mnt point
+
+---
+## Previous Commits
 ---
 - OpsC REST call made to private ip
 - all calls to S3 wrapped in basic retry logic

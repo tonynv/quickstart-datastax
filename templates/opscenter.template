@@ -28,6 +28,15 @@
       "Description": "InstanceProfile for OpsC instance",
       "Type": "String"
     },
+    "DSAcademyUser": {
+      "Type": "String",
+      "Description": "User for academy.datastax.com account",
+    },
+    "DSAcademyPW": {
+      "Type": "String",
+      "Description": "PW for academy.datastax.com account",
+      "NoEcho": true
+    },
     "DBPassword": {
       "Type": "String",
       "Description": "C* password",
@@ -477,9 +486,10 @@
                     "cloud_type=\"aws\" \n",
                     "cd ~ubuntu \n",
                     "apt-get -y install unzip \n",
-                    "wget https://github.com/DSPN/install-datastax-ubuntu/archive/master.zip \n",
-                    "unzip master.zip \n",
-                    "cd install-datastax-ubuntu-master/bin \n",
+                    "release=\"5.5.4\" \n",
+                    "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.zip \n",
+                    "unzip $release.zip \n",
+                    "cd install-datastax-ubuntu-$release/bin \n",
                     "./os/install_java.sh \n",
                     "./opscenter/install.sh $cloud_type \n",
                     "./opscenter/start.sh"
@@ -515,7 +525,8 @@
                     "#!/usr/bin/env bash -e \n",
                     "cd ~ubuntu \n",
                     "pip install requests \n",
-                    "cd install-datastax-ubuntu-master/bin/lcm \n",
+                    "release=\"5.5.4\" \n",
+                    "cd install-datastax-ubuntu-$release/bin/lcm \n",
                     "privkey=$(readlink -f ~ubuntu/.ssh/lcm.pem) \n",
                     "sleep 1m \n",
                     "./setupCluster.py ",
@@ -524,11 +535,15 @@
                       "Ref": "ClusterName"
                     }, "\" ",
                     "--dsever '5.1.0' ",
-                    "--repouser 'collin.poczatek+awstesting@gmail.com' ",
-                    "--repopw 'Cassandra1' ",
+                    "--repouser '", {
+                      "Ref": "DSAcademyUser"
+                    }, "' ",
+                    "--repopw '", {
+                      "Ref": "DSAcademyPW"
+                    }, "' ",
                     "--privkey $privkey ",
                     "--user ubuntu ",
-                    "--datapath \"/mnt/cassandra\" \n"
+                    "--datapath \"/data/cassandra\" \n"
                   ]]
                 }
               }
@@ -540,10 +555,11 @@
                 "command": {
                   "Fn::Join": ["", [
                     "#!/usr/bin/env bash -e \n",
+                    "release=\"5.5.4\" \n",
                     "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete\" \"", {
                       "Ref": "OpsCenterWaitHandle"
                     }, "\" \n",
-                    "cd ~ubuntu/install-datastax-ubuntu-master/bin/lcm \n",
+                    "cd ~ubuntu/install-datastax-ubuntu-$release/bin/lcm \n",
                     "echo 'Blocking execution till LCM jobs finish...' \n",
                     "./waitForJobs.py --num ", {
                       "Ref": "NumberDCs"
@@ -551,7 +567,7 @@
                     "aws s3 rm s3://", {
                       "Ref": "S3Bucket"
                     }, "/lcm.pem.pub \n",
-                    "cd ~ubuntu/install-datastax-ubuntu-master/bin/opscenter/ \n",
+                    "cd ../opscenter/ \n",
                     "./set_opsc_pw_https.sh '", {
                       "Ref": "OpsCPassword"
                     }, "' \n"
@@ -641,18 +657,7 @@
       "Value": {
         "Fn::GetAtt": ["OpsCenterInstance", "PrivateIp"]
       },
-      "Description": "Public IP for OpsCenter"
-    },
-    "LCMURL": {
-      "Value": {
-        "Fn::Join": ["", [
-          "https://", {
-            "Fn::GetAtt": ["OpsCenterInstance", "PublicDnsName"]
-          },
-          ":8443/opscenter/lcm.html"
-        ]]
-      },
-      "Description": "URL for Lifecycle Manager"
+      "Description": "Private IP for OpsCenter"
     }
   }
 }

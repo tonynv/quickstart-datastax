@@ -49,7 +49,7 @@
     "VolumeSize": {
       "Type": "Number",
       "Description": "EBS volume size in GB",
-      "Default": "256"
+      "Default": "1024"
     },
     "SecurityCIDR": {
       "Description": "The IP address range covering node instances",
@@ -506,15 +506,15 @@
                   "Fn::Join": ["", [
                     "#!/bin/bash -xe\n",
                     "mkfs -t ext4 /dev/xvdf \n",
-                    "mkdir /mnt/cassandra \n",
-                    "mount /dev/xvdf /mnt/cassandra \n",
-                    "mkdir /mnt/cassandra/data \n",
-                    "mkdir /mnt/cassandra/commitlog \n",
-                    "mkdir /mnt/cassandra/saved_caches \n",
+                    "mkdir -p /data/cassandra \n",
+                    "mount /dev/xvdf /data/cassandra \n",
+                    "mkdir /data/cassandra/data \n",
+                    "mkdir /data/cassandra/commitlog \n",
+                    "mkdir /data/cassandra/saved_caches \n",
                     "useradd cassandra \n",
-                    "chown -R cassandra:cassandra /mnt/cassandra \n",
+                    "chown -R cassandra:cassandra /data/cassandra \n",
                     "cp /etc/fstab /etc/fstab.bak \n",
-                    "echo \"/dev/xvdf       /mnt/cassandra   ext4    defaults,nofail        0       2\" >> /etc/fstab \n"
+                    "echo \"/dev/xvdf       /data/cassandra   ext4    defaults,nofail        0       2\" >> /etc/fstab \n"
                   ]]
                 }
               }
@@ -540,9 +540,10 @@
                     "sleep 15s \n",
                     "done \n",
                     "cat .ssh/lcm.pem.pub >> .ssh/authorized_keys \n",
-                    "wget https://github.com/DSPN/install-datastax-ubuntu/archive/master.zip \n",
-                    "unzip master.zip \n",
-                    "cd install-datastax-ubuntu-master/bin/lcm \n",
+                    "release=\"5.5.4\" \n",
+                    "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.zip \n",
+                    "unzip $release.zip \n",
+                    "cd install-datastax-ubuntu-$release/bin/lcm \n",
                     "privip=$(curl http://169.254.169.254/latest/meta-data/local-ipv4) \n",
                     "nodeid=$(curl http://169.254.169.254/latest/meta-data/instance-id) \n",
                     "rack=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone) \n",
@@ -551,22 +552,22 @@
                     " --opsc-ip ", {
                       "Ref": "OpsCenterIP"
                     },
-                    " --clustername ", {
+                    " --clustername '", {
                       "Ref": "ClusterName"
                     },
-                    " --dcsize ", {
+                    "' --dcsize ", {
                       "Ref": "DataCenterSize"
                     },
-                    " --dcname ", {
+                    " --dcname '", {
                       "Ref": "DataCenterName"
                     },
-                    " --rack $rack",
+                    "' --rack $rack",
                     " --pubip $privip",
                     " --privip $privip",
                     " --nodeid $nodeid",
-                    " --dbpasswd ", {
+                    " --dbpasswd '", {
                       "Ref": "DBPassword"
-                    }, " \n",
+                    }, "' \n",
                     "./waitForJobs.py ",
                     " --opsc-ip ", {
                       "Ref": "OpsCenterIP"
