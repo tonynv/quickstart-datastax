@@ -7,11 +7,11 @@
       "Type": "AWS::EC2::KeyPair::KeyName",
       "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
     },
-    "OpsCenterPubIP": {
+    "OpsCenterIP": {
       "Description": "Public IP of OpsCenter instance.",
       "Type": "String",
       "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})",
-      "ConstraintDescription": "must be valid and public IP"
+      "ConstraintDescription": "must be valid IP"
     },
     "ClusterName": {
       "Description": "Name of DSE cluster",
@@ -49,7 +49,7 @@
     "VolumeSize": {
       "Type": "Number",
       "Description": "EBS volume size in GB",
-      "Default": "256"
+      "Default": "1024"
     },
     "SecurityCIDR": {
       "Description": "The IP address range covering node instances",
@@ -506,15 +506,15 @@
                   "Fn::Join": ["", [
                     "#!/bin/bash -xe\n",
                     "mkfs -t ext4 /dev/xvdf \n",
-                    "mkdir /mnt/cassandra \n",
-                    "mount /dev/xvdf /mnt/cassandra \n",
-                    "mkdir /mnt/cassandra/data \n",
-                    "mkdir /mnt/cassandra/commitlog \n",
-                    "mkdir /mnt/cassandra/saved_caches \n",
+                    "mkdir -p /data/cassandra \n",
+                    "mount /dev/xvdf /data/cassandra \n",
+                    "mkdir /data/cassandra/data \n",
+                    "mkdir /data/cassandra/commitlog \n",
+                    "mkdir /data/cassandra/saved_caches \n",
                     "useradd cassandra \n",
-                    "chown -R cassandra:cassandra /mnt/cassandra \n",
+                    "chown -R cassandra:cassandra /data/cassandra \n",
                     "cp /etc/fstab /etc/fstab.bak \n",
-                    "echo \"/dev/xvdf       /mnt/cassandra   ext4    defaults,nofail        0       2\" >> /etc/fstab \n"
+                    "echo \"/dev/xvdf       /data/cassandra   ext4    defaults,nofail        0       2\" >> /etc/fstab \n"
                   ]]
                 }
               }
@@ -529,38 +529,49 @@
                     "apt-get -y install awscli unzip\n",
                     "pip install requests \n",
                     "cd ~ubuntu \n",
+                    "n=1 \n",
+                    "until [ $n -ge 8 ] \n",
+                    "do \n",
                     "aws s3 cp s3://", {
                       "Ref": "S3Bucket"
-                    }, "/lcm.pem.pub .ssh/ \n",
+                    }, "/lcm.pem.pub .ssh/ && break \n",
+                    "echo \"S3 download try $n failed, sleeping...\" \n",
+                    "n=$[$n+1] \n",
+                    "sleep 15s \n",
+                    "done \n",
                     "cat .ssh/lcm.pem.pub >> .ssh/authorized_keys \n",
-                    "wget https://github.com/DSPN/install-datastax-ubuntu/archive/master.zip \n",
-                    "unzip master.zip \n",
-                    "cd install-datastax-ubuntu-master/bin/lcm \n",
+                    "release=\"5.5.4\" \n",
+                    "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.zip \n",
+                    "unzip $release.zip \n",
+                    "cd install-datastax-ubuntu-$release/bin/lcm \n",
                     "privip=$(curl http://169.254.169.254/latest/meta-data/local-ipv4) \n",
                     "nodeid=$(curl http://169.254.169.254/latest/meta-data/instance-id) \n",
                     "rack=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone) \n",
-                    "echo 'Calling addNode.py, bloking install job with arbitrarily large clustersize' \n",
+                    "echo 'Calling addNode.py...' \n",
                     "./addNode.py ",
                     " --opsc-ip ", {
-                      "Ref": "OpsCenterPubIP"
+                      "Ref": "OpsCenterIP"
                     },
-                    " --clustername ", {
+                    " --clustername '", {
                       "Ref": "ClusterName"
                     },
-                    " --clustersize 9999 ",
-                    " --dcsize ", {
+                    "' --dcsize ", {
                       "Ref": "DataCenterSize"
                     },
-                    " --dcname ", {
+                    " --dcname '", {
                       "Ref": "DataCenterName"
                     },
-                    " --rack $rack",
+                    "' --rack $rack",
                     " --pubip $privip",
                     " --privip $privip",
                     " --nodeid $nodeid",
-                    " --dbpasswd ", {
+                    " --dbpasswd '", {
                       "Ref": "DBPassword"
-                    }, " \n"
+                    }, "' \n",
+                    "./waitForJobs.py ",
+                    " --opsc-ip ", {
+                      "Ref": "OpsCenterIP"
+                    }, " \n",
                   ]]
                 }
               }
@@ -605,7 +616,13 @@
               "#!/bin/bash -xe\n",
               "apt-get update\n",
               "apt-get -y install python python-setuptools python-pip\n",
-              "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz \n",
+              "n=1 \n",
+              "until [ $n -ge 8 ] \n",
+              "do \n",
+              "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz && break \n",
+              "echo \"pip install cfn-bootstrap try $n failed, retry...\" \n",
+              "n=$[$n+1] \n",
+              "done \n",
               "ln -s /usr/local/init/ubuntu/cfn-hup /etc/init.d/cfn-hup \n",
               "chmod 775 /usr/local/init/ubuntu/cfn-hup \n",
               "update-rc.d cfn-hup defaults \n",
@@ -636,133 +653,15 @@
         }
       }
     },
-    "DSESecurityGroup": {
-      "Type": "AWS::EC2::SecurityGroup",
-      "Properties": {
-        "GroupDescription": "Enable HTTP(S), SSH access, and DSE ports",
-        "VpcId": {
-          "Ref": "VPC"
-        },
-        "SecurityGroupIngress": [{
-          "IpProtocol": "tcp",
-          "FromPort": "80",
-          "ToPort": "80",
-          "CidrIp": {
-            "Ref": "SecurityCIDR"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "22",
-          "ToPort": "22",
-          "CidrIp": {
-            "Ref": "SecurityCIDR"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "8888",
-          "ToPort": "8888",
-          "CidrIp": {
-            "Ref": "SecurityCIDR"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "4040",
-          "ToPort": "4040",
-          "CidrIp": {
-            "Ref": "SecurityCIDR"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "5598",
-          "ToPort": "5599",
-          "CidrIp": {
-            "Ref": "SecurityCIDR"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "7000",
-          "ToPort": "7001",
-          "CidrIp": {
-            "Ref": "SecurityCIDR"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "7077",
-          "ToPort": "7077",
-          "CidrIp": {
-            "Ref": "SecurityCIDR"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "7080",
-          "ToPort": "7081",
-          "CidrIp": {
-            "Ref": "SecurityCIDR"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "7199",
-          "ToPort": "7199",
-          "CidrIp": {
-            "Ref": "SecurityCIDR"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "8090",
-          "ToPort": "8090",
-          "CidrIp": {
-            "Ref": "SecurityCIDR"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "8182",
-          "ToPort": "8182",
-          "CidrIp": {
-            "Ref": "SecurityCIDR"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "8609",
-          "ToPort": "8609",
-          "CidrIp": {
-            "Ref": "SecurityCIDR"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "8983",
-          "ToPort": "8984",
-          "CidrIp": {
-            "Ref": "SecurityCIDR"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "9042",
-          "ToPort": "9042",
-          "CidrIp": {
-            "Ref": "SecurityCIDR"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "9091",
-          "ToPort": "9091",
-          "CidrIp": {
-            "Ref": "SecurityCIDR"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "9160",
-          "ToPort": "9160",
-          "CidrIp": {
-            "Ref": "SecurityCIDR"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "61620",
-          "ToPort": "61621",
-          "CidrIp": {
-            "Ref": "SecurityCIDR"
-          }
-        }]
+
+    "DSESecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable HTTP(S), SSH access, and DSE ports",
+        "VpcId": {"Ref" : "VPC"},
+        "SecurityGroupIngress" : [
+          {"IpProtocol" : "tcp", "FromPort" : "1", "ToPort" : "65535", "CidrIp" : { "Ref" : "SecurityCIDR"}}
+       ]
       }
     }
   }

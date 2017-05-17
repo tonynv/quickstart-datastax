@@ -20,13 +20,22 @@
       "Type": "String",
       "Default": "DSE Cluster"
     },
-    "DCSizes": {
-      "Description": "List of number of nodes/datacenter",
-      "Type": "CommaDelimitedList"
+    "NumberDCs": {
+      "Type": "Number",
+      "Description": "Number of datacenters",
     },
     "Profile": {
       "Description": "InstanceProfile for OpsC instance",
       "Type": "String"
+    },
+    "DSAcademyUser": {
+      "Type": "String",
+      "Description": "User for academy.datastax.com account",
+    },
+    "DSAcademyPW": {
+      "Type": "String",
+      "Description": "PW for academy.datastax.com account",
+      "NoEcho": true
     },
     "DBPassword": {
       "Type": "String",
@@ -418,7 +427,7 @@
       "Metadata": {
         "AWS::CloudFormation::Init": {
           "configSets": {
-            "full_install": ["install_cfn", "install_opsc", "gen_ssh_key", "setup_cluster", "trigger_install"]
+            "full_install": ["install_cfn", "install_opsc", "gen_ssh_key", "setup_cluster", "post_install"]
           },
           "install_cfn": {
             "files": {
@@ -477,9 +486,10 @@
                     "cloud_type=\"aws\" \n",
                     "cd ~ubuntu \n",
                     "apt-get -y install unzip \n",
-                    "wget https://github.com/DSPN/install-datastax-ubuntu/archive/master.zip \n",
-                    "unzip master.zip \n",
-                    "cd install-datastax-ubuntu-master/bin \n",
+                    "release=\"5.5.4\" \n",
+                    "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.zip \n",
+                    "unzip $release.zip \n",
+                    "cd install-datastax-ubuntu-$release/bin \n",
                     "./os/install_java.sh \n",
                     "./opscenter/install.sh $cloud_type \n",
                     "./opscenter/start.sh"
@@ -515,56 +525,50 @@
                     "#!/usr/bin/env bash -e \n",
                     "cd ~ubuntu \n",
                     "pip install requests \n",
-                    "cd install-datastax-ubuntu-master/bin/lcm \n",
-                    "pubip=$(curl http://169.254.169.254/latest/meta-data/public-ipv4) \n",
+                    "release=\"5.5.4\" \n",
+                    "cd install-datastax-ubuntu-$release/bin/lcm \n",
                     "privkey=$(readlink -f ~ubuntu/.ssh/lcm.pem) \n",
                     "sleep 1m \n",
-                    "sed -ie 's/5.1.0/5.0.8/g' ./setupCluster.py \n",
                     "./setupCluster.py ",
-                    "--opsc-ip $pubip ",
+                    "--opsc-ip 127.0.0.1 ",
                     "--clustername \"", {
                       "Ref": "ClusterName"
                     }, "\" ",
+                    "--dsever '5.1.0' ",
+                    "--repouser '", {
+                      "Ref": "DSAcademyUser"
+                    }, "' ",
+                    "--repopw '", {
+                      "Ref": "DSAcademyPW"
+                    }, "' ",
                     "--privkey $privkey ",
                     "--user ubuntu ",
-                    "--datapath \"/mnt/cassandra\" \n",
-                    "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete\" \"", {
-                      "Ref": "OpsCenterWaitHandle"
-                    }, "\" \n"
+                    "--datapath \"/data/cassandra\" \n"
                   ]]
                 }
               }
             }
           },
-          "trigger_install": {
+          "post_install": {
             "commands": {
-              "01_trigger_install": {
+              "01_post_install": {
                 "command": {
                   "Fn::Join": ["", [
                     "#!/usr/bin/env bash -e \n",
-                    "cd ~ubuntu/install-datastax-ubuntu-master/bin/lcm \n",
-                    "privip=$(curl http://169.254.169.254/latest/meta-data/local-ipv4) \n",
-                    "csize=$(( ", {
-                      "Fn::Join": ["+", {
-                        "Ref": "DCSizes"
-                      }]
-                    }, " )) \n",
-                    "cname=\"", {
-                      "Ref": "ClusterName"
+                    "release=\"5.5.4\" \n",
+                    "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete\" \"", {
+                      "Ref": "OpsCenterWaitHandle"
                     }, "\" \n",
-                    "echo \"Calling triggerInstall.py with args:\" $privip $cname $csize \n",
-                    "./triggerInstall.py ",
-                    " --opsc-ip $privip ",
-                    " --clustername $cname ",
-                    " --clustersize $csize ",
-                    " --dbpasswd ", {
-                      "Ref": "DBPassword"
-                    }, " && ",
+                    "cd ~ubuntu/install-datastax-ubuntu-$release/bin/lcm \n",
+                    "echo 'Blocking execution till LCM jobs finish...' \n",
+                    "./waitForJobs.py --num ", {
+                      "Ref": "NumberDCs"
+                    }," \n",
                     "aws s3 rm s3://", {
                       "Ref": "S3Bucket"
                     }, "/lcm.pem.pub \n",
-                    "cd ~ubuntu/install-datastax-ubuntu-master/bin/opscenter/ \n",
-                    "#./set_opsc_pw.sh '", {
+                    "cd ../opscenter/ \n",
+                    "./set_opsc_pw_https.sh '", {
                       "Ref": "OpsCPassword"
                     }, "' \n"
                   ]]
@@ -605,7 +609,13 @@
               "#!/bin/bash -xe\n",
               "apt-get update\n",
               "apt-get -y install python-setuptools python-pip\n",
-              "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz \n",
+              "n=1 \n",
+              "until [ $n -ge 8 ] \n",
+              "do \n",
+              "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz && break \n",
+              "echo \"pip install cfn-bootstrap try $n failed, retry...\" \n",
+              "n=$[$n+1] \n",
+              "done \n",
               "ln -s /usr/local/init/ubuntu/cfn-hup /etc/init.d/cfn-hup \n",
               "chmod 775 /usr/local/init/ubuntu/cfn-hup \n",
               "update-rc.d cfn-hup defaults \n",
@@ -629,10 +639,10 @@
     "OpsCenterURL": {
       "Value": {
         "Fn::Join": ["", [
-          "http://", {
+          "https://", {
             "Fn::GetAtt": ["OpsCenterInstance", "PublicDnsName"]
           },
-          ":8888"
+          ":8443"
         ]]
       },
       "Description": "URL for OpsCenter"
@@ -643,16 +653,11 @@
       },
       "Description": "Public IP for OpsCenter"
     },
-    "LCMURL": {
+    "OpsCenterPrivateIP": {
       "Value": {
-        "Fn::Join": ["", [
-          "http://", {
-            "Fn::GetAtt": ["OpsCenterInstance", "PublicDnsName"]
-          },
-          ":8888/opscenter/lcm.html"
-        ]]
+        "Fn::GetAtt": ["OpsCenterInstance", "PrivateIp"]
       },
-      "Description": "URL for Lifecycle Manager"
+      "Description": "Private IP for OpsCenter"
     }
   }
 }

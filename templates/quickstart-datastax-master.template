@@ -20,6 +20,15 @@
       "Description": "List of 3 AvailabilityZones for VPC, Length must match AZs",
       "Type": "List<AWS::EC2::AvailabilityZone::Name>"
     },
+    "DSAcademyUser": {
+      "Type": "String",
+      "Description": "User for academy.datastax.com account",
+    },
+    "DSAcademyPW": {
+      "Type": "String",
+      "Description": "PW for academy.datastax.com account",
+      "NoEcho": true
+    },
     "DBPassword": {
       "Type": "String",
       "Description": "C* password",
@@ -32,26 +41,30 @@
     },
     "NumberDCs": {
       "Type": "Number",
-      "Description": "Number of nodes in datacenter",
-      "Default": 3,
+      "Description": "Number of datacenters",
+      "Default": 1,
       "AllowedValues": [1, 2, 3, 4],
       "ConstraintDescription": "Value must be an integer from 1-4"
     },
     "DataCenters": {
       "Description": "List of datacenter names. Length must match NumberofDCs",
-      "Type": "CommaDelimitedList"
+      "Type": "CommaDelimitedList",
+      "Default": "DC0"
     },
     "Instances": {
       "Description": "List of instance types",
-      "Type": "CommaDelimitedList"
+      "Type": "CommaDelimitedList",
+      "Default": "m4.large"
     },
     "VolumeSizes": {
       "Description": "List of EBS volume sizes (GB)",
-      "Type": "List<Number>"
+      "Type": "List<Number>",
+      "Default": "1024"
     },
     "DCSizes": {
       "Description": "List of number of nodes/datacenter",
-      "Type": "List<Number>"
+      "Type": "List<Number>",
+      "Default": "3"
     },
     "ClusterName": {
       "Description": "Name of DSE cluster",
@@ -216,10 +229,17 @@
           }
         }, {
           "IpProtocol": "tcp",
+          "FromPort": "8443",
+          "ToPort": "8443",
+          "CidrIp": {
+            "Ref": "AccessLocation"
+          }
+        },{
+          "IpProtocol": "tcp",
           "FromPort": "8888",
           "ToPort": "8888",
           "CidrIp": {
-            "Ref": "AccessLocation"
+            "Fn::GetAtt": ["VPCstack", "Outputs.VPCCIDR"]
           }
         }, {
           "IpProtocol": "tcp",
@@ -268,10 +288,14 @@
           "ClusterName": {
             "Ref": "ClusterName"
           },
-          "DCSizes": {
-            "Fn::Join": [",", {
-              "Ref": "DCSizes"
-            }]
+          "NumberDCs": {
+              "Ref": "NumberDCs"
+          },
+          "DSAcademyUser": {
+              "Ref": "DSAcademyUser"
+          },
+          "DSAcademyPW": {
+              "Ref": "DSAcademyPW"
           },
           "DBPassword": {
             "Ref": "DBPassword"
@@ -316,8 +340,8 @@
           "S3Bucket": {
             "Ref": "S3Bucket"
           },
-          "OpsCenterPubIP": {
-            "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPublicIP"]
+          "OpsCenterIP": {
+            "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPrivateIP"]
           },
           "ClusterName": {
             "Ref": "ClusterName"
@@ -367,7 +391,7 @@
           }
         }
       },
-      "DependsOn": "OpsCenterstack"
+      "DependsOn": "VPCstack"
     },
     "DC1stack": {
       "Type": "AWS::CloudFormation::Stack",
@@ -396,15 +420,13 @@
           "S3Bucket": {
             "Ref": "S3Bucket"
           },
-          "OpsCenterPubIP": {
-            "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPublicIP"]
+          "OpsCenterIP": {
+            "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPrivateIP"]
           },
           "ClusterName": {
             "Ref": "ClusterName"
           },
-          "DBPassword": {
-            "Ref": "DBPassword"
-          },
+          "DBPassword": "cassandra",
           "DataCenterName": {
             "Fn::Select": ["1", {
               "Ref": "DataCenters"
@@ -447,7 +469,7 @@
           }
         }
       },
-      "DependsOn": "OpsCenterstack"
+      "DependsOn": "VPCstack"
     },
     "DC2stack": {
       "Type": "AWS::CloudFormation::Stack",
@@ -476,15 +498,13 @@
           "S3Bucket": {
             "Ref": "S3Bucket"
           },
-          "OpsCenterPubIP": {
-            "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPublicIP"]
+          "OpsCenterIP": {
+            "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPrivateIP"]
           },
           "ClusterName": {
             "Ref": "ClusterName"
           },
-          "DBPassword": {
-            "Ref": "DBPassword"
-          },
+          "DBPassword": "cassandra",
           "DataCenterName": {
             "Fn::Select": ["2", {
               "Ref": "DataCenters"
@@ -527,7 +547,7 @@
           }
         }
       },
-      "DependsOn": "OpsCenterstack"
+      "DependsOn": "VPCstack"
     },
     "DC3stack": {
       "Type": "AWS::CloudFormation::Stack",
@@ -556,15 +576,13 @@
           "S3Bucket": {
             "Ref": "S3Bucket"
           },
-          "OpsCenterPubIP": {
-            "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPublicIP"]
+          "OpsCenterIP": {
+            "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPrivateIP"]
           },
           "ClusterName": {
             "Ref": "ClusterName"
           },
-          "DBPassword": {
-            "Ref": "DBPassword"
-          },
+          "DBPassword": "cassandra",
           "DataCenterName": {
             "Fn::Select": ["3", {
               "Ref": "DataCenters"
@@ -607,23 +625,18 @@
           }
         }
       },
-      "DependsOn": "OpsCenterstack"
+      "DependsOn": "VPCstack"
     }
   },
   "Outputs": {
-    "VPCstackRef": {
-      "Value": {
-        "Ref": "VPCstack"
-      }
-    },
-    "LCMURL": {
-      "Value": {
-        "Fn::GetAtt": ["OpsCenterstack", "Outputs.LCMURL"]
-      }
-    },
     "OpsCenterURL": {
       "Value": {
         "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterURL"]
+      }
+    },
+    "VPCstackRef": {
+      "Value": {
+        "Ref": "VPCstack"
       }
     }
   }
