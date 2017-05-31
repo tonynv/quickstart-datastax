@@ -1,9 +1,11 @@
 # Changelog
 
-- split S3 role into specific OpsCenter and node roles
+- switch to passing db password to all dc's
 
 ---
 ## Previous Commits
+---
+- split S3 role into specific OpsCenter and node roles
 ---
 - add version of root template to deploy to an existing VPC
 ---

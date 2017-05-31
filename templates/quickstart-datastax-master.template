@@ -472,7 +472,9 @@
           "ClusterName": {
             "Ref": "ClusterName"
           },
-          "DBPassword": "cassandra",
+          "DBPassword": {
+            "Ref": "DBPassword"
+          },
           "DataCenterName": {
             "Fn::Select": ["1", {
               "Ref": "DataCenters"
@@ -550,7 +552,9 @@
           "ClusterName": {
             "Ref": "ClusterName"
           },
-          "DBPassword": "cassandra",
+          "DBPassword": {
+            "Ref": "DBPassword"
+          },
           "DataCenterName": {
             "Fn::Select": ["2", {
               "Ref": "DataCenters"
@@ -628,7 +632,9 @@
           "ClusterName": {
             "Ref": "ClusterName"
           },
-          "DBPassword": "cassandra",
+          "DBPassword": {
+            "Ref": "DBPassword"
+          },
           "DataCenterName": {
             "Fn::Select": ["3", {
               "Ref": "DataCenters"
