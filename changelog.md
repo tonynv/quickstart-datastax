@@ -1,9 +1,13 @@
 # Changelog
 
-- add version of root template to deploy to an existing VPC
+- switch to passing db password to all dc's
 
 ---
 ## Previous Commits
+---
+- split S3 role into specific OpsCenter and node roles
+---
+- add version of root template to deploy to an existing VPC
 ---
 - set top level defaults (give 1 DC+3 nodes), add minimal.json as example minimal params
 (doesn't include QSS3 params)

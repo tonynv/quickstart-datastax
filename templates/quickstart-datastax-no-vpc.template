@@ -157,7 +157,7 @@
       },
       "DeletionPolicy": "Delete"
     },
-    "S3Role": {
+    "S3RoleOpsC": {
       "Type": "AWS::IAM::Role",
       "Properties": {
         "AssumeRolePolicyDocument": {
@@ -172,7 +172,53 @@
         "Path": "/"
       }
     },
-    "S3RolePolicies": {
+    "S3RolePoliciesOpsC": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "s3-access",
+        "PolicyDocument": {
+          "Statement": [
+              {
+                  "Action": [
+                      "s3:GetObject",
+                      "s3:DeleteObject",
+                      "s3:PutObject"
+                  ],
+                  "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "S3Bucket"} ,"/*"]]},
+                  "Effect": "Allow"
+              }
+          ]
+        },
+        "Roles": [{
+          "Ref": "S3RoleOpsC"
+        }]
+      }
+    },
+    "S3ProfileOpsC": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [{
+          "Ref": "S3RoleOpsC"
+        }]
+      }
+    },
+    "S3RoleNode": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": {
+              "Service": ["ec2.amazonaws.com"]
+            },
+            "Action": ["sts:AssumeRole"]
+          }]
+        },
+        "Path": "/"
+      }
+    },
+    "S3RolePoliciesNode": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
         "PolicyName": "s3-access",
@@ -180,22 +226,22 @@
           "Statement": [{
             "Effect": "Allow",
             "Action": [
-              "s3:*"
+              "s3:GetObject"
             ],
-            "Resource": "*"
+            "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "S3Bucket"} ,"/*"]]},
           }]
         },
         "Roles": [{
-          "Ref": "S3Role"
+          "Ref": "S3RoleNode"
         }]
       }
     },
-    "S3Profile": {
+    "S3ProfileNode": {
       "Type": "AWS::IAM::InstanceProfile",
       "Properties": {
         "Path": "/",
         "Roles": [{
-          "Ref": "S3Role"
+          "Ref": "S3RoleNode"
         }]
       }
     },
@@ -289,7 +335,7 @@
             "Ref": "OpsCPassword"
           },
           "Profile": {
-            "Ref": "S3Profile"
+            "Ref": "S3ProfileOpsC"
           },
           "S3Bucket": {
             "Ref": "S3Bucket"
@@ -319,7 +365,7 @@
             "Ref": "KeyName"
           },
           "Profile": {
-            "Ref": "S3Profile"
+            "Ref": "S3ProfileNode"
           },
           "S3Bucket": {
             "Ref": "S3Bucket"
@@ -394,7 +440,7 @@
             "Ref": "KeyName"
           },
           "Profile": {
-            "Ref": "S3Profile"
+            "Ref": "S3ProfileNode"
           },
           "S3Bucket": {
             "Ref": "S3Bucket"
@@ -405,7 +451,9 @@
           "ClusterName": {
             "Ref": "ClusterName"
           },
-          "DBPassword": "cassandra",
+          "DBPassword": {
+            "Ref": "DBPassword"
+          },
           "DataCenterName": {
             "Fn::Select": ["1", {
               "Ref": "DataCenters"
@@ -467,7 +515,7 @@
             "Ref": "KeyName"
           },
           "Profile": {
-            "Ref": "S3Profile"
+            "Ref": "S3ProfileNode"
           },
           "S3Bucket": {
             "Ref": "S3Bucket"
@@ -478,7 +526,9 @@
           "ClusterName": {
             "Ref": "ClusterName"
           },
-          "DBPassword": "cassandra",
+          "DBPassword": {
+            "Ref": "DBPassword"
+          },
           "DataCenterName": {
             "Fn::Select": ["2", {
               "Ref": "DataCenters"
@@ -540,7 +590,7 @@
             "Ref": "KeyName"
           },
           "Profile": {
-            "Ref": "S3Profile"
+            "Ref": "S3ProfileNode"
           },
           "S3Bucket": {
             "Ref": "S3Bucket"
@@ -551,7 +601,9 @@
           "ClusterName": {
             "Ref": "ClusterName"
           },
-          "DBPassword": "cassandra",
+          "DBPassword": {
+            "Ref": "DBPassword"
+          },
           "DataCenterName": {
             "Fn::Select": ["3", {
               "Ref": "DataCenters"
