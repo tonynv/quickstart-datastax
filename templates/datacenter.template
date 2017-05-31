@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "QS(5048) AWS CloudFormation Sample Template DataStax Enterprise: Create a DSE cluster with OpsCenter on EC2. This template demonstrates using the AWS CloudFormation bootstrap scripts to install the packages and files necessary to deploy DSE. **WARNING** This template creates Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
+    "Description": "(qs-1nbqhl4uk) Datastax template, License: Apache 2.0 (Please do not remove) May,30,2017",
     "Parameters": {
         "KeyName": {
             "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",

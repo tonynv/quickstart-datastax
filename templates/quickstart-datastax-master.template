@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "Datastax template, License: Apache 2.0 (Please do not remove) May,1,2017",
+    "Description": "(qs-1nbqhl4ua) Datastax template, License: Apache 2.0 (Please do not remove) May,30,2017",
     "Parameters": {
         "KeyName": {
             "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
