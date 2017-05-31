@@ -1,9 +1,11 @@
 # Changelog
 
-- add version of root template to deploy to an existing VPC
+- split S3 role into specific OpsCenter and node roles
 
 ---
 ## Previous Commits
+---
+- add version of root template to deploy to an existing VPC
 ---
 - set top level defaults (give 1 DC+3 nodes), add minimal.json as example minimal params
 (doesn't include QSS3 params)
