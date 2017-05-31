@@ -1,7 +1,7 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description": "(qs-1nbqhl4up) Datastax template, License: Apache 2.0 (Please do not remove) May,30,2017",
-        "Metadata": {
+    "Metadata": {
         "AWS::CloudFormation::Interface": {
             "ParameterGroups": [{
                 "Label": {
@@ -208,13 +208,6 @@
                     "Ref": "AWS::Region"
                 },
                 "us-gov-west-1"
-            ]
-        },
-        "NestedStackCondition": {
-            "Fn::Equals": [{
-                    "Ref": "QSS3KeyPrefix"
-                },
-                "datastax/latest"
             ]
         },
         "CreateDC1": {
