@@ -1,6 +1,106 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description": "(qs-1nbqhl4up) Datastax template, License: Apache 2.0 (Please do not remove) May,30,2017",
+        "Metadata": {
+        "AWS::CloudFormation::Interface": {
+            "ParameterGroups": [{
+                "Label": {
+                    "default": " VPC Network Configuration"
+                },
+                "Parameters": [
+                    "AccessLocation",
+                    "PrivateSubnetCIDR",
+                    "PrivateSubnets",
+                    "PublicSubnetId",
+                    "VPCId"
+                ]
+            }, {
+                "Label": {
+                    "default": "Datastax Setup"
+                },
+                "Parameters": [
+                    "KeyName",
+                    "DSAcademyUser",
+                    "DSAcademyPW",
+                    "DBPassword",
+                    "OpsCPassword",
+                    "NumberDCs",
+                    "DataCenters",
+                    "Instances",
+                    "DCSizes",
+                    "VolumeSizes",
+                    "ClusterName"
+                ]
+            }, {
+                "Label": {
+                    "default": "AWS Quick Start Configuration"
+                },
+                "Parameters": [
+                    "QSS3BucketName",
+                    "QSS3KeyPrefix"
+                ]
+            }],
+            "ParameterLabels": {
+                "AccessLocation": {
+                    "default": "Permitted IP range"
+                },
+                "AvailabilityZones": {
+                    "default": "Availability Zones"
+                },
+                "KeyName": {
+                    "default": "Key Name"
+                },
+                "DSAcademyUser": {
+                    "default": "DataStax Academy Username"
+                },
+                "DBPassword": {
+                    "default": "Database Password"
+                },
+                "DataCenters": {
+                    "default": "Data Center Names"
+                },
+                "DSAcademyPW": {
+                    "default": "DataStax Academy Password"
+                },
+                "NumberDCs": {
+                    "default": "Number of DataCenters"
+                },
+                "OpsCPassword": {
+                    "default": "OpsCenter Password"
+                },
+                "Instances": {
+                    "default": "Instances Types"
+                },
+                "DCSizes": {
+                    "default": "Data Center Sizes"
+                },
+                "ClusterName": {
+                    "default": "Cluster Name"
+                },
+                "VolumeSizes": {
+                    "default": "Volume Sizes"
+                },
+                "QSS3BucketName": {
+                    "default": "Quick Start S3 Bucket Name"
+                },
+                "QSS3KeyPrefix": {
+                    "default": "Quick Start S3 Key Prefix"
+                },
+                "VPCId": {
+                    "default": "VPC ID"
+                },
+                "PrivateSubnets": {
+                    "default": "Private Subnets"
+                },
+                "PrivateSubnetCIDR": {
+                    "default": "Private Subnet CIDR"
+                },
+                "PublicSubnetId": {
+                    "default": "Public Subnet ID"
+                }
+            }
+        }
+    },
     "Parameters": {
         "KeyName": {
             "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
@@ -95,10 +195,10 @@
             "Type": "String"
         },
         "QSS3KeyPrefix": {
-            "AllowedPattern": "^[0-9a-zA-Z-]+(/[0-9a-zA-Z-]+)*$",
-            "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/). It cannot start or end with forward slash (/) because they are automatically appended.",
-            "Default": "redhat/ansible/latest",
-            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/). It cannot start or end with forward slash (/) because they are automatically appended.",
+            "AllowedPattern": "^[0-9a-zA-Z-/]*$",
+            "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
+            "Default": "datastax/latest/",
+            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
             "Type": "String"
         }
     },
