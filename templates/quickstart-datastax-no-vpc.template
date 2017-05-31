@@ -1,654 +1,660 @@
 {
-  "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Datastax template, License: Apache 2.0 (Please do not remove) May,1,2017",
-  "Parameters": {
-    "KeyName": {
-      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
-      "Type": "AWS::EC2::KeyPair::KeyName",
-      "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
-    },
-    "AccessLocation": {
-      "Description": " The IP address range that can be used to access the OpsCenter web console, or SSH to the EC2 instance",
-      "Type": "String",
-      "MinLength": "9",
-      "MaxLength": "18",
-      "Default": "0.0.0.0/0",
-      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
-      "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
-    },
-    "VPCId": {
-      "Description": "Id of existing VPC",
-      "Type": "AWS::EC2::VPC::Id"
-    },
-    "AvailabilityZones": {
-      "Type": "CommaDelimitedList",
-      "Description": "List of AZs in VPC"
-    },
-    "PrivateSubnets": {
-      "Type": "CommaDelimitedList",
-      "Description": "List of private subnet ids to deploy nodes into"
-    },
-    "PrivateSubnetCIDR": {
-      "Description": "CIDR block covering private subnets.",
-      "Type": "String"
-    },
-    "PublicSubnetId": {
-      "Description": "Id for a public subnet in existing VPC, used for OpsCenter instance",
-      "Type": "AWS::EC2::Subnet::Id"
-    },
-    "DSAcademyUser": {
-      "Type": "String",
-      "Description": "User for academy.datastax.com account"
-    },
-    "DSAcademyPW": {
-      "Type": "String",
-      "Description": "PW for academy.datastax.com account",
-      "NoEcho": true
-    },
-    "DBPassword": {
-      "Type": "String",
-      "Description": "C* password",
-      "NoEcho": true
-    },
-    "OpsCPassword": {
-      "Type": "String",
-      "Description": "Password for default OpsCenter user 'admin'",
-      "NoEcho": true
-    },
-    "NumberDCs": {
-      "Type": "Number",
-      "Description": "Number of datacenters",
-      "Default": 1,
-      "AllowedValues": [1, 2, 3, 4],
-      "ConstraintDescription": "Value must be an integer from 1-4"
-    },
-    "DataCenters": {
-      "Description": "List of datacenter names. Length must match NumberofDCs",
-      "Type": "CommaDelimitedList",
-      "Default": "DC0"
-    },
-    "Instances": {
-      "Description": "List of instance types",
-      "Type": "CommaDelimitedList",
-      "Default": "m4.large"
-    },
-    "VolumeSizes": {
-      "Description": "List of EBS volume sizes (GB)",
-      "Type": "List<Number>",
-      "Default": "1024"
-    },
-    "DCSizes": {
-      "Description": "List of number of nodes/datacenter",
-      "Type": "List<Number>",
-      "Default": "3"
-    },
-    "ClusterName": {
-      "Description": "Name of DSE cluster",
-      "Type": "String",
-      "Default": "DSE Cluster"
-    },
-    "QSS3BucketName": {
-      "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
-      "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-      "Default": "quickstart-reference",
-      "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-      "Type": "String"
-    },
-    "QSS3KeyPrefix": {
-      "AllowedPattern": "^[0-9a-zA-Z-]+(/[0-9a-zA-Z-]+)*$",
-      "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/). It cannot start or end with forward slash (/) because they are automatically appended.",
-      "Default": "redhat/ansible/latest",
-      "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/). It cannot start or end with forward slash (/) because they are automatically appended.",
-      "Type": "String"
-    }
-  },
-  "Conditions": {
-    "GovCloudCondition": {
-      "Fn::Equals": [{
-          "Ref": "AWS::Region"
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Datastax template, License: Apache 2.0 (Please do not remove) May,1,2017",
+    "Parameters": {
+        "KeyName": {
+            "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+            "Type": "AWS::EC2::KeyPair::KeyName",
+            "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
         },
-        "us-gov-west-1"
-      ]
-    },
-    "NestedStackCondition": {
-      "Fn::Equals": [{
-          "Ref": "QSS3KeyPrefix"
+        "AccessLocation": {
+            "Description": " The IP address range that can be used to access the OpsCenter web console, or SSH to the EC2 instance",
+            "Type": "String",
+            "MinLength": "9",
+            "MaxLength": "18",
+            "Default": "0.0.0.0/0",
+            "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+            "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
         },
-        "datastax/latest"
-      ]
+        "VPCId": {
+            "Description": "Id of existing VPC",
+            "Type": "AWS::EC2::VPC::Id"
+        },
+        "AvailabilityZones": {
+            "Type": "CommaDelimitedList",
+            "Description": "List of AZs in VPC"
+        },
+        "PrivateSubnets": {
+            "Type": "CommaDelimitedList",
+            "Description": "List of private subnet ids to deploy nodes into"
+        },
+        "PrivateSubnetCIDR": {
+            "Description": "CIDR block covering private subnets.",
+            "Type": "String"
+        },
+        "PublicSubnetId": {
+            "Description": "Id for a public subnet in existing VPC, used for OpsCenter instance",
+            "Type": "AWS::EC2::Subnet::Id"
+        },
+        "DSAcademyUser": {
+            "Type": "String",
+            "Description": "User for academy.datastax.com account"
+        },
+        "DSAcademyPW": {
+            "Type": "String",
+            "Description": "PW for academy.datastax.com account",
+            "NoEcho": true
+        },
+        "DBPassword": {
+            "Type": "String",
+            "Description": "C* password",
+            "NoEcho": true
+        },
+        "OpsCPassword": {
+            "Type": "String",
+            "Description": "Password for default OpsCenter user 'admin'",
+            "NoEcho": true
+        },
+        "NumberDCs": {
+            "Type": "Number",
+            "Description": "Number of datacenters",
+            "Default": 1,
+            "AllowedValues": [1, 2, 3, 4],
+            "ConstraintDescription": "Value must be an integer from 1-4"
+        },
+        "DataCenters": {
+            "Description": "List of datacenter names. Length must match NumberofDCs",
+            "Type": "CommaDelimitedList",
+            "Default": "DC0"
+        },
+        "Instances": {
+            "Description": "List of instance types",
+            "Type": "CommaDelimitedList",
+            "Default": "m4.large"
+        },
+        "VolumeSizes": {
+            "Description": "List of EBS volume sizes (GB)",
+            "Type": "List<Number>",
+            "Default": "1024"
+        },
+        "DCSizes": {
+            "Description": "List of number of nodes/datacenter",
+            "Type": "List<Number>",
+            "Default": "3"
+        },
+        "ClusterName": {
+            "Description": "Name of DSE cluster",
+            "Type": "String",
+            "Default": "DSE Cluster"
+        },
+        "QSS3BucketName": {
+            "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
+            "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Default": "quickstart-reference",
+            "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
+            "Type": "String"
+        },
+        "QSS3KeyPrefix": {
+            "AllowedPattern": "^[0-9a-zA-Z-]+(/[0-9a-zA-Z-]+)*$",
+            "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/). It cannot start or end with forward slash (/) because they are automatically appended.",
+            "Default": "redhat/ansible/latest",
+            "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/). It cannot start or end with forward slash (/) because they are automatically appended.",
+            "Type": "String"
+        }
     },
-    "CreateDC1": {
-      "Fn::Or": [{
-        "Fn::Equals": [{
-          "Ref": "NumberDCs"
-        }, 2]
-      }, {
-        "Fn::Equals": [{
-          "Ref": "NumberDCs"
-        }, 3]
-      }, {
-        "Fn::Equals": [{
-          "Ref": "NumberDCs"
-        }, 4]
-      }]
+    "Conditions": {
+        "GovCloudCondition": {
+            "Fn::Equals": [{
+                    "Ref": "AWS::Region"
+                },
+                "us-gov-west-1"
+            ]
+        },
+        "NestedStackCondition": {
+            "Fn::Equals": [{
+                    "Ref": "QSS3KeyPrefix"
+                },
+                "datastax/latest"
+            ]
+        },
+        "CreateDC1": {
+            "Fn::Or": [{
+                "Fn::Equals": [{
+                    "Ref": "NumberDCs"
+                }, 2]
+            }, {
+                "Fn::Equals": [{
+                    "Ref": "NumberDCs"
+                }, 3]
+            }, {
+                "Fn::Equals": [{
+                    "Ref": "NumberDCs"
+                }, 4]
+            }]
+        },
+        "CreateDC2": {
+            "Fn::Or": [{
+                "Fn::Equals": [{
+                    "Ref": "NumberDCs"
+                }, 3]
+            }, {
+                "Fn::Equals": [{
+                    "Ref": "NumberDCs"
+                }, 4]
+            }]
+        },
+        "CreateDC3": {
+            "Fn::Equals": [{
+                "Ref": "NumberDCs"
+            }, 4]
+        }
     },
-    "CreateDC2": {
-      "Fn::Or": [{
-        "Fn::Equals": [{
-          "Ref": "NumberDCs"
-        }, 3]
-      }, {
-        "Fn::Equals": [{
-          "Ref": "NumberDCs"
-        }, 4]
-      }]
-    },
-    "CreateDC3": {
-      "Fn::Equals": [{
-        "Ref": "NumberDCs"
-      }, 4]
-    }
-  },
-  "Resources": {
-    "S3Bucket": {
-      "Type": "AWS::S3::Bucket",
-      "Properties": {
-        "AccessControl": "Private"
-      },
-      "DeletionPolicy": "Delete"
-    },
-    "S3RoleOpsC": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [{
-            "Effect": "Allow",
-            "Principal": {
-              "Service": ["ec2.amazonaws.com"]
+    "Resources": {
+        "S3Bucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+                "AccessControl": "Private"
             },
-            "Action": ["sts:AssumeRole"]
-          }]
+            "DeletionPolicy": "Delete"
         },
-        "Path": "/"
-      }
-    },
-    "S3RolePoliciesOpsC": {
-      "Type": "AWS::IAM::Policy",
-      "Properties": {
-        "PolicyName": "s3-access",
-        "PolicyDocument": {
-          "Statement": [
-              {
-                  "Action": [
-                      "s3:GetObject",
-                      "s3:DeleteObject",
-                      "s3:PutObject"
-                  ],
-                  "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "S3Bucket"} ,"/*"]]},
-                  "Effect": "Allow"
-              }
-          ]
-        },
-        "Roles": [{
-          "Ref": "S3RoleOpsC"
-        }]
-      }
-    },
-    "S3ProfileOpsC": {
-      "Type": "AWS::IAM::InstanceProfile",
-      "Properties": {
-        "Path": "/",
-        "Roles": [{
-          "Ref": "S3RoleOpsC"
-        }]
-      }
-    },
-    "S3RoleNode": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [{
-            "Effect": "Allow",
-            "Principal": {
-              "Service": ["ec2.amazonaws.com"]
-            },
-            "Action": ["sts:AssumeRole"]
-          }]
-        },
-        "Path": "/"
-      }
-    },
-    "S3RolePoliciesNode": {
-      "Type": "AWS::IAM::Policy",
-      "Properties": {
-        "PolicyName": "s3-access",
-        "PolicyDocument": {
-          "Statement": [{
-            "Effect": "Allow",
-            "Action": [
-              "s3:GetObject"
-            ],
-            "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "S3Bucket"} ,"/*"]]},
-          }]
-        },
-        "Roles": [{
-          "Ref": "S3RoleNode"
-        }]
-      }
-    },
-    "S3ProfileNode": {
-      "Type": "AWS::IAM::InstanceProfile",
-      "Properties": {
-        "Path": "/",
-        "Roles": [{
-          "Ref": "S3RoleNode"
-        }]
-      }
-    },
-    "OpsCSecurityGroup": {
-      "Type": "AWS::EC2::SecurityGroup",
-      "Properties": {
-        "GroupDescription": "Enable SSH access, and OpsCenter port",
-        "VpcId": {
-          "Ref": "VPCId"
-        },
-        "SecurityGroupIngress": [{
-          "IpProtocol": "tcp",
-          "FromPort": "22",
-          "ToPort": "22",
-          "CidrIp": {
-            "Ref": "AccessLocation"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "8443",
-          "ToPort": "8443",
-          "CidrIp": {
-            "Ref": "AccessLocation"
-          }
-        },{
-          "IpProtocol": "tcp",
-          "FromPort": "8888",
-          "ToPort": "8888",
-          "CidrIp": {
-            "Ref": "PrivateSubnetCIDR"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "22",
-          "ToPort": "22",
-          "CidrIp": {
-            "Ref": "PrivateSubnetCIDR"
-          }
-        }, {
-          "IpProtocol": "tcp",
-          "FromPort": "61620",
-          "ToPort": "61620",
-          "CidrIp": {
-            "Ref": "PrivateSubnetCIDR"
-          }
-        }]
-      }
-    },
-    "OpsCenterstack": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "TemplateURL": {
-          "Fn::Sub": [
-            "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/opscenter.template", {
-              "S3Region": {
-                "Fn::If": [
-                  "GovCloudCondition",
-                  "s3-us-gov-west-1",
-                  "s3"
-                ]
-              }
+        "S3RoleOpsC": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Statement": [{
+                        "Effect": "Allow",
+                        "Principal": {
+                            "Service": ["ec2.amazonaws.com"]
+                        },
+                        "Action": ["sts:AssumeRole"]
+                    }]
+                },
+                "Path": "/"
             }
-          ]
         },
-        "Parameters": {
-          "KeyName": {
-            "Ref": "KeyName"
-          },
-          "OpsCenterSecurityGroupId": {
-            "Fn::GetAtt": ["OpsCSecurityGroup", "GroupId"]
-          },
-          "SubnetId": {
-            "Ref": "PublicSubnetId"
-          },
-          "ClusterName": {
-            "Ref": "ClusterName"
-          },
-          "NumberDCs": {
-              "Ref": "NumberDCs"
-          },
-          "DSAcademyUser": {
-              "Ref": "DSAcademyUser"
-          },
-          "DSAcademyPW": {
-              "Ref": "DSAcademyPW"
-          },
-          "DBPassword": {
-            "Ref": "DBPassword"
-          },
-          "OpsCPassword": {
-            "Ref": "OpsCPassword"
-          },
-          "Profile": {
-            "Ref": "S3ProfileOpsC"
-          },
-          "S3Bucket": {
-            "Ref": "S3Bucket"
-          },
-          "InstanceType": "t2.medium"
-        }
-      }
-    },
-    "DC0stack": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "TemplateURL": {
-          "Fn::Sub": [
-            "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/datacenter.template", {
-              "S3Region": {
-                "Fn::If": [
-                  "GovCloudCondition",
-                  "s3-us-gov-west-1",
-                  "s3"
-                ]
-              }
+        "S3RolePoliciesOpsC": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "s3-access",
+                "PolicyDocument": {
+                    "Statement": [{
+                        "Action": [
+                            "s3:GetObject",
+                            "s3:DeleteObject",
+                            "s3:PutObject"
+                        ],
+                        "Resource": {
+                            "Fn::Join": ["", ["arn:aws:s3:::", {
+                                "Ref": "S3Bucket"
+                            }, "/*"]]
+                        },
+                        "Effect": "Allow"
+                    }]
+                },
+                "Roles": [{
+                    "Ref": "S3RoleOpsC"
+                }]
             }
-          ]
         },
-        "Parameters": {
-          "KeyName": {
-            "Ref": "KeyName"
-          },
-          "Profile": {
-            "Ref": "S3ProfileNode"
-          },
-          "S3Bucket": {
-            "Ref": "S3Bucket"
-          },
-          "OpsCenterIP": {
-            "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPrivateIP"]
-          },
-          "ClusterName": {
-            "Ref": "ClusterName"
-          },
-          "DBPassword": {
-            "Ref": "DBPassword"
-          },
-          "DataCenterName": {
-            "Fn::Select": ["0", {
-              "Ref": "DataCenters"
-            }]
-          },
-          "DataCenterSize": {
-            "Fn::Select": ["0", {
-              "Ref": "DCSizes"
-            }]
-          },
-          "InstanceType": {
-            "Fn::Select": ["0", {
-              "Ref": "Instances"
-            }]
-          },
-          "VolumeSize": {
-            "Fn::Select": ["0", {
-              "Ref": "VolumeSizes"
-            }]
-          },
-          "VPC": {
-            "Ref": "VPCId"
-          },
-          "AvailabilityZones": {
-            "Fn::Join": [",", {
-              "Ref": "AvailabilityZones"
-            }]
-          },
-          "Subnets": {
-            "Fn::Join": [",", {
-              "Ref": "PrivateSubnets"
-            }]
-          },
-          "SecurityCIDR": {
-            "Ref": "PrivateSubnetCIDR"
-          }
-        }
-      }
-    },
-    "DC1stack": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Condition": "CreateDC1",
-      "Properties": {
-        "TemplateURL": {
-          "Fn::Sub": [
-            "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/datacenter.template", {
-              "S3Region": {
-                "Fn::If": [
-                  "GovCloudCondition",
-                  "s3-us-gov-west-1",
-                  "s3"
-                ]
-              }
+        "S3ProfileOpsC": {
+            "Type": "AWS::IAM::InstanceProfile",
+            "Properties": {
+                "Path": "/",
+                "Roles": [{
+                    "Ref": "S3RoleOpsC"
+                }]
             }
-          ]
         },
-        "Parameters": {
-          "KeyName": {
-            "Ref": "KeyName"
-          },
-          "Profile": {
-            "Ref": "S3ProfileNode"
-          },
-          "S3Bucket": {
-            "Ref": "S3Bucket"
-          },
-          "OpsCenterIP": {
-            "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPrivateIP"]
-          },
-          "ClusterName": {
-            "Ref": "ClusterName"
-          },
-          "DBPassword": {
-            "Ref": "DBPassword"
-          },
-          "DataCenterName": {
-            "Fn::Select": ["1", {
-              "Ref": "DataCenters"
-            }]
-          },
-          "DataCenterSize": {
-            "Fn::Select": ["1", {
-              "Ref": "DCSizes"
-            }]
-          },
-          "InstanceType": {
-            "Fn::Select": ["1", {
-              "Ref": "Instances"
-            }]
-          },
-          "VolumeSize": {
-            "Fn::Select": ["1", {
-              "Ref": "VolumeSizes"
-            }]
-          },
-          "VPC": {
-            "Ref": "VPCId"
-          },
-          "AvailabilityZones": {
-            "Fn::Join": [",", {
-              "Ref": "AvailabilityZones"
-            }]
-          },
-          "Subnets": {
-            "Fn::Join": [",", {
-              "Ref": "PrivateSubnets"
-            }]
-          },
-          "SecurityCIDR": {
-            "Ref": "PrivateSubnetCIDR"
-          }
-        }
-      }
-    },
-    "DC2stack": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Condition": "CreateDC2",
-      "Properties": {
-        "TemplateURL": {
-          "Fn::Sub": [
-            "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/datacenter.template", {
-              "S3Region": {
-                "Fn::If": [
-                  "GovCloudCondition",
-                  "s3-us-gov-west-1",
-                  "s3"
-                ]
-              }
+        "S3RoleNode": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Statement": [{
+                        "Effect": "Allow",
+                        "Principal": {
+                            "Service": ["ec2.amazonaws.com"]
+                        },
+                        "Action": ["sts:AssumeRole"]
+                    }]
+                },
+                "Path": "/"
             }
-          ]
         },
-        "Parameters": {
-          "KeyName": {
-            "Ref": "KeyName"
-          },
-          "Profile": {
-            "Ref": "S3ProfileNode"
-          },
-          "S3Bucket": {
-            "Ref": "S3Bucket"
-          },
-          "OpsCenterIP": {
-            "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPrivateIP"]
-          },
-          "ClusterName": {
-            "Ref": "ClusterName"
-          },
-          "DBPassword": {
-            "Ref": "DBPassword"
-          },
-          "DataCenterName": {
-            "Fn::Select": ["2", {
-              "Ref": "DataCenters"
-            }]
-          },
-          "DataCenterSize": {
-            "Fn::Select": ["2", {
-              "Ref": "DCSizes"
-            }]
-          },
-          "InstanceType": {
-            "Fn::Select": ["2", {
-              "Ref": "Instances"
-            }]
-          },
-          "VolumeSize": {
-            "Fn::Select": ["2", {
-              "Ref": "VolumeSizes"
-            }]
-          },
-          "VPC": {
-            "Ref": "VPCId"
-          },
-          "AvailabilityZones": {
-            "Fn::Join": [",", {
-              "Ref": "AvailabilityZones"
-            }]
-          },
-          "Subnets": {
-            "Fn::Join": [",", {
-              "Ref": "PrivateSubnets"
-            }]
-          },
-          "SecurityCIDR": {
-            "Ref": "PrivateSubnetCIDR"
-          }
-        }
-      }
-    },
-    "DC3stack": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Condition": "CreateDC3",
-      "Properties": {
-        "TemplateURL": {
-          "Fn::Sub": [
-            "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/datacenter.template", {
-              "S3Region": {
-                "Fn::If": [
-                  "GovCloudCondition",
-                  "s3-us-gov-west-1",
-                  "s3"
-                ]
-              }
+        "S3RolePoliciesNode": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "s3-access",
+                "PolicyDocument": {
+                    "Statement": [{
+                        "Effect": "Allow",
+                        "Action": [
+                            "s3:GetObject"
+                        ],
+                        "Resource": {
+                            "Fn::Join": ["", ["arn:aws:s3:::", {
+                                "Ref": "S3Bucket"
+                            }, "/*"]]
+                        }
+                    }]
+                },
+                "Roles": [{
+                    "Ref": "S3RoleNode"
+                }]
             }
-          ]
         },
-        "Parameters": {
-          "KeyName": {
-            "Ref": "KeyName"
-          },
-          "Profile": {
-            "Ref": "S3ProfileNode"
-          },
-          "S3Bucket": {
-            "Ref": "S3Bucket"
-          },
-          "OpsCenterIP": {
-            "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPrivateIP"]
-          },
-          "ClusterName": {
-            "Ref": "ClusterName"
-          },
-          "DBPassword": {
-            "Ref": "DBPassword"
-          },
-          "DataCenterName": {
-            "Fn::Select": ["3", {
-              "Ref": "DataCenters"
-            }]
-          },
-          "DataCenterSize": {
-            "Fn::Select": ["3", {
-              "Ref": "DCSizes"
-            }]
-          },
-          "InstanceType": {
-            "Fn::Select": ["3", {
-              "Ref": "Instances"
-            }]
-          },
-          "VolumeSize": {
-            "Fn::Select": ["3", {
-              "Ref": "VolumeSizes"
-            }]
-          },
-          "VPC": {
-            "Ref": "VPCId"
-          },
-          "AvailabilityZones": {
-            "Fn::Join": [",", {
-              "Ref": "AvailabilityZones"
-            }]
-          },
-          "Subnets": {
-            "Fn::Join": [",", {
-              "Ref": "PrivateSubnets"
-            }]
-          },
-          "SecurityCIDR": {
-            "Ref": "PrivateSubnetCIDR"
-          }
+        "S3ProfileNode": {
+            "Type": "AWS::IAM::InstanceProfile",
+            "Properties": {
+                "Path": "/",
+                "Roles": [{
+                    "Ref": "S3RoleNode"
+                }]
+            }
+        },
+        "OpsCSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Enable SSH access, and OpsCenter port",
+                "VpcId": {
+                    "Ref": "VPCId"
+                },
+                "SecurityGroupIngress": [{
+                    "IpProtocol": "tcp",
+                    "FromPort": "22",
+                    "ToPort": "22",
+                    "CidrIp": {
+                        "Ref": "AccessLocation"
+                    }
+                }, {
+                    "IpProtocol": "tcp",
+                    "FromPort": "8443",
+                    "ToPort": "8443",
+                    "CidrIp": {
+                        "Ref": "AccessLocation"
+                    }
+                }, {
+                    "IpProtocol": "tcp",
+                    "FromPort": "8888",
+                    "ToPort": "8888",
+                    "CidrIp": {
+                        "Ref": "PrivateSubnetCIDR"
+                    }
+                }, {
+                    "IpProtocol": "tcp",
+                    "FromPort": "22",
+                    "ToPort": "22",
+                    "CidrIp": {
+                        "Ref": "PrivateSubnetCIDR"
+                    }
+                }, {
+                    "IpProtocol": "tcp",
+                    "FromPort": "61620",
+                    "ToPort": "61620",
+                    "CidrIp": {
+                        "Ref": "PrivateSubnetCIDR"
+                    }
+                }]
+            }
+        },
+        "OpsCenterstack": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "TemplateURL": {
+                    "Fn::Sub": [
+                        "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/opscenter.template", {
+                            "S3Region": {
+                                "Fn::If": [
+                                    "GovCloudCondition",
+                                    "s3-us-gov-west-1",
+                                    "s3"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "Parameters": {
+                    "KeyName": {
+                        "Ref": "KeyName"
+                    },
+                    "OpsCenterSecurityGroupId": {
+                        "Fn::GetAtt": ["OpsCSecurityGroup", "GroupId"]
+                    },
+                    "SubnetId": {
+                        "Ref": "PublicSubnetId"
+                    },
+                    "ClusterName": {
+                        "Ref": "ClusterName"
+                    },
+                    "NumberDCs": {
+                        "Ref": "NumberDCs"
+                    },
+                    "DSAcademyUser": {
+                        "Ref": "DSAcademyUser"
+                    },
+                    "DSAcademyPW": {
+                        "Ref": "DSAcademyPW"
+                    },
+                    "DBPassword": {
+                        "Ref": "DBPassword"
+                    },
+                    "OpsCPassword": {
+                        "Ref": "OpsCPassword"
+                    },
+                    "Profile": {
+                        "Ref": "S3ProfileOpsC"
+                    },
+                    "S3Bucket": {
+                        "Ref": "S3Bucket"
+                    },
+                    "InstanceType": "t2.medium"
+                }
+            }
+        },
+        "DC0stack": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "TemplateURL": {
+                    "Fn::Sub": [
+                        "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/datacenter.template", {
+                            "S3Region": {
+                                "Fn::If": [
+                                    "GovCloudCondition",
+                                    "s3-us-gov-west-1",
+                                    "s3"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "Parameters": {
+                    "KeyName": {
+                        "Ref": "KeyName"
+                    },
+                    "Profile": {
+                        "Ref": "S3ProfileNode"
+                    },
+                    "S3Bucket": {
+                        "Ref": "S3Bucket"
+                    },
+                    "OpsCenterIP": {
+                        "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPrivateIP"]
+                    },
+                    "ClusterName": {
+                        "Ref": "ClusterName"
+                    },
+                    "DBPassword": {
+                        "Ref": "DBPassword"
+                    },
+                    "DataCenterName": {
+                        "Fn::Select": ["0", {
+                            "Ref": "DataCenters"
+                        }]
+                    },
+                    "DataCenterSize": {
+                        "Fn::Select": ["0", {
+                            "Ref": "DCSizes"
+                        }]
+                    },
+                    "InstanceType": {
+                        "Fn::Select": ["0", {
+                            "Ref": "Instances"
+                        }]
+                    },
+                    "VolumeSize": {
+                        "Fn::Select": ["0", {
+                            "Ref": "VolumeSizes"
+                        }]
+                    },
+                    "VPC": {
+                        "Ref": "VPCId"
+                    },
+                    "AvailabilityZones": {
+                        "Fn::Join": [",", {
+                            "Ref": "AvailabilityZones"
+                        }]
+                    },
+                    "Subnets": {
+                        "Fn::Join": [",", {
+                            "Ref": "PrivateSubnets"
+                        }]
+                    },
+                    "SecurityCIDR": {
+                        "Ref": "PrivateSubnetCIDR"
+                    }
+                }
+            }
+        },
+        "DC1stack": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Condition": "CreateDC1",
+            "Properties": {
+                "TemplateURL": {
+                    "Fn::Sub": [
+                        "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/datacenter.template", {
+                            "S3Region": {
+                                "Fn::If": [
+                                    "GovCloudCondition",
+                                    "s3-us-gov-west-1",
+                                    "s3"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "Parameters": {
+                    "KeyName": {
+                        "Ref": "KeyName"
+                    },
+                    "Profile": {
+                        "Ref": "S3ProfileNode"
+                    },
+                    "S3Bucket": {
+                        "Ref": "S3Bucket"
+                    },
+                    "OpsCenterIP": {
+                        "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPrivateIP"]
+                    },
+                    "ClusterName": {
+                        "Ref": "ClusterName"
+                    },
+                    "DBPassword": {
+                        "Ref": "DBPassword"
+                    },
+                    "DataCenterName": {
+                        "Fn::Select": ["1", {
+                            "Ref": "DataCenters"
+                        }]
+                    },
+                    "DataCenterSize": {
+                        "Fn::Select": ["1", {
+                            "Ref": "DCSizes"
+                        }]
+                    },
+                    "InstanceType": {
+                        "Fn::Select": ["1", {
+                            "Ref": "Instances"
+                        }]
+                    },
+                    "VolumeSize": {
+                        "Fn::Select": ["1", {
+                            "Ref": "VolumeSizes"
+                        }]
+                    },
+                    "VPC": {
+                        "Ref": "VPCId"
+                    },
+                    "AvailabilityZones": {
+                        "Fn::Join": [",", {
+                            "Ref": "AvailabilityZones"
+                        }]
+                    },
+                    "Subnets": {
+                        "Fn::Join": [",", {
+                            "Ref": "PrivateSubnets"
+                        }]
+                    },
+                    "SecurityCIDR": {
+                        "Ref": "PrivateSubnetCIDR"
+                    }
+                }
+            }
+        },
+        "DC2stack": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Condition": "CreateDC2",
+            "Properties": {
+                "TemplateURL": {
+                    "Fn::Sub": [
+                        "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/datacenter.template", {
+                            "S3Region": {
+                                "Fn::If": [
+                                    "GovCloudCondition",
+                                    "s3-us-gov-west-1",
+                                    "s3"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "Parameters": {
+                    "KeyName": {
+                        "Ref": "KeyName"
+                    },
+                    "Profile": {
+                        "Ref": "S3ProfileNode"
+                    },
+                    "S3Bucket": {
+                        "Ref": "S3Bucket"
+                    },
+                    "OpsCenterIP": {
+                        "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPrivateIP"]
+                    },
+                    "ClusterName": {
+                        "Ref": "ClusterName"
+                    },
+                    "DBPassword": {
+                        "Ref": "DBPassword"
+                    },
+                    "DataCenterName": {
+                        "Fn::Select": ["2", {
+                            "Ref": "DataCenters"
+                        }]
+                    },
+                    "DataCenterSize": {
+                        "Fn::Select": ["2", {
+                            "Ref": "DCSizes"
+                        }]
+                    },
+                    "InstanceType": {
+                        "Fn::Select": ["2", {
+                            "Ref": "Instances"
+                        }]
+                    },
+                    "VolumeSize": {
+                        "Fn::Select": ["2", {
+                            "Ref": "VolumeSizes"
+                        }]
+                    },
+                    "VPC": {
+                        "Ref": "VPCId"
+                    },
+                    "AvailabilityZones": {
+                        "Fn::Join": [",", {
+                            "Ref": "AvailabilityZones"
+                        }]
+                    },
+                    "Subnets": {
+                        "Fn::Join": [",", {
+                            "Ref": "PrivateSubnets"
+                        }]
+                    },
+                    "SecurityCIDR": {
+                        "Ref": "PrivateSubnetCIDR"
+                    }
+                }
+            }
+        },
+        "DC3stack": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Condition": "CreateDC3",
+            "Properties": {
+                "TemplateURL": {
+                    "Fn::Sub": [
+                        "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/datacenter.template", {
+                            "S3Region": {
+                                "Fn::If": [
+                                    "GovCloudCondition",
+                                    "s3-us-gov-west-1",
+                                    "s3"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "Parameters": {
+                    "KeyName": {
+                        "Ref": "KeyName"
+                    },
+                    "Profile": {
+                        "Ref": "S3ProfileNode"
+                    },
+                    "S3Bucket": {
+                        "Ref": "S3Bucket"
+                    },
+                    "OpsCenterIP": {
+                        "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPrivateIP"]
+                    },
+                    "ClusterName": {
+                        "Ref": "ClusterName"
+                    },
+                    "DBPassword": {
+                        "Ref": "DBPassword"
+                    },
+                    "DataCenterName": {
+                        "Fn::Select": ["3", {
+                            "Ref": "DataCenters"
+                        }]
+                    },
+                    "DataCenterSize": {
+                        "Fn::Select": ["3", {
+                            "Ref": "DCSizes"
+                        }]
+                    },
+                    "InstanceType": {
+                        "Fn::Select": ["3", {
+                            "Ref": "Instances"
+                        }]
+                    },
+                    "VolumeSize": {
+                        "Fn::Select": ["3", {
+                            "Ref": "VolumeSizes"
+                        }]
+                    },
+                    "VPC": {
+                        "Ref": "VPCId"
+                    },
+                    "AvailabilityZones": {
+                        "Fn::Join": [",", {
+                            "Ref": "AvailabilityZones"
+                        }]
+                    },
+                    "Subnets": {
+                        "Fn::Join": [",", {
+                            "Ref": "PrivateSubnets"
+                        }]
+                    },
+                    "SecurityCIDR": {
+                        "Ref": "PrivateSubnetCIDR"
+                    }
+                }
+            }
         }
-      }
+    },
+    "Outputs": {
+        "OpsCenterURL": {
+            "Value": {
+                "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterURL"]
+            }
+        }
     }
-  },
-  "Outputs": {
-    "OpsCenterURL": {
-      "Value": {
-        "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterURL"]
-      }
-    }
-  }
 }

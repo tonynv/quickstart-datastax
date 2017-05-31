@@ -1,668 +1,675 @@
 {
-  "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "QS(5048) AWS CloudFormation Sample Template DataStax Enterprise: Create a DSE cluster with OpsCenter on EC2. This template demonstrates using the AWS CloudFormation bootstrap scripts to install the packages and files necessary to deploy DSE. **WARNING** This template creates Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
-  "Parameters": {
-    "KeyName": {
-      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
-      "Type": "AWS::EC2::KeyPair::KeyName",
-      "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
-    },
-    "OpsCenterIP": {
-      "Description": "Public IP of OpsCenter instance.",
-      "Type": "String",
-      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})",
-      "ConstraintDescription": "must be valid IP"
-    },
-    "ClusterName": {
-      "Description": "Name of DSE cluster",
-      "Type": "String"
-    },
-    "DBPassword": {
-      "Type": "String",
-      "Description": "C* password",
-      "NoEcho": true
-    },
-    "DataCenterName": {
-      "Description": "Name of DSE cluster",
-      "Type": "String"
-    },
-    "DataCenterSize": {
-      "Type": "Number",
-      "Description": "Number of nodes in datacenter",
-      "Default": "3"
-    },
-    "Profile": {
-      "Description": "InstanceProfile for OpsC instance",
-      "Type": "String"
-    },
-    "S3Bucket": {
-      "Description": "S3Bucket for public key passing",
-      "Type": "String"
-    },
-    "InstanceType": {
-      "Description": "Node EC2 instance type",
-      "Type": "String",
-      "Default": "m4.large",
-      "AllowedValues": ["t2.medium", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge"],
-      "ConstraintDescription": "must be a valid EC2 instance type."
-    },
-    "VolumeSize": {
-      "Type": "Number",
-      "Description": "EBS volume size in GB",
-      "Default": "1024"
-    },
-    "SecurityCIDR": {
-      "Description": "The IP address range covering node instances",
-      "Type": "String",
-      "MinLength": "9",
-      "MaxLength": "18",
-      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
-      "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
-    },
-    "AvailabilityZones": {
-      "Type": "CommaDelimitedList",
-      "Description": "List of AZs in VPC"
-    },
-    "VPC": {
-      "Type": "AWS::EC2::VPC::Id",
-      "Description": "VPC id"
-    },
-    "Subnets": {
-      "Type": "CommaDelimitedList",
-      "Description": "List of subnet ids to deploy nodes into"
-    }
-  },
-  "Mappings": {
-    "AWSInstanceType2Arch": {
-      "t1.micro": {
-        "Arch": "PV64"
-      },
-      "t2.nano": {
-        "Arch": "HVM64"
-      },
-      "t2.micro": {
-        "Arch": "HVM64"
-      },
-      "t2.small": {
-        "Arch": "HVM64"
-      },
-      "t2.medium": {
-        "Arch": "HVM64"
-      },
-      "t2.large": {
-        "Arch": "HVM64"
-      },
-      "m1.small": {
-        "Arch": "PV64"
-      },
-      "m1.medium": {
-        "Arch": "PV64"
-      },
-      "m1.large": {
-        "Arch": "PV64"
-      },
-      "m1.xlarge": {
-        "Arch": "PV64"
-      },
-      "m2.xlarge": {
-        "Arch": "PV64"
-      },
-      "m2.2xlarge": {
-        "Arch": "PV64"
-      },
-      "m2.4xlarge": {
-        "Arch": "PV64"
-      },
-      "m3.medium": {
-        "Arch": "HVM64"
-      },
-      "m3.large": {
-        "Arch": "HVM64"
-      },
-      "m3.xlarge": {
-        "Arch": "HVM64"
-      },
-      "m3.2xlarge": {
-        "Arch": "HVM64"
-      },
-      "m4.large": {
-        "Arch": "HVM64"
-      },
-      "m4.xlarge": {
-        "Arch": "HVM64"
-      },
-      "m4.2xlarge": {
-        "Arch": "HVM64"
-      },
-      "m4.4xlarge": {
-        "Arch": "HVM64"
-      },
-      "m4.10xlarge": {
-        "Arch": "HVM64"
-      },
-      "c1.medium": {
-        "Arch": "PV64"
-      },
-      "c1.xlarge": {
-        "Arch": "PV64"
-      },
-      "c3.large": {
-        "Arch": "HVM64"
-      },
-      "c3.xlarge": {
-        "Arch": "HVM64"
-      },
-      "c3.2xlarge": {
-        "Arch": "HVM64"
-      },
-      "c3.4xlarge": {
-        "Arch": "HVM64"
-      },
-      "c3.8xlarge": {
-        "Arch": "HVM64"
-      },
-      "c4.large": {
-        "Arch": "HVM64"
-      },
-      "c4.xlarge": {
-        "Arch": "HVM64"
-      },
-      "c4.2xlarge": {
-        "Arch": "HVM64"
-      },
-      "c4.4xlarge": {
-        "Arch": "HVM64"
-      },
-      "c4.8xlarge": {
-        "Arch": "HVM64"
-      },
-      "g2.2xlarge": {
-        "Arch": "HVMG2"
-      },
-      "g2.8xlarge": {
-        "Arch": "HVMG2"
-      },
-      "r3.large": {
-        "Arch": "HVM64"
-      },
-      "r3.xlarge": {
-        "Arch": "HVM64"
-      },
-      "r3.2xlarge": {
-        "Arch": "HVM64"
-      },
-      "r3.4xlarge": {
-        "Arch": "HVM64"
-      },
-      "r3.8xlarge": {
-        "Arch": "HVM64"
-      },
-      "i2.xlarge": {
-        "Arch": "HVM64"
-      },
-      "i2.2xlarge": {
-        "Arch": "HVM64"
-      },
-      "i2.4xlarge": {
-        "Arch": "HVM64"
-      },
-      "i2.8xlarge": {
-        "Arch": "HVM64"
-      },
-      "d2.xlarge": {
-        "Arch": "HVM64"
-      },
-      "d2.2xlarge": {
-        "Arch": "HVM64"
-      },
-      "d2.4xlarge": {
-        "Arch": "HVM64"
-      },
-      "d2.8xlarge": {
-        "Arch": "HVM64"
-      },
-      "hi1.4xlarge": {
-        "Arch": "HVM64"
-      },
-      "hs1.8xlarge": {
-        "Arch": "HVM64"
-      },
-      "cr1.8xlarge": {
-        "Arch": "HVM64"
-      },
-      "cc2.8xlarge": {
-        "Arch": "HVM64"
-      }
-    },
-    "AWSInstanceType2NATArch": {
-      "t1.micro": {
-        "Arch": "NATPV64"
-      },
-      "t2.nano": {
-        "Arch": "NATHVM64"
-      },
-      "t2.micro": {
-        "Arch": "NATHVM64"
-      },
-      "t2.small": {
-        "Arch": "NATHVM64"
-      },
-      "t2.medium": {
-        "Arch": "NATHVM64"
-      },
-      "t2.large": {
-        "Arch": "NATHVM64"
-      },
-      "m1.small": {
-        "Arch": "NATPV64"
-      },
-      "m1.medium": {
-        "Arch": "NATPV64"
-      },
-      "m1.large": {
-        "Arch": "NATPV64"
-      },
-      "m1.xlarge": {
-        "Arch": "NATPV64"
-      },
-      "m2.xlarge": {
-        "Arch": "NATPV64"
-      },
-      "m2.2xlarge": {
-        "Arch": "NATPV64"
-      },
-      "m2.4xlarge": {
-        "Arch": "NATPV64"
-      },
-      "m3.medium": {
-        "Arch": "NATHVM64"
-      },
-      "m3.large": {
-        "Arch": "NATHVM64"
-      },
-      "m3.xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "m3.2xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "m4.large": {
-        "Arch": "NATHVM64"
-      },
-      "m4.xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "m4.2xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "m4.4xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "m4.10xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "c1.medium": {
-        "Arch": "NATPV64"
-      },
-      "c1.xlarge": {
-        "Arch": "NATPV64"
-      },
-      "c3.large": {
-        "Arch": "NATHVM64"
-      },
-      "c3.xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "c3.2xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "c3.4xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "c3.8xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "c4.large": {
-        "Arch": "NATHVM64"
-      },
-      "c4.xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "c4.2xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "c4.4xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "c4.8xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "g2.2xlarge": {
-        "Arch": "NATHVMG2"
-      },
-      "g2.8xlarge": {
-        "Arch": "NATHVMG2"
-      },
-      "r3.large": {
-        "Arch": "NATHVM64"
-      },
-      "r3.xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "r3.2xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "r3.4xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "r3.8xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "i2.xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "i2.2xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "i2.4xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "i2.8xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "d2.xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "d2.2xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "d2.4xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "d2.8xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "hi1.4xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "hs1.8xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "cr1.8xlarge": {
-        "Arch": "NATHVM64"
-      },
-      "cc2.8xlarge": {
-        "Arch": "NATHVM64"
-      }
-    },
-    "AWSRegionArch2AMI": {
-      "us-east-1": {
-        "HVM64": "ami-feb6fee9"
-      },
-      "us-west-2": {
-        "HVM64": "ami-01eb3061"
-      },
-      "us-west-1": {
-        "HVM64": "ami-36094156"
-      }
-    }
-
-  },
-  "Resources": {
-    "CassandraGroup": {
-      "Type": "AWS::AutoScaling::AutoScalingGroup",
-      "Properties": {
-        "AvailabilityZones": {
-          "Ref": "AvailabilityZones"
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "QS(5048) AWS CloudFormation Sample Template DataStax Enterprise: Create a DSE cluster with OpsCenter on EC2. This template demonstrates using the AWS CloudFormation bootstrap scripts to install the packages and files necessary to deploy DSE. **WARNING** This template creates Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
+    "Parameters": {
+        "KeyName": {
+            "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+            "Type": "AWS::EC2::KeyPair::KeyName",
+            "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
         },
-        "LaunchConfigurationName": {
-          "Ref": "CassandraLaunchConfig"
+        "OpsCenterIP": {
+            "Description": "Public IP of OpsCenter instance.",
+            "Type": "String",
+            "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})",
+            "ConstraintDescription": "must be valid IP"
         },
-        "MinSize": {
-          "Ref": "DataCenterSize"
+        "ClusterName": {
+            "Description": "Name of DSE cluster",
+            "Type": "String"
         },
-        "MaxSize": {
-          "Ref": "DataCenterSize"
+        "DBPassword": {
+            "Type": "String",
+            "Description": "C* password",
+            "NoEcho": true
         },
-        "VPCZoneIdentifier": {
-          "Ref": "Subnets"
-        }
-      },
-      "CreationPolicy": {
-        "ResourceSignal": {
-          "Timeout": "PT30M",
-          "Count": "1"
-        }
-      },
-      "UpdatePolicy": {
-        "AutoScalingRollingUpdate": {
-          "MinInstancesInService": "1",
-          "MaxBatchSize": "1",
-          "PauseTime": "PT30M",
-          "WaitOnResourceSignals": "true"
-        }
-      }
-    },
-    "CassandraLaunchConfig": {
-      "Type": "AWS::AutoScaling::LaunchConfiguration",
-      "Metadata": {
-        "AWS::CloudFormation::Init": {
-          "configSets": {
-            "full_install": ["install_cfn", "setup_disk", "add_node"]
-          },
-          "install_cfn": {
-            "files": {
-              "/etc/cfn/cfn-hup.conf": {
-                "content": {
-                  "Fn::Join": ["", [
-                    "[main]\n",
-                    "stack=", {
-                      "Ref": "AWS::StackId"
-                    }, "\n",
-                    "region=", {
-                      "Ref": "AWS::Region"
-                    }, "\n"
-                  ]]
-                },
-                "mode": "000400",
-                "owner": "root",
-                "group": "root"
-              },
-
-              "/etc/cfn/hooks.d/cfn-auto-reloader.conf": {
-                "content": {
-                  "Fn::Join": ["", [
-                    "[cfn-auto-reloader-hook]\n",
-                    "triggers=post.update\n",
-                    "path=Resources.WebServer.Metadata.AWS::CloudFormation::Init\n",
-                    "action=/usr/local/bin/cfn-init -v ",
-                    "         --stack ", {
-                      "Ref": "AWS::StackName"
-                    },
-                    "         --resource WebServer ",
-                    "         --configsets full_install ",
-                    "         --region ", {
-                      "Ref": "AWS::Region"
-                    }, "\n",
-                    "runas=root\n"
-                  ]]
-                }
-              }
-            },
-            "services": {
-              "sysvinit": {
-                "cfn-hup": {
-                  "enabled": "true",
-                  "ensureRunning": "true",
-                  "files": ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]
-                }
-              }
-            }
-          },
-          "setup_disk": {
-            "commands": {
-              "01_add_node": {
-                "command": {
-                  "Fn::Join": ["", [
-                    "#!/bin/bash -xe\n",
-                    "mkfs -t ext4 /dev/xvdf \n",
-                    "mkdir -p /data/cassandra \n",
-                    "mount /dev/xvdf /data/cassandra \n",
-                    "mkdir /data/cassandra/data \n",
-                    "mkdir /data/cassandra/commitlog \n",
-                    "mkdir /data/cassandra/saved_caches \n",
-                    "useradd cassandra \n",
-                    "chown -R cassandra:cassandra /data/cassandra \n",
-                    "cp /etc/fstab /etc/fstab.bak \n",
-                    "echo \"/dev/xvdf       /data/cassandra   ext4    defaults,nofail        0       2\" >> /etc/fstab \n"
-                  ]]
-                }
-              }
-            }
-          },
-          "add_node": {
-            "commands": {
-              "01_add_node": {
-                "command": {
-                  "Fn::Join": ["", [
-                    "#!/usr/bin/env bash -e \n",
-                    "apt-get -y install awscli unzip\n",
-                    "pip install requests \n",
-                    "cd ~ubuntu \n",
-                    "n=1 \n",
-                    "until [ $n -ge 8 ] \n",
-                    "do \n",
-                    "aws s3 cp s3://", {
-                      "Ref": "S3Bucket"
-                    }, "/lcm.pem.pub .ssh/ && break \n",
-                    "echo \"S3 download try $n failed, sleeping...\" \n",
-                    "n=$[$n+1] \n",
-                    "sleep 15s \n",
-                    "done \n",
-                    "cat .ssh/lcm.pem.pub >> .ssh/authorized_keys \n",
-                    "release=\"5.5.4\" \n",
-                    "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.zip \n",
-                    "unzip $release.zip \n",
-                    "cd install-datastax-ubuntu-$release/bin/lcm \n",
-                    "privip=$(curl http://169.254.169.254/latest/meta-data/local-ipv4) \n",
-                    "nodeid=$(curl http://169.254.169.254/latest/meta-data/instance-id) \n",
-                    "rack=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone) \n",
-                    "echo 'Calling addNode.py...' \n",
-                    "./addNode.py ",
-                    " --opsc-ip ", {
-                      "Ref": "OpsCenterIP"
-                    },
-                    " --clustername '", {
-                      "Ref": "ClusterName"
-                    },
-                    "' --dcsize ", {
-                      "Ref": "DataCenterSize"
-                    },
-                    " --dcname '", {
-                      "Ref": "DataCenterName"
-                    },
-                    "' --rack $rack",
-                    " --pubip $privip",
-                    " --privip $privip",
-                    " --nodeid $nodeid",
-                    " --dbpasswd '", {
-                      "Ref": "DBPassword"
-                    }, "' \n",
-                    "./waitForJobs.py ",
-                    " --opsc-ip ", {
-                      "Ref": "OpsCenterIP"
-                    }, " \n",
-                  ]]
-                }
-              }
-            }
-          }
-        }
-      },
-      "Properties": {
-        "ImageId": {
-          "Fn::FindInMap": ["AWSRegionArch2AMI", {
-            "Ref": "AWS::Region"
-          }, {
-            "Fn::FindInMap": ["AWSInstanceType2Arch", {
-              "Ref": "InstanceType"
-            }, "Arch"]
-          }]
+        "DataCenterName": {
+            "Description": "Name of DSE cluster",
+            "Type": "String"
+        },
+        "DataCenterSize": {
+            "Type": "Number",
+            "Description": "Number of nodes in datacenter",
+            "Default": "3"
+        },
+        "Profile": {
+            "Description": "InstanceProfile for OpsC instance",
+            "Type": "String"
+        },
+        "S3Bucket": {
+            "Description": "S3Bucket for public key passing",
+            "Type": "String"
         },
         "InstanceType": {
-          "Ref": "InstanceType"
+            "Description": "Node EC2 instance type",
+            "Type": "String",
+            "Default": "m4.large",
+            "AllowedValues": ["t2.medium", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge"],
+            "ConstraintDescription": "must be a valid EC2 instance type."
         },
-        "IamInstanceProfile": {
-          "Ref": "Profile"
+        "VolumeSize": {
+            "Type": "Number",
+            "Description": "EBS volume size in GB",
+            "Default": "1024"
         },
-        "SecurityGroups": [{
-          "Ref": "DSESecurityGroup"
-        }],
-        "KeyName": {
-          "Ref": "KeyName"
+        "SecurityCIDR": {
+            "Description": "The IP address range covering node instances",
+            "Type": "String",
+            "MinLength": "9",
+            "MaxLength": "18",
+            "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+            "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
         },
-        "BlockDeviceMappings": [{
-          "DeviceName": "/dev/xvdf",
-          "Ebs": {
-            "VolumeType": "gp2",
-            "VolumeSize": {
-              "Ref": "VolumeSize"
-            }
-          }
-        }],
-        "UserData": {
-          "Fn::Base64": {
-            "Fn::Join": ["", [
-              "#!/bin/bash -xe\n",
-              "apt-get update\n",
-              "apt-get -y install python python-setuptools python-pip\n",
-              "n=1 \n",
-              "until [ $n -ge 8 ] \n",
-              "do \n",
-              "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz && break \n",
-              "echo \"pip install cfn-bootstrap try $n failed, retry...\" \n",
-              "n=$[$n+1] \n",
-              "done \n",
-              "ln -s /usr/local/init/ubuntu/cfn-hup /etc/init.d/cfn-hup \n",
-              "chmod 775 /usr/local/init/ubuntu/cfn-hup \n",
-              "update-rc.d cfn-hup defaults \n",
-              "/usr/local/bin/cfn-init -v ",
-              "         --stack ", {
-                "Ref": "AWS::StackId"
-              },
-              "         --resource CassandraLaunchConfig ",
-              "         --configsets full_install ",
-              "         --region ", {
-                "Ref": "AWS::Region"
-              }, "\n",
-              "/usr/local/bin/cfn-signal -e $? ",
-              "         --stack ", {
-                "Ref": "AWS::StackId"
-              },
-              "         --resource CassandraGroup ",
-              "         --region ", {
-                "Ref": "AWS::Region"
-              }, "\n"
-            ]]
-          }
+        "AvailabilityZones": {
+            "Type": "CommaDelimitedList",
+            "Description": "List of AZs in VPC"
+        },
+        "VPC": {
+            "Type": "AWS::EC2::VPC::Id",
+            "Description": "VPC id"
+        },
+        "Subnets": {
+            "Type": "CommaDelimitedList",
+            "Description": "List of subnet ids to deploy nodes into"
         }
-      },
-      "CreationPolicy": {
-        "ResourceSignal": {
-          "Timeout": "PT30M"
-        }
-      }
     },
+    "Mappings": {
+        "AWSInstanceType2Arch": {
+            "t1.micro": {
+                "Arch": "PV64"
+            },
+            "t2.nano": {
+                "Arch": "HVM64"
+            },
+            "t2.micro": {
+                "Arch": "HVM64"
+            },
+            "t2.small": {
+                "Arch": "HVM64"
+            },
+            "t2.medium": {
+                "Arch": "HVM64"
+            },
+            "t2.large": {
+                "Arch": "HVM64"
+            },
+            "m1.small": {
+                "Arch": "PV64"
+            },
+            "m1.medium": {
+                "Arch": "PV64"
+            },
+            "m1.large": {
+                "Arch": "PV64"
+            },
+            "m1.xlarge": {
+                "Arch": "PV64"
+            },
+            "m2.xlarge": {
+                "Arch": "PV64"
+            },
+            "m2.2xlarge": {
+                "Arch": "PV64"
+            },
+            "m2.4xlarge": {
+                "Arch": "PV64"
+            },
+            "m3.medium": {
+                "Arch": "HVM64"
+            },
+            "m3.large": {
+                "Arch": "HVM64"
+            },
+            "m3.xlarge": {
+                "Arch": "HVM64"
+            },
+            "m3.2xlarge": {
+                "Arch": "HVM64"
+            },
+            "m4.large": {
+                "Arch": "HVM64"
+            },
+            "m4.xlarge": {
+                "Arch": "HVM64"
+            },
+            "m4.2xlarge": {
+                "Arch": "HVM64"
+            },
+            "m4.4xlarge": {
+                "Arch": "HVM64"
+            },
+            "m4.10xlarge": {
+                "Arch": "HVM64"
+            },
+            "c1.medium": {
+                "Arch": "PV64"
+            },
+            "c1.xlarge": {
+                "Arch": "PV64"
+            },
+            "c3.large": {
+                "Arch": "HVM64"
+            },
+            "c3.xlarge": {
+                "Arch": "HVM64"
+            },
+            "c3.2xlarge": {
+                "Arch": "HVM64"
+            },
+            "c3.4xlarge": {
+                "Arch": "HVM64"
+            },
+            "c3.8xlarge": {
+                "Arch": "HVM64"
+            },
+            "c4.large": {
+                "Arch": "HVM64"
+            },
+            "c4.xlarge": {
+                "Arch": "HVM64"
+            },
+            "c4.2xlarge": {
+                "Arch": "HVM64"
+            },
+            "c4.4xlarge": {
+                "Arch": "HVM64"
+            },
+            "c4.8xlarge": {
+                "Arch": "HVM64"
+            },
+            "g2.2xlarge": {
+                "Arch": "HVMG2"
+            },
+            "g2.8xlarge": {
+                "Arch": "HVMG2"
+            },
+            "r3.large": {
+                "Arch": "HVM64"
+            },
+            "r3.xlarge": {
+                "Arch": "HVM64"
+            },
+            "r3.2xlarge": {
+                "Arch": "HVM64"
+            },
+            "r3.4xlarge": {
+                "Arch": "HVM64"
+            },
+            "r3.8xlarge": {
+                "Arch": "HVM64"
+            },
+            "i2.xlarge": {
+                "Arch": "HVM64"
+            },
+            "i2.2xlarge": {
+                "Arch": "HVM64"
+            },
+            "i2.4xlarge": {
+                "Arch": "HVM64"
+            },
+            "i2.8xlarge": {
+                "Arch": "HVM64"
+            },
+            "d2.xlarge": {
+                "Arch": "HVM64"
+            },
+            "d2.2xlarge": {
+                "Arch": "HVM64"
+            },
+            "d2.4xlarge": {
+                "Arch": "HVM64"
+            },
+            "d2.8xlarge": {
+                "Arch": "HVM64"
+            },
+            "hi1.4xlarge": {
+                "Arch": "HVM64"
+            },
+            "hs1.8xlarge": {
+                "Arch": "HVM64"
+            },
+            "cr1.8xlarge": {
+                "Arch": "HVM64"
+            },
+            "cc2.8xlarge": {
+                "Arch": "HVM64"
+            }
+        },
+        "AWSInstanceType2NATArch": {
+            "t1.micro": {
+                "Arch": "NATPV64"
+            },
+            "t2.nano": {
+                "Arch": "NATHVM64"
+            },
+            "t2.micro": {
+                "Arch": "NATHVM64"
+            },
+            "t2.small": {
+                "Arch": "NATHVM64"
+            },
+            "t2.medium": {
+                "Arch": "NATHVM64"
+            },
+            "t2.large": {
+                "Arch": "NATHVM64"
+            },
+            "m1.small": {
+                "Arch": "NATPV64"
+            },
+            "m1.medium": {
+                "Arch": "NATPV64"
+            },
+            "m1.large": {
+                "Arch": "NATPV64"
+            },
+            "m1.xlarge": {
+                "Arch": "NATPV64"
+            },
+            "m2.xlarge": {
+                "Arch": "NATPV64"
+            },
+            "m2.2xlarge": {
+                "Arch": "NATPV64"
+            },
+            "m2.4xlarge": {
+                "Arch": "NATPV64"
+            },
+            "m3.medium": {
+                "Arch": "NATHVM64"
+            },
+            "m3.large": {
+                "Arch": "NATHVM64"
+            },
+            "m3.xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "m3.2xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "m4.large": {
+                "Arch": "NATHVM64"
+            },
+            "m4.xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "m4.2xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "m4.4xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "m4.10xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "c1.medium": {
+                "Arch": "NATPV64"
+            },
+            "c1.xlarge": {
+                "Arch": "NATPV64"
+            },
+            "c3.large": {
+                "Arch": "NATHVM64"
+            },
+            "c3.xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "c3.2xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "c3.4xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "c3.8xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "c4.large": {
+                "Arch": "NATHVM64"
+            },
+            "c4.xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "c4.2xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "c4.4xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "c4.8xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "g2.2xlarge": {
+                "Arch": "NATHVMG2"
+            },
+            "g2.8xlarge": {
+                "Arch": "NATHVMG2"
+            },
+            "r3.large": {
+                "Arch": "NATHVM64"
+            },
+            "r3.xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "r3.2xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "r3.4xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "r3.8xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "i2.xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "i2.2xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "i2.4xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "i2.8xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "d2.xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "d2.2xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "d2.4xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "d2.8xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "hi1.4xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "hs1.8xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "cr1.8xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "cc2.8xlarge": {
+                "Arch": "NATHVM64"
+            }
+        },
+        "AWSRegionArch2AMI": {
+            "us-east-1": {
+                "HVM64": "ami-feb6fee9"
+            },
+            "us-west-2": {
+                "HVM64": "ami-01eb3061"
+            },
+            "us-west-1": {
+                "HVM64": "ami-36094156"
+            }
+        }
 
-    "DSESecurityGroup" : {
-      "Type" : "AWS::EC2::SecurityGroup",
-      "Properties" : {
-        "GroupDescription" : "Enable HTTP(S), SSH access, and DSE ports",
-        "VpcId": {"Ref" : "VPC"},
-        "SecurityGroupIngress" : [
-          {"IpProtocol" : "tcp", "FromPort" : "1", "ToPort" : "65535", "CidrIp" : { "Ref" : "SecurityCIDR"}}
-       ]
-      }
+    },
+    "Resources": {
+        "CassandraGroup": {
+            "Type": "AWS::AutoScaling::AutoScalingGroup",
+            "Properties": {
+                "AvailabilityZones": {
+                    "Ref": "AvailabilityZones"
+                },
+                "LaunchConfigurationName": {
+                    "Ref": "CassandraLaunchConfig"
+                },
+                "MinSize": {
+                    "Ref": "DataCenterSize"
+                },
+                "MaxSize": {
+                    "Ref": "DataCenterSize"
+                },
+                "VPCZoneIdentifier": {
+                    "Ref": "Subnets"
+                }
+            },
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT30M",
+                    "Count": "1"
+                }
+            },
+            "UpdatePolicy": {
+                "AutoScalingRollingUpdate": {
+                    "MinInstancesInService": "1",
+                    "MaxBatchSize": "1",
+                    "PauseTime": "PT30M",
+                    "WaitOnResourceSignals": "true"
+                }
+            }
+        },
+        "CassandraLaunchConfig": {
+            "Type": "AWS::AutoScaling::LaunchConfiguration",
+            "Metadata": {
+                "AWS::CloudFormation::Init": {
+                    "configSets": {
+                        "full_install": ["install_cfn", "setup_disk", "add_node"]
+                    },
+                    "install_cfn": {
+                        "files": {
+                            "/etc/cfn/cfn-hup.conf": {
+                                "content": {
+                                    "Fn::Join": ["", [
+                                        "[main]\n",
+                                        "stack=", {
+                                            "Ref": "AWS::StackId"
+                                        }, "\n",
+                                        "region=", {
+                                            "Ref": "AWS::Region"
+                                        }, "\n"
+                                    ]]
+                                },
+                                "mode": "000400",
+                                "owner": "root",
+                                "group": "root"
+                            },
+
+                            "/etc/cfn/hooks.d/cfn-auto-reloader.conf": {
+                                "content": {
+                                    "Fn::Join": ["", [
+                                        "[cfn-auto-reloader-hook]\n",
+                                        "triggers=post.update\n",
+                                        "path=Resources.WebServer.Metadata.AWS::CloudFormation::Init\n",
+                                        "action=/usr/local/bin/cfn-init -v ",
+                                        "         --stack ", {
+                                            "Ref": "AWS::StackName"
+                                        },
+                                        "         --resource WebServer ",
+                                        "         --configsets full_install ",
+                                        "         --region ", {
+                                            "Ref": "AWS::Region"
+                                        }, "\n",
+                                        "runas=root\n"
+                                    ]]
+                                }
+                            }
+                        },
+                        "services": {
+                            "sysvinit": {
+                                "cfn-hup": {
+                                    "enabled": "true",
+                                    "ensureRunning": "true",
+                                    "files": ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]
+                                }
+                            }
+                        }
+                    },
+                    "setup_disk": {
+                        "commands": {
+                            "01_add_node": {
+                                "command": {
+                                    "Fn::Join": ["", [
+                                        "#!/bin/bash -xe\n",
+                                        "mkfs -t ext4 /dev/xvdf \n",
+                                        "mkdir -p /data/cassandra \n",
+                                        "mount /dev/xvdf /data/cassandra \n",
+                                        "mkdir /data/cassandra/data \n",
+                                        "mkdir /data/cassandra/commitlog \n",
+                                        "mkdir /data/cassandra/saved_caches \n",
+                                        "useradd cassandra \n",
+                                        "chown -R cassandra:cassandra /data/cassandra \n",
+                                        "cp /etc/fstab /etc/fstab.bak \n",
+                                        "echo \"/dev/xvdf       /data/cassandra   ext4    defaults,nofail        0       2\" >> /etc/fstab \n"
+                                    ]]
+                                }
+                            }
+                        }
+                    },
+                    "add_node": {
+                        "commands": {
+                            "01_add_node": {
+                                "command": {
+                                    "Fn::Join": ["", [
+                                        "#!/usr/bin/env bash -e \n",
+                                        "apt-get -y install awscli unzip\n",
+                                        "pip install requests \n",
+                                        "cd ~ubuntu \n",
+                                        "n=1 \n",
+                                        "until [ $n -ge 8 ] \n",
+                                        "do \n",
+                                        "aws s3 cp s3://", {
+                                            "Ref": "S3Bucket"
+                                        }, "/lcm.pem.pub .ssh/ && break \n",
+                                        "echo \"S3 download try $n failed, sleeping...\" \n",
+                                        "n=$[$n+1] \n",
+                                        "sleep 15s \n",
+                                        "done \n",
+                                        "cat .ssh/lcm.pem.pub >> .ssh/authorized_keys \n",
+                                        "release=\"5.5.4\" \n",
+                                        "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.zip \n",
+                                        "unzip $release.zip \n",
+                                        "cd install-datastax-ubuntu-$release/bin/lcm \n",
+                                        "privip=$(curl http://169.254.169.254/latest/meta-data/local-ipv4) \n",
+                                        "nodeid=$(curl http://169.254.169.254/latest/meta-data/instance-id) \n",
+                                        "rack=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone) \n",
+                                        "echo 'Calling addNode.py...' \n",
+                                        "./addNode.py ",
+                                        " --opsc-ip ", {
+                                            "Ref": "OpsCenterIP"
+                                        },
+                                        " --clustername '", {
+                                            "Ref": "ClusterName"
+                                        },
+                                        "' --dcsize ", {
+                                            "Ref": "DataCenterSize"
+                                        },
+                                        " --dcname '", {
+                                            "Ref": "DataCenterName"
+                                        },
+                                        "' --rack $rack",
+                                        " --pubip $privip",
+                                        " --privip $privip",
+                                        " --nodeid $nodeid",
+                                        " --dbpasswd '", {
+                                            "Ref": "DBPassword"
+                                        }, "' \n",
+                                        "./waitForJobs.py ",
+                                        " --opsc-ip ", {
+                                            "Ref": "OpsCenterIP"
+                                        }, " \n"
+                                    ]]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Properties": {
+                "ImageId": {
+                    "Fn::FindInMap": ["AWSRegionArch2AMI", {
+                        "Ref": "AWS::Region"
+                    }, {
+                        "Fn::FindInMap": ["AWSInstanceType2Arch", {
+                            "Ref": "InstanceType"
+                        }, "Arch"]
+                    }]
+                },
+                "InstanceType": {
+                    "Ref": "InstanceType"
+                },
+                "IamInstanceProfile": {
+                    "Ref": "Profile"
+                },
+                "SecurityGroups": [{
+                    "Ref": "DSESecurityGroup"
+                }],
+                "KeyName": {
+                    "Ref": "KeyName"
+                },
+                "BlockDeviceMappings": [{
+                    "DeviceName": "/dev/xvdf",
+                    "Ebs": {
+                        "VolumeType": "gp2",
+                        "VolumeSize": {
+                            "Ref": "VolumeSize"
+                        }
+                    }
+                }],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": ["", [
+                            "#!/bin/bash -xe\n",
+                            "apt-get update\n",
+                            "apt-get -y install python python-setuptools python-pip\n",
+                            "n=1 \n",
+                            "until [ $n -ge 8 ] \n",
+                            "do \n",
+                            "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz && break \n",
+                            "echo \"pip install cfn-bootstrap try $n failed, retry...\" \n",
+                            "n=$[$n+1] \n",
+                            "done \n",
+                            "ln -s /usr/local/init/ubuntu/cfn-hup /etc/init.d/cfn-hup \n",
+                            "chmod 775 /usr/local/init/ubuntu/cfn-hup \n",
+                            "update-rc.d cfn-hup defaults \n",
+                            "/usr/local/bin/cfn-init -v ",
+                            "         --stack ", {
+                                "Ref": "AWS::StackId"
+                            },
+                            "         --resource CassandraLaunchConfig ",
+                            "         --configsets full_install ",
+                            "         --region ", {
+                                "Ref": "AWS::Region"
+                            }, "\n",
+                            "/usr/local/bin/cfn-signal -e $? ",
+                            "         --stack ", {
+                                "Ref": "AWS::StackId"
+                            },
+                            "         --resource CassandraGroup ",
+                            "         --region ", {
+                                "Ref": "AWS::Region"
+                            }, "\n"
+                        ]]
+                    }
+                }
+            },
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT30M"
+                }
+            }
+        },
+
+        "DSESecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Enable HTTP(S), SSH access, and DSE ports",
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "SecurityGroupIngress": [{
+                    "IpProtocol": "tcp",
+                    "FromPort": "1",
+                    "ToPort": "65535",
+                    "CidrIp": {
+                        "Ref": "SecurityCIDR"
+                    }
+                }]
+            }
+        }
     }
-  }
 }

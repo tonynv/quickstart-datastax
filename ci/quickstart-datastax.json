@@ -28,4 +28,13 @@
 }, {
   "ParameterKey": "DCSizes",
   "ParameterValue": "5,4,3,2"
+}, {
+  "ParameterKey": "DSAcademyUser",
+  "ParameterValue": "DSAcademyUsername"
+}, {
+  "ParameterKey": "DSAcademyPW",
+  "ParameterValue": "$[taskcat_genpass_8S]"
+},{
+  "ParameterKey": "AccessLocation",
+  "ParameterValue": "1.2.3.4/0"
 }]

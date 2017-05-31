@@ -25,7 +25,23 @@
 }, {
   "ParameterKey": "VolumeSizes",
   "ParameterValue": "256,256,256,256"
-}, {
+},{
   "ParameterKey": "DCSizes",
   "ParameterValue": "5,4,3,2"
+},{
+  "ParameterKey": "DSAcademyUser",
+  "ParameterValue": "DSAcademyUsername"
+}, {
+  "ParameterKey": "DSAcademyPW",
+  "ParameterValue": "$[taskcat_genpass_8S]"
+},{
+  "ParameterKey": "AccessLocation",
+  "ParameterValue": "0.0.0.0/0"
+},{
+  "ParameterKey": "QSS3BucketName",
+  "ParameterValue": "tonynv"
+},{
+  "ParameterKey": "QSS3KeyPrefix",
+  "ParameterValue": "quickstart-datastax/"
 }]
+
