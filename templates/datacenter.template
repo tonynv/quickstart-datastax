@@ -395,18 +395,26 @@
                 "Arch": "NATHVM64"
             }
         },
-        "AWSRegionArch2AMI": {
+        "AWSAMIRegionMap": {
+            "AMI": {
+                "US1604HVM": "ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-20170414"
+            },
             "us-east-1": {
-                "HVM64": "ami-feb6fee9"
+                "US1604HVM": "ami-80861296"
+            },
+            "us-east-2": {
+                "US1604HVM": "ami-618fab04"
+            },
+            "ap-southeast-2": {
+                "US1604HVM": "ami-96666ff5"
+            },
+            "eu-west-1": {
+                "US1604HVM": "ami-a8d2d7ce"
             },
             "us-west-2": {
-                "HVM64": "ami-01eb3061"
-            },
-            "us-west-1": {
-                "HVM64": "ami-36094156"
+                "US1604HVM": "ami-efd0428f"
             }
         }
-
     },
     "Resources": {
         "CassandraGroup": {
@@ -581,13 +589,13 @@
             },
             "Properties": {
                 "ImageId": {
-                    "Fn::FindInMap": ["AWSRegionArch2AMI", {
-                        "Ref": "AWS::Region"
-                    }, {
-                        "Fn::FindInMap": ["AWSInstanceType2Arch", {
-                            "Ref": "InstanceType"
-                        }, "Arch"]
-                    }]
+                    "Fn::FindInMap": [
+                        "AWSAMIRegionMap",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "US1604HVM"
+                    ]
                 },
                 "InstanceType": {
                     "Ref": "InstanceType"
