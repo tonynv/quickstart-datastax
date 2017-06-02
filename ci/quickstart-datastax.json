@@ -1,6 +1,6 @@
 [{
   "ParameterKey": "KeyName",
-  "ParameterValue": "tonynv"
+  "ParameterValue": "cikey"
 }, {
   "ParameterKey": "AvailabilityZones",
   "ParameterValue": "$[alfred_genaz_3]"
@@ -9,10 +9,10 @@
   "ParameterValue": "mycluster"
 }, {
   "ParameterKey": "DBPassword",
-  "ParameterValue": "$[alfred_genpass_8S]"
+  "ParameterValue": "$[alfred_genpass_8]"
 }, {
   "ParameterKey": "OpsCPassword",
-  "ParameterValue": "$[alfred_genpass_8S]"
+  "ParameterValue": "$[alfred_genpass_8]"
 }, {
   "ParameterKey": "NumberDCs",
   "ParameterValue": "4"
@@ -25,16 +25,17 @@
 }, {
   "ParameterKey": "VolumeSizes",
   "ParameterValue": "256,256,256,256"
-}, {
+},{
   "ParameterKey": "DCSizes",
   "ParameterValue": "5,4,3,2"
-}, {
+},{
   "ParameterKey": "DSAcademyUser",
   "ParameterValue": "DSAcademyUsername"
 }, {
   "ParameterKey": "DSAcademyPW",
-  "ParameterValue": "$[taskcat_genpass_8S]"
+  "ParameterValue": "$[alfred_genpass_8]"
 },{
   "ParameterKey": "AccessLocation",
-  "ParameterValue": "1.2.3.4/0"
+  "ParameterValue": "0.0.0.0/0"
 }]
+
