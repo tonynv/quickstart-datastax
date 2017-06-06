@@ -1,9 +1,11 @@
 # Changelog
 
-- switch to passing db password to all dc's
+- pass region to CLI s3 calls
 
 ---
 ## Previous Commits
+---
+- switch to passing db password to all dc's
 ---
 - split S3 role into specific OpsCenter and node roles
 ---

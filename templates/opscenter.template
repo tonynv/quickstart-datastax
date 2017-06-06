@@ -520,6 +520,8 @@
                                         "echo 'Generated lcm.pem and lcm.pem.pub' \n",
                                         "aws s3 cp lcm.pem.pub s3://", {
                                             "Ref": "S3Bucket"
+                                        }, " --region ", {
+                                          "Ref": "AWS::Region"
                                         }, " \n"
                                     ]]
                                 }
@@ -575,7 +577,9 @@
                                         }, " \n",
                                         "aws s3 rm s3://", {
                                             "Ref": "S3Bucket"
-                                        }, "/lcm.pem.pub \n",
+                                        }, "/lcm.pem.pub --region ", {
+                                          "Ref": "AWS::Region"
+                                        }, " \n",
                                         "cd ../opscenter/ \n",
                                         "./set_opsc_pw_https.sh '", {
                                             "Ref": "OpsCPassword"

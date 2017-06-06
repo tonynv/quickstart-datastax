@@ -542,7 +542,9 @@
                                         "do \n",
                                         "aws s3 cp s3://", {
                                             "Ref": "S3Bucket"
-                                        }, "/lcm.pem.pub .ssh/ && break \n",
+                                        }, "/lcm.pem.pub .ssh/ --region ", {
+                                          "Ref": "AWS::Region"
+                                        }, " && break \n",
                                         "echo \"S3 download try $n failed, sleeping...\" \n",
                                         "n=$[$n+1] \n",
                                         "sleep 15s \n",
