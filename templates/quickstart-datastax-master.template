@@ -60,7 +60,7 @@
                     "default": "DataStax Academy Password"
                 },
                 "NumberDCs": {
-                    "default": "Number of DataCenters"
+                    "default": "Number of Data Centers"
                 },
                 "OpsCPassword": {
                     "default": "OpsCenter Password"
