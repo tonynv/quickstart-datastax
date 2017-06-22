@@ -1,9 +1,11 @@
 # Changelog
 
-- pass region to CLI s3 calls
+- update parameter descriptions to match edited deployment guide
 
 ---
 ## Previous Commits
+---
+- pass region to CLI s3 calls
 ---
 - switch to passing db password to all dc's
 ---
