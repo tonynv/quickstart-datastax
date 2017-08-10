@@ -1,9 +1,14 @@
 # Changelog
 
-- update parameter descriptions to match edited deployment guide
-
+- change EIP declaration (failed in some accounts)
+- fix param description error
+- bump versions to DSE 5.1.2, OpsC 6.1.2
+- i3 instance type
+- fix cfn-auto-reloader.conf
 ---
 ## Previous Commits
+---
+- update parameter descriptions to match edited deployment guide
 ---
 - pass region to CLI s3 calls
 ---

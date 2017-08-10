@@ -141,12 +141,12 @@
             "Default": "m4.large"
         },
         "VolumeSizes": {
-            "Description": "The number of nodes to create for each DSE data center, separated by commas. The number of sizes in this array must match the NumberDCs parameter.",
+            "Description": "The EBS volume size, in GiB, for the nodes in each data center, separated by commas. The number of volume sizes in this array must match the NumberDCs parameter.",
             "Type": "List<Number>",
             "Default": "1024"
         },
         "DCSizes": {
-            "Description": "The EBS volume size, in GiB, for the nodes in each data center, separated by commas. The number of volume sizes in this array must match the NumberDCs parameter.",
+            "Description": "The number of nodes to create for each DSE data center, separated by commas. The number of sizes in this array must match the NumberDCs parameter.",
             "Type": "List<Number>",
             "Default": "3"
         },

@@ -409,7 +409,10 @@
     },
     "Resources": {
         "OpsCenterEIP": {
-            "Type": "AWS::EC2::EIP"
+            "Type": "AWS::EC2::EIP",
+            "Properties": {
+                "Domain": "vpc"
+            }
         },
         "IPAssoc": {
             "Type": "AWS::EC2::EIPAssociation",
@@ -417,9 +420,12 @@
                 "InstanceId": {
                     "Ref": "OpsCenterInstance"
                 },
-                "EIP": {
-                    "Ref": "OpsCenterEIP"
-                }
+                "AllocationId": {
+                    "Fn::GetAtt": [
+                        "OpsCenterEIP",
+                        "AllocationId"
+                    ]
+                },
             }
         },
         "OpsCenterWaitCondition": {
@@ -524,6 +530,7 @@
                                             "cd ~ubuntu \n",
                                             "apt-get -y install unzip \n",
                                             "release=\"5.5.4\" \n",
+                                            "export OPSC_VERSION='6.1.2' \n",
                                             "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.zip \n",
                                             "unzip $release.zip \n",
                                             "cd install-datastax-ubuntu-$release/bin \n",
@@ -585,7 +592,7 @@
                                                 "Ref": "ClusterName"
                                             },
                                             "\" ",
-                                            "--dsever '5.1.0' ",
+                                            "--dsever '5.1.2' ",
                                             "--repouser '",
                                             {
                                                 "Ref": "DSAcademyUser"

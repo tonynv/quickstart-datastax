@@ -53,9 +53,9 @@
                 "c4.xlarge",
                 "c4.2xlarge",
                 "c4.4xlarge",
-                "i2.xlarge",
-                "i2.2xlarge",
-                "i2.4xlarge"
+                "i3.xlarge",
+                "i3.2xlarge",
+                "i3.4xlarge"
             ],
             "ConstraintDescription": "must be a valid EC2 instance type."
         },
@@ -507,13 +507,13 @@
                                         [
                                             "[cfn-auto-reloader-hook]\n",
                                             "triggers=post.update\n",
-                                            "path=Resources.WebServer.Metadata.AWS::CloudFormation::Init\n",
+                                            "path=Resources.CassandraLaunchConfig.Metadata.AWS::CloudFormation::Init\n",
                                             "action=/usr/local/bin/cfn-init -v ",
                                             "         --stack ",
                                             {
                                                 "Ref": "AWS::StackName"
                                             },
-                                            "         --resource WebServer ",
+                                            "         --resource CassandraLaunchConfig ",
                                             "         --configsets full_install ",
                                             "         --region ",
                                             {
