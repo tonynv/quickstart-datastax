@@ -425,7 +425,7 @@
                         "OpsCenterEIP",
                         "AllocationId"
                     ]
-                },
+                }
             }
         },
         "OpsCenterWaitCondition": {
@@ -459,8 +459,7 @@
                             "/etc/cfn/cfn-hup.conf": {
                                 "content": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "[main]\n",
                                             "stack=",
                                             {
@@ -482,8 +481,7 @@
                             "/etc/cfn/hooks.d/cfn-auto-reloader.conf": {
                                 "content": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "[cfn-auto-reloader-hook]\n",
                                             "triggers=post.update\n",
                                             "path=Resources.OpsCenterInstance.Metadata.AWS::CloudFormation::Init\n",
@@ -523,8 +521,7 @@
                             "01_install_opsc": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "#!/usr/bin/env bash -e \n",
                                             "cloud_type=\"aws\" \n",
                                             "cd ~ubuntu \n",
@@ -548,8 +545,7 @@
                             "01_gen_ssh_key": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "#!/usr/bin/env bash -e \n",
                                             "apt-get -y install awscli \n",
                                             "cd ~ubuntu/.ssh/ \n",
@@ -576,8 +572,7 @@
                             "01_setup_cluster": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "#!/usr/bin/env bash -e \n",
                                             "cd ~ubuntu \n",
                                             "pip install requests \n",
@@ -617,8 +612,7 @@
                             "01_post_install": {
                                 "command": {
                                     "Fn::Join": [
-                                        "",
-                                        [
+                                        "", [
                                             "#!/usr/bin/env bash -e \n",
                                             "release=\"5.5.4\" \n",
                                             "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete\" \"",
@@ -672,11 +666,9 @@
                 "IamInstanceProfile": {
                     "Ref": "Profile"
                 },
-                "SecurityGroupIds": [
-                    {
-                        "Ref": "OpsCenterSecurityGroupId"
-                    }
-                ],
+                "SecurityGroupIds": [{
+                    "Ref": "OpsCenterSecurityGroupId"
+                }],
                 "SubnetId": {
                     "Ref": "SubnetId"
                 },
@@ -686,8 +678,7 @@
                 "UserData": {
                     "Fn::Base64": {
                         "Fn::Join": [
-                            "",
-                            [
+                            "", [
                                 "#!/bin/bash -xe\n",
                                 "apt-get update\n",
                                 "apt-get -y install python-setuptools python-pip\n",
@@ -724,8 +715,7 @@
         "OpsCenterURL": {
             "Value": {
                 "Fn::Join": [
-                    "",
-                    [
+                    "", [
                         "https://",
                         {
                             "Fn::GetAtt": [
