@@ -1,12 +1,17 @@
 # Changelog
 
+- bump versions: DSE -> 5.1.3, OpsCenter -> 6.1.3, install scripts -> 6.0.0
+- LCM install job triggered from OpsCenter instance, required shifting params
+from `datacenter.template` to `opscenter.template`. No top-level param changes.
+- calling `alterKeyspaces.py` in post-install cleanup
+---
+## Previous Commits
+---
 - change EIP declaration (failed in some accounts)
 - fix param description error
 - bump versions to DSE 5.1.2, OpsC 6.1.2
 - i3 instance type
 - fix cfn-auto-reloader.conf
----
-## Previous Commits
 ---
 - update parameter descriptions to match edited deployment guide
 ---

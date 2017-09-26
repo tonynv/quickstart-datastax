@@ -17,11 +17,6 @@
             "Description": "Name of DSE cluster",
             "Type": "String"
         },
-        "DBPassword": {
-            "Type": "String",
-            "Description": "C* password",
-            "NoEcho": true
-        },
         "DataCenterName": {
             "Description": "Name of DSE cluster",
             "Type": "String"
@@ -591,7 +586,7 @@
                                             "sleep 15s \n",
                                             "done \n",
                                             "cat .ssh/lcm.pem.pub >> .ssh/authorized_keys \n",
-                                            "release=\"5.5.4\" \n",
+                                            "release=\"6.0.0\" \n",
                                             "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.zip \n",
                                             "unzip $release.zip \n",
                                             "cd install-datastax-ubuntu-$release/bin/lcm \n",
@@ -608,23 +603,16 @@
                                             {
                                                 "Ref": "ClusterName"
                                             },
-                                            "' --dcsize ",
-                                            {
-                                                "Ref": "DataCenterSize"
-                                            },
-                                            " --dcname '",
+                                            "' ",
+                                            "--dcname '",
                                             {
                                                 "Ref": "DataCenterName"
                                             },
-                                            "' --rack $rack",
+                                            "' ",
+                                            " --rack $rack",
                                             " --pubip $privip",
                                             " --privip $privip",
-                                            " --nodeid $nodeid",
-                                            " --dbpasswd '",
-                                            {
-                                                "Ref": "DBPassword"
-                                            },
-                                            "' \n",
+                                            " --nodeid $nodeid \n",
                                             "./waitForJobs.py ",
                                             " --opsc-ip ",
                                             {

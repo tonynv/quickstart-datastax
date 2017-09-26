@@ -421,6 +421,9 @@
                     "NumberDCs": {
                         "Ref": "NumberDCs"
                     },
+                    "DCSizes": {
+                        "Ref": "DCSizes"
+                    },
                     "DSAcademyUser": {
                         "Ref": "DSAcademyUser"
                     },
@@ -474,9 +477,6 @@
                     },
                     "ClusterName": {
                         "Ref": "ClusterName"
-                    },
-                    "DBPassword": {
-                        "Ref": "DBPassword"
                     },
                     "DataCenterName": {
                         "Fn::Select": ["0", {
@@ -550,9 +550,6 @@
                     "ClusterName": {
                         "Ref": "ClusterName"
                     },
-                    "DBPassword": {
-                        "Ref": "DBPassword"
-                    },
                     "DataCenterName": {
                         "Fn::Select": ["1", {
                             "Ref": "DataCenters"
@@ -625,9 +622,6 @@
                     "ClusterName": {
                         "Ref": "ClusterName"
                     },
-                    "DBPassword": {
-                        "Ref": "DBPassword"
-                    },
                     "DataCenterName": {
                         "Fn::Select": ["2", {
                             "Ref": "DataCenters"
@@ -699,9 +693,6 @@
                     },
                     "ClusterName": {
                         "Ref": "ClusterName"
-                    },
-                    "DBPassword": {
-                        "Ref": "DBPassword"
                     },
                     "DataCenterName": {
                         "Fn::Select": ["3", {

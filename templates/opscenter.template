@@ -24,6 +24,10 @@
             "Type": "Number",
             "Description": "Number of datacenters"
         },
+        "DCSizes": {
+            "Description": "The number of nodes to create for each DSE data center, separated by commas. The number of sizes in this array must match the NumberDCs parameter.",
+            "Type": "String"
+        },
         "Profile": {
             "Description": "InstanceProfile for OpsC instance",
             "Type": "String"
@@ -529,8 +533,8 @@
                                             "cloud_type=\"aws\" \n",
                                             "cd ~ubuntu \n",
                                             "apt-get -y install unzip \n",
-                                            "release=\"5.5.4\" \n",
-                                            "export OPSC_VERSION='6.1.2' \n",
+                                            "release=\"6.0.0\" \n",
+                                            "export OPSC_VERSION='6.1.3' \n",
                                             "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.zip \n",
                                             "unzip $release.zip \n",
                                             "cd install-datastax-ubuntu-$release/bin \n",
@@ -581,18 +585,18 @@
                                             "#!/usr/bin/env bash -e \n",
                                             "cd ~ubuntu \n",
                                             "pip install requests \n",
-                                            "release=\"5.5.4\" \n",
+                                            "release=\"6.0.0\" \n",
                                             "cd install-datastax-ubuntu-$release/bin/lcm \n",
                                             "privkey=$(readlink -f ~ubuntu/.ssh/lcm.pem) \n",
                                             "sleep 1m \n",
                                             "./setupCluster.py ",
                                             "--opsc-ip 127.0.0.1 ",
-                                            "--clustername \"",
+                                            " --clustername '",
                                             {
                                                 "Ref": "ClusterName"
                                             },
-                                            "\" ",
-                                            "--dsever '5.1.2' ",
+                                            "' ",
+                                            "--dsever '5.1.3' ",
                                             "--repouser '",
                                             {
                                                 "Ref": "DSAcademyUser"
@@ -620,19 +624,37 @@
                                         "",
                                         [
                                             "#!/usr/bin/env bash -e \n",
-                                            "release=\"5.5.4\" \n",
+                                            "release=\"6.0.0\" \n",
                                             "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete\" \"",
                                             {
                                                 "Ref": "OpsCenterWaitHandle"
                                             },
                                             "\" \n",
                                             "cd ~ubuntu/install-datastax-ubuntu-$release/bin/lcm \n",
+                                            "echo 'Triggering install...' \n",
+                                            "csize=$(( ", {"Fn::Join" : [ "+", { "Fn::Split" : [ ",", { "Ref" : "DCSizes" } ] } ] }," )) \n",
+                                            "echo csize=$csize \n",
+                                            "./triggerInstall.py ",
+                                            "--opsc-ip 127.0.0.1 ",
+                                            " --clustername '",
+                                            {
+                                                "Ref": "ClusterName"
+                                            },
+                                            "' ",
+                                            "--clustersize $csize ",
+                                            "--dclevel ",
+                                            "--dbpasswd '",
+                                            {
+                                                "Ref": "DBPassword"
+                                            },
+                                            "' \n",
                                             "echo 'Blocking execution till LCM jobs finish...' \n",
                                             "./waitForJobs.py --num ",
                                             {
                                                 "Ref": "NumberDCs"
                                             },
                                             " \n",
+                                            "./alterKeyspaces.py \n",
                                             "aws s3 rm s3://",
                                             {
                                                 "Ref": "S3Bucket"
