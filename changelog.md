@@ -1,11 +1,13 @@
 # Changelog
 
+- bug fix for passing `DCSizes` param to opscenter.template in no-vpc template
+---
+## Previous Commits
+---
 - bump versions: DSE -> 5.1.3, OpsCenter -> 6.1.3, install scripts -> 6.0.0
 - LCM install job triggered from OpsCenter instance, required shifting params
 from `datacenter.template` to `opscenter.template`. No top-level param changes.
 - calling `alterKeyspaces.py` in post-install cleanup
----
-## Previous Commits
 ---
 - change EIP declaration (failed in some accounts)
 - fix param description error

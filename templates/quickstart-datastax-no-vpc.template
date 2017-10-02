@@ -422,7 +422,9 @@
                         "Ref": "NumberDCs"
                     },
                     "DCSizes": {
-                        "Ref": "DCSizes"
+                        "Fn::Join": [",", {
+                            "Ref": "DCSizes"
+                        }]
                     },
                     "DSAcademyUser": {
                         "Ref": "DSAcademyUser"
