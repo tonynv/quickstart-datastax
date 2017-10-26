@@ -586,7 +586,7 @@
                                             "sleep 15s \n",
                                             "done \n",
                                             "cat .ssh/lcm.pem.pub >> .ssh/authorized_keys \n",
-                                            "release=\"6.0.0\" \n",
+                                            "release=\"6.0.1\" \n",
                                             "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.zip \n",
                                             "unzip $release.zip \n",
                                             "cd install-datastax-ubuntu-$release/bin/lcm \n",
