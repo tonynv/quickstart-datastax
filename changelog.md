@@ -1,8 +1,10 @@
 # Changelog
 
-- bug fix for passing `DCSizes` param to opscenter.template in no-vpc template
+- versions to DSE 5.1.5, OpsC 6.1.4, scripts 6.0.1. Fixes JCE download bug.
 ---
 ## Previous Commits
+---
+- bug fix for passing `DCSizes` param to opscenter.template in no-vpc template
 ---
 - bump versions: DSE -> 5.1.3, OpsCenter -> 6.1.3, install scripts -> 6.0.0
 - LCM install job triggered from OpsCenter instance, required shifting params
