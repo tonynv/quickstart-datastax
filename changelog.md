@@ -1,8 +1,12 @@
 # Changelog
 
-- versions to DSE 5.1.5, OpsC 6.1.4, scripts 6.0.1. Fixes JCE download bug.
+- versions to DSE 5.1.6, OpsC 6.1.5, scripts 6.0.4. Fixes java 8u162 startup bug.
+- increase CassandraGroup timeout to 35m
+
 ---
 ## Previous Commits
+---
+- versions to DSE 5.1.5, OpsC 6.1.4, scripts 6.0.1. Fixes JCE download bug.
 ---
 - bug fix for passing `DCSizes` param to opscenter.template in no-vpc template
 ---

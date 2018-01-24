@@ -533,8 +533,8 @@
                                             "cloud_type=\"aws\" \n",
                                             "cd ~ubuntu \n",
                                             "apt-get -y install unzip \n",
-                                            "release=\"6.0.1\" \n",
-                                            "export OPSC_VERSION='6.1.4' \n",
+                                            "release=\"6.0.4\" \n",
+                                            "export OPSC_VERSION='6.1.5' \n",
                                             "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.zip \n",
                                             "unzip $release.zip \n",
                                             "cd install-datastax-ubuntu-$release/bin \n",
@@ -585,7 +585,7 @@
                                             "#!/usr/bin/env bash -e \n",
                                             "cd ~ubuntu \n",
                                             "pip install requests \n",
-                                            "release=\"6.0.1\" \n",
+                                            "release=\"6.0.4\" \n",
                                             "cd install-datastax-ubuntu-$release/bin/lcm \n",
                                             "privkey=$(readlink -f ~ubuntu/.ssh/lcm.pem) \n",
                                             "sleep 1m \n",
@@ -596,7 +596,7 @@
                                                 "Ref": "ClusterName"
                                             },
                                             "' ",
-                                            "--dsever '5.1.5' ",
+                                            "--dsever '5.1.6' ",
                                             "--repouser '",
                                             {
                                                 "Ref": "DSAcademyUser"
@@ -624,7 +624,7 @@
                                         "",
                                         [
                                             "#!/usr/bin/env bash -e \n",
-                                            "release=\"6.0.1\" \n",
+                                            "release=\"6.0.4\" \n",
                                             "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete\" \"",
                                             {
                                                 "Ref": "OpsCenterWaitHandle"

@@ -446,7 +446,7 @@
             },
             "CreationPolicy": {
                 "ResourceSignal": {
-                    "Timeout": "PT30M",
+                    "Timeout": "PT35M",
                     "Count": "1"
                 }
             },
@@ -454,7 +454,7 @@
                 "AutoScalingRollingUpdate": {
                     "MinInstancesInService": "1",
                     "MaxBatchSize": "1",
-                    "PauseTime": "PT30M",
+                    "PauseTime": "PT35M",
                     "WaitOnResourceSignals": "true"
                 }
             }
@@ -586,7 +586,7 @@
                                             "sleep 15s \n",
                                             "done \n",
                                             "cat .ssh/lcm.pem.pub >> .ssh/authorized_keys \n",
-                                            "release=\"6.0.1\" \n",
+                                            "release=\"6.0.4\" \n",
                                             "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.zip \n",
                                             "unzip $release.zip \n",
                                             "cd install-datastax-ubuntu-$release/bin/lcm \n",
@@ -710,7 +710,7 @@
             },
             "CreationPolicy": {
                 "ResourceSignal": {
-                    "Timeout": "PT30M"
+                    "Timeout": "PT35M"
                 }
             }
         },
