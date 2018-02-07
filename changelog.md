@@ -1,10 +1,16 @@
 # Changelog
 
-- versions to DSE 5.1.6, OpsC 6.1.5, scripts 6.0.4. Fixes java 8u162 startup bug.
-- increase CassandraGroup timeout to 35m
+- install scripts to 6.1.0
+- all LCM REST calls use https/auth
+- OpsC PW params added/passed to datacenter.template
+- shell cleanup
 
 ---
 ## Previous Commits
+---
+- versions to DSE 5.1.6, OpsC 6.1.5, scripts 6.0.4. Fixes java 8u162 startup bug.
+- increase CassandraGroup timeout to 35m
+
 ---
 - versions to DSE 5.1.5, OpsC 6.1.4, scripts 6.0.1. Fixes JCE download bug.
 ---

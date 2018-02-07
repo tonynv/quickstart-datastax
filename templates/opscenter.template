@@ -532,15 +532,18 @@
                                             "#!/usr/bin/env bash -e \n",
                                             "cloud_type=\"aws\" \n",
                                             "cd ~ubuntu \n",
-                                            "apt-get -y install unzip \n",
-                                            "release=\"6.0.4\" \n",
+                                            "release=\"6.1.0\" \n",
                                             "export OPSC_VERSION='6.1.5' \n",
-                                            "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.zip \n",
-                                            "unzip $release.zip \n",
+                                            "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.tar.gz \n",
+                                            "tar -xvf $release.tar.gz \n",
                                             "cd install-datastax-ubuntu-$release/bin \n",
+                                            "./os/extra_packages.sh \n",
                                             "./os/install_java.sh \n",
                                             "./opscenter/install.sh $cloud_type \n",
-                                            "./opscenter/start.sh"
+                                            "./opscenter/set_opsc_pw_https.sh ",
+                                            {
+                                                "Ref": "OpsCPassword"
+                                            },
                                         ]
                                     ]
                                 }
@@ -584,32 +587,35 @@
                                         [
                                             "#!/usr/bin/env bash -e \n",
                                             "cd ~ubuntu \n",
-                                            "pip install requests \n",
-                                            "release=\"6.0.4\" \n",
-                                            "cd install-datastax-ubuntu-$release/bin/lcm \n",
+                                            "release=\"6.1.0\" \n",
+                                            "cd install-datastax-ubuntu-$release/bin \n",
                                             "privkey=$(readlink -f ~ubuntu/.ssh/lcm.pem) \n",
                                             "sleep 1m \n",
-                                            "./setupCluster.py ",
-                                            "--opsc-ip 127.0.0.1 ",
+                                            "./lcm/setupCluster.py ",
                                             " --clustername '",
                                             {
                                                 "Ref": "ClusterName"
                                             },
                                             "' ",
-                                            "--dsever '5.1.6' ",
-                                            "--repouser '",
+                                            " --dsever '5.1.6'",
+                                            " --repouser '",
                                             {
                                                 "Ref": "DSAcademyUser"
                                             },
                                             "' ",
-                                            "--repopw '",
+                                            " --repopw '",
                                             {
                                                 "Ref": "DSAcademyPW"
                                             },
                                             "' ",
-                                            "--privkey $privkey ",
-                                            "--user ubuntu ",
-                                            "--datapath \"/data/cassandra\" \n"
+                                            " --privkey $privkey",
+                                            " --user ubuntu",
+                                            " --datapath \"/data/cassandra\"",
+                                            " --opscpw '",
+                                            {
+                                                "Ref": "OpsCPassword"
+                                            },
+                                            "' \n",
                                         ]
                                     ]
                                 }
@@ -624,13 +630,13 @@
                                         "",
                                         [
                                             "#!/usr/bin/env bash -e \n",
-                                            "release=\"6.0.4\" \n",
+                                            "release=\"6.1.0\" \n",
                                             "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete\" \"",
                                             {
                                                 "Ref": "OpsCenterWaitHandle"
                                             },
                                             "\" \n",
-                                            "cd ~ubuntu/install-datastax-ubuntu-$release/bin/lcm \n",
+                                            "cd ~ubuntu/install-datastax-ubuntu-$release/bin \n",
                                             "echo 'Triggering install...' \n",
                                             "csize=$(( ",
                                             {
@@ -648,27 +654,41 @@
                                             },
                                             " )) \n",
                                             "echo csize=$csize \n",
-                                            "./triggerInstall.py ",
-                                            "--opsc-ip 127.0.0.1 ",
+                                            "./lcm/triggerInstall.py ",
                                             " --clustername '",
                                             {
                                                 "Ref": "ClusterName"
                                             },
                                             "' ",
-                                            "--clustersize $csize ",
-                                            "--dclevel ",
-                                            "--dbpasswd '",
+                                            " --clustersize $csize ",
+                                            " --dclevel ",
+                                            " --dbpasswd '",
                                             {
                                                 "Ref": "DBPassword"
                                             },
+                                            "' ",
+                                            " --opscpw '",
+                                            {
+                                                "Ref": "OpsCPassword"
+                                            },
                                             "' \n",
                                             "echo 'Blocking execution till LCM jobs finish...' \n",
-                                            "./waitForJobs.py --num ",
+                                            "./lcm/waitForJobs.py --num ",
                                             {
                                                 "Ref": "NumberDCs"
                                             },
-                                            " \n",
-                                            "./alterKeyspaces.py \n",
+                                            " --opscpw '",
+                                            {
+                                                "Ref": "OpsCPassword"
+                                            },
+                                            "' \n",
+                                            "./lcm/alterKeyspaces.py ",
+                                            " --opscpw '",
+                                            {
+                                                "Ref": "OpsCPassword"
+                                            },
+                                            "' \n",
+                                            "echo 'Removing lcm.pem.pub from bucket...' \n",
                                             "aws s3 rm s3://",
                                             {
                                                 "Ref": "S3Bucket"
@@ -677,13 +697,7 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            " \n",
-                                            "cd ../opscenter/ \n",
-                                            "./set_opsc_pw_https.sh '",
-                                            {
-                                                "Ref": "OpsCPassword"
-                                            },
-                                            "' \n"
+                                            " \n"
                                         ]
                                     ]
                                 }
