@@ -477,6 +477,9 @@
                     "OpsCenterIP": {
                         "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPrivateIP"]
                     },
+                    "OpsCPassword": {
+                        "Ref": "OpsCPassword"
+                    },
                     "ClusterName": {
                         "Ref": "ClusterName"
                     },
@@ -548,6 +551,9 @@
                     },
                     "OpsCenterIP": {
                         "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPrivateIP"]
+                    },
+                    "OpsCPassword": {
+                        "Ref": "OpsCPassword"
                     },
                     "ClusterName": {
                         "Ref": "ClusterName"
@@ -621,6 +627,9 @@
                     "OpsCenterIP": {
                         "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPrivateIP"]
                     },
+                    "OpsCPassword": {
+                        "Ref": "OpsCPassword"
+                    },
                     "ClusterName": {
                         "Ref": "ClusterName"
                     },
@@ -692,6 +701,9 @@
                     },
                     "OpsCenterIP": {
                         "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPrivateIP"]
+                    },
+                    "OpsCPassword": {
+                        "Ref": "OpsCPassword"
                     },
                     "ClusterName": {
                         "Ref": "ClusterName"
