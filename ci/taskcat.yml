@@ -2,7 +2,6 @@ global:
   marketplace: true
   owner: quickstart-eng@amazon.com
   qsname: quickstart-datastax
-  s3bucket: tonynv
   regions:
     - ap-northeast-1
     - ap-northeast-2
