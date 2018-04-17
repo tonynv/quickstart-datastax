@@ -12,30 +12,30 @@
                     "AccessLocation"
                 ]
             }, {
-                "Label": {
-                    "default": "Datastax Setup"
-                },
-                "Parameters": [
-                    "KeyName",
-                    "DSAcademyUser",
-                    "DSAcademyPW",
-                    "DBPassword",
-                    "OpsCPassword",
-                    "NumberDCs",
-                    "DataCenters",
-                    "Instances",
-                    "DCSizes",
-                    "VolumeSizes",
-                    "ClusterName"
-                ]
+            "Label": {
+                "default": "Datastax Setup"
+            },
+            "Parameters": [
+                "KeyName",
+                "DSAcademyUser",
+                "DSAcademyPW",
+                "DBPassword",
+                "OpsCPassword",
+                "NumberDCs",
+                "DataCenters",
+                "Instances",
+                "DCSizes",
+                "VolumeSizes",
+                "ClusterName"
+            ]
             }, {
-                "Label": {
-                    "default": "AWS Quick Start Configuration"
-                },
-                "Parameters": [
-                    "QSS3BucketName",
-                    "QSS3KeyPrefix"
-                ]
+            "Label": {
+                "default": "AWS Quick Start Configuration"
+            },
+            "Parameters": [
+                "QSS3BucketName",
+                "QSS3KeyPrefix"
+            ]
             }],
             "ParameterLabels": {
                 "AccessLocation": {
@@ -158,14 +158,14 @@
         "QSS3BucketName": {
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
-            "Default": "quickstart-reference",
+            "Default": "aws-quickstart",
             "Description": "S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
             "Type": "String"
         },
         "QSS3KeyPrefix": {
             "AllowedPattern": "^[0-9a-zA-Z-/]*$",
             "ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
-            "Default": "datastax/latest/",
+            "Default": "quickstart-datastax/",
             "Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
             "Type": "String"
         }
@@ -173,9 +173,9 @@
     "Conditions": {
         "GovCloudCondition": {
             "Fn::Equals": [{
-                    "Ref": "AWS::Region"
-                },
-                "us-gov-west-1"
+                "Ref": "AWS::Region"
+            },
+            "us-gov-west-1"
             ]
         },
         "CreateDC1": {
@@ -184,13 +184,13 @@
                     "Ref": "NumberDCs"
                 }, 2]
             }, {
-                "Fn::Equals": [{
-                    "Ref": "NumberDCs"
-                }, 3]
+            "Fn::Equals": [{
+                "Ref": "NumberDCs"
+            }, 3]
             }, {
-                "Fn::Equals": [{
-                    "Ref": "NumberDCs"
-                }, 4]
+            "Fn::Equals": [{
+                "Ref": "NumberDCs"
+            }, 4]
             }]
         },
         "CreateDC2": {
@@ -199,9 +199,9 @@
                     "Ref": "NumberDCs"
                 }, 3]
             }, {
-                "Fn::Equals": [{
-                    "Ref": "NumberDCs"
-                }, 4]
+            "Fn::Equals": [{
+                "Ref": "NumberDCs"
+            }, 4]
             }]
         },
         "CreateDC3": {
@@ -357,33 +357,33 @@
                         "Ref": "AccessLocation"
                     }
                 }, {
-                    "IpProtocol": "tcp",
-                    "FromPort": "8443",
-                    "ToPort": "8443",
-                    "CidrIp": {
-                        "Ref": "AccessLocation"
-                    }
+                "IpProtocol": "tcp",
+                "FromPort": "8443",
+                "ToPort": "8443",
+                "CidrIp": {
+                    "Ref": "AccessLocation"
+                }
                 }, {
-                    "IpProtocol": "tcp",
-                    "FromPort": "8888",
-                    "ToPort": "8888",
-                    "CidrIp": {
-                        "Fn::GetAtt": ["VPCstack", "Outputs.VPCCIDR"]
-                    }
+                "IpProtocol": "tcp",
+                "FromPort": "8888",
+                "ToPort": "8888",
+                "CidrIp": {
+                    "Fn::GetAtt": ["VPCstack", "Outputs.VPCCIDR"]
+                }
                 }, {
-                    "IpProtocol": "tcp",
-                    "FromPort": "22",
-                    "ToPort": "22",
-                    "CidrIp": {
-                        "Fn::GetAtt": ["VPCstack", "Outputs.VPCCIDR"]
-                    }
+                "IpProtocol": "tcp",
+                "FromPort": "22",
+                "ToPort": "22",
+                "CidrIp": {
+                    "Fn::GetAtt": ["VPCstack", "Outputs.VPCCIDR"]
+                }
                 }, {
-                    "IpProtocol": "tcp",
-                    "FromPort": "61620",
-                    "ToPort": "61620",
-                    "CidrIp": {
-                        "Fn::GetAtt": ["VPCstack", "Outputs.VPCCIDR"]
-                    }
+                "IpProtocol": "tcp",
+                "FromPort": "61620",
+                "ToPort": "61620",
+                "CidrIp": {
+                    "Fn::GetAtt": ["VPCstack", "Outputs.VPCCIDR"]
+                }
                 }]
             },
             "DependsOn": "VPCstack"
@@ -515,9 +515,9 @@
                         "Fn::Join": [",", [{
                             "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet1AID"]
                         }, {
-                            "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet2AID"]
+                        "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet2AID"]
                         }, {
-                            "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet3AID"]
+                        "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet3AID"]
                         }]]
                     },
                     "SecurityCIDR": {
@@ -595,9 +595,9 @@
                         "Fn::Join": [",", [{
                             "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet1AID"]
                         }, {
-                            "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet2AID"]
+                        "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet2AID"]
                         }, {
-                            "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet3AID"]
+                        "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet3AID"]
                         }]]
                     },
                     "SecurityCIDR": {
@@ -675,9 +675,9 @@
                         "Fn::Join": [",", [{
                             "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet1AID"]
                         }, {
-                            "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet2AID"]
+                        "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet2AID"]
                         }, {
-                            "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet3AID"]
+                        "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet3AID"]
                         }]]
                     },
                     "SecurityCIDR": {
@@ -755,9 +755,9 @@
                         "Fn::Join": [",", [{
                             "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet1AID"]
                         }, {
-                            "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet2AID"]
+                        "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet2AID"]
                         }, {
-                            "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet3AID"]
+                        "Fn::GetAtt": ["VPCstack", "Outputs.PrivateSubnet3AID"]
                         }]]
                     },
                     "SecurityCIDR": {
