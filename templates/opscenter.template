@@ -543,7 +543,7 @@
                                             "./opscenter/set_opsc_pw_https.sh ",
                                             {
                                                 "Ref": "OpsCPassword"
-                                            },
+                                            }
                                         ]
                                     ]
                                 }
@@ -615,7 +615,7 @@
                                             {
                                                 "Ref": "OpsCPassword"
                                             },
-                                            "' \n",
+                                            "' \n"
                                         ]
                                     ]
                                 }
@@ -639,65 +639,65 @@
                                             "cd ~ubuntu/install-datastax-ubuntu-$release/bin \n",
                                             "echo 'Triggering install...' \n",
                                             "csize=$(( ",
-                                            {
-                                                "Fn::Join": [
-                                                    "+",
-                                                    {
-                                                        "Fn::Split": [
-                                                            ",",
-                                                            {
-                                                                "Ref": "DCSizes"
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            },
-                                            " )) \n",
-                                            "echo csize=$csize \n",
-                                            "./lcm/triggerInstall.py ",
-                                            " --clustername '",
-                                            {
-                                                "Ref": "ClusterName"
-                                            },
-                                            "' ",
-                                            " --clustersize $csize ",
-                                            " --dclevel ",
-                                            " --dbpasswd '",
-                                            {
-                                                "Ref": "DBPassword"
-                                            },
-                                            "' ",
-                                            " --opscpw '",
-                                            {
-                                                "Ref": "OpsCPassword"
-                                            },
-                                            "' \n",
-                                            "echo 'Blocking execution till LCM jobs finish...' \n",
-                                            "./lcm/waitForJobs.py --num ",
-                                            {
-                                                "Ref": "NumberDCs"
-                                            },
-                                            " --opscpw '",
-                                            {
-                                                "Ref": "OpsCPassword"
-                                            },
-                                            "' \n",
-                                            "./lcm/alterKeyspaces.py ",
-                                            " --opscpw '",
-                                            {
-                                                "Ref": "OpsCPassword"
-                                            },
-                                            "' \n",
-                                            "echo 'Removing lcm.pem.pub from bucket...' \n",
-                                            "aws s3 rm s3://",
-                                            {
-                                                "Ref": "S3Bucket"
-                                            },
-                                            "/lcm.pem.pub --region ",
-                                            {
-                                                "Ref": "AWS::Region"
-                                            },
-                                            " \n"
+                                                {
+                                                    "Fn::Join": [
+                                                        "+",
+                                                        {
+                                                            "Fn::Split": [
+                                                                ",",
+                                                                {
+                                                                    "Ref": "DCSizes"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                " )) \n",
+                                                "echo csize=$csize \n",
+                                                "./lcm/triggerInstall.py ",
+                                                " --clustername '",
+                                                {
+                                                    "Ref": "ClusterName"
+                                                },
+                                                "' ",
+                                                " --clustersize $csize ",
+                                                " --dclevel ",
+                                                " --dbpasswd '",
+                                                {
+                                                    "Ref": "DBPassword"
+                                                },
+                                                "' ",
+                                                " --opscpw '",
+                                                {
+                                                    "Ref": "OpsCPassword"
+                                                },
+                                                "' \n",
+                                                "echo 'Blocking execution till LCM jobs finish...' \n",
+                                                "./lcm/waitForJobs.py --num ",
+                                                {
+                                                    "Ref": "NumberDCs"
+                                                },
+                                                " --opscpw '",
+                                                {
+                                                    "Ref": "OpsCPassword"
+                                                },
+                                                "' \n",
+                                                "./lcm/alterKeyspaces.py ",
+                                                " --opscpw '",
+                                                {
+                                                    "Ref": "OpsCPassword"
+                                                },
+                                                "' \n",
+                                                "echo 'Removing lcm.pem.pub from bucket...' \n",
+                                                "aws s3 rm s3://",
+                                                {
+                                                    "Ref": "S3Bucket"
+                                                },
+                                                "/lcm.pem.pub --region ",
+                                                {
+                                                    "Ref": "AWS::Region"
+                                                },
+                                                " \n"
                                         ]
                                     ]
                                 }
