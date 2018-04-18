@@ -415,6 +415,9 @@
             "ap-southeast-2": {
                 "US1604HVM": "ami-2b12dc49"
             },
+            "eu-central-1": {
+                "US1604HVM": "ami-cd491726"
+            },
             "eu-west-1": {
                 "US1604HVM": "ami-74e6b80d"
             },
