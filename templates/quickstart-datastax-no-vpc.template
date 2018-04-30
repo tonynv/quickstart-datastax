@@ -23,6 +23,7 @@
                 "KeyName",
                 "DSAcademyUser",
                 "DSAcademyPW",
+                "DSEVersion",
                 "DBPassword",
                 "OpsCPassword",
                 "NumberDCs",
@@ -56,6 +57,9 @@
                 },
                 "DBPassword": {
                     "default": "Database Password"
+                },
+                "DSEVersion": {
+                  "default": "DSE version, 5.1.7 or 6.0.0 supported."
                 },
                 "DataCenters": {
                     "default": "Data Center Names"
@@ -135,6 +139,12 @@
         "PublicSubnetId": {
             "Description": "Id for a public subnet in existing VPC, used for OpsCenter instance",
             "Type": "AWS::EC2::Subnet::Id"
+        },
+        "DSEVersion": {
+            "Type": "String",
+            "Description": "DSE version to install.",
+            "Default": "6.0.0",
+            "AllowedValues": ["5.1.7","6.0.0"],
         },
         "DSAcademyUser": {
             "Type": "String",
@@ -425,6 +435,9 @@
                         "Fn::Join": [",", {
                             "Ref": "DCSizes"
                         }]
+                    },
+                    "DSEVersion": {
+                      "Ref": "DSEVersion"
                     },
                     "DSAcademyUser": {
                         "Ref": "DSAcademyUser"

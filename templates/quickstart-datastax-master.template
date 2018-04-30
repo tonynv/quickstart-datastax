@@ -19,6 +19,7 @@
                 "KeyName",
                 "DSAcademyUser",
                 "DSAcademyPW",
+                "DSEVersion",
                 "DBPassword",
                 "OpsCPassword",
                 "NumberDCs",
@@ -46,6 +47,9 @@
                 },
                 "KeyName": {
                     "default": "Key Name"
+                },
+                "DSEVersion": {
+                  "default": "DSE version, 5.1.7 or 6.0.0 supported."
                 },
                 "DSAcademyUser": {
                     "default": "DataStax Academy Username"
@@ -103,6 +107,12 @@
         "AvailabilityZones": {
             "Type": "List<AWS::EC2::AvailabilityZone::Name>",
             "Description": "The list of Availability Zones to use for the subnets in the VPC. The Quick Start uses three Availability Zones from your list and preserves the logical order you specify."
+        },
+        "DSEVersion": {
+            "Type": "String",
+            "Description": "DSE version to install.",
+            "Default": "6.0.0",
+            "AllowedValues": ["5.1.7","6.0.0"],
         },
         "DSAcademyUser": {
             "Type": "String",
@@ -424,6 +434,9 @@
                         "Fn::Join": [",", {
                             "Ref": "DCSizes"
                         }]
+                    },
+                    "DSEVersion": {
+                      "Ref": "DSEVersion"
                     },
                     "DSAcademyUser": {
                         "Ref": "DSAcademyUser"

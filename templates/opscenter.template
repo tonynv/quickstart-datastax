@@ -32,6 +32,10 @@
             "Description": "InstanceProfile for OpsC instance",
             "Type": "String"
         },
+        "DSEVersion": {
+            "Type": "String",
+            "Description": "DSE version to install."
+        },
         "DSAcademyUser": {
             "Type": "String",
             "Description": "User for academy.datastax.com account"
@@ -535,8 +539,8 @@
                                             "#!/usr/bin/env bash -e \n",
                                             "cloud_type=\"aws\" \n",
                                             "cd ~ubuntu \n",
-                                            "release=\"6.1.0\" \n",
-                                            "export OPSC_VERSION='6.1.5' \n",
+                                            "release=\"7.0.0\" \n",
+                                            "export OPSC_VERSION='6.5.0' \n",
                                             "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.tar.gz \n",
                                             "tar -xvf $release.tar.gz \n",
                                             "cd install-datastax-ubuntu-$release/bin \n",
@@ -590,7 +594,7 @@
                                         [
                                             "#!/usr/bin/env bash -e \n",
                                             "cd ~ubuntu \n",
-                                            "release=\"6.1.0\" \n",
+                                            "release=\"7.0.0\" \n",
                                             "cd install-datastax-ubuntu-$release/bin \n",
                                             "privkey=$(readlink -f ~ubuntu/.ssh/lcm.pem) \n",
                                             "sleep 1m \n",
@@ -600,7 +604,11 @@
                                                 "Ref": "ClusterName"
                                             },
                                             "' ",
-                                            " --dsever '5.1.6'",
+                                            " --dsever '",
+                                            {
+                                              "Ref": "DSEVersion"
+                                            },
+                                            "' ",
                                             " --repouser '",
                                             {
                                                 "Ref": "DSAcademyUser"
@@ -609,6 +617,11 @@
                                             " --repopw '",
                                             {
                                                 "Ref": "DSAcademyPW"
+                                            },
+                                            "' ",
+                                            " --dbpasswd '",
+                                            {
+                                                "Ref": "DBPassword"
                                             },
                                             "' ",
                                             " --privkey $privkey",
@@ -633,7 +646,7 @@
                                         "",
                                         [
                                             "#!/usr/bin/env bash -e \n",
-                                            "release=\"6.1.0\" \n",
+                                            "release=\"7.0.0\" \n",
                                             "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete\" \"",
                                             {
                                                 "Ref": "OpsCenterWaitHandle"
@@ -664,12 +677,6 @@
                                             },
                                             "' ",
                                             " --clustersize $csize ",
-                                            " --dclevel ",
-                                            " --dbpasswd '",
-                                            {
-                                                "Ref": "DBPassword"
-                                            },
-                                            "' ",
                                             " --opscpw '",
                                             {
                                                 "Ref": "OpsCPassword"
