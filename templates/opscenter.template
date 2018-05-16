@@ -539,7 +539,7 @@
                                             "#!/usr/bin/env bash -e \n",
                                             "cloud_type=\"aws\" \n",
                                             "cd ~ubuntu \n",
-                                            "release=\"7.0.1\" \n",
+                                            "release=\"7.0.2\" \n",
                                             "export OPSC_VERSION='6.5.0' \n",
                                             "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.tar.gz \n",
                                             "tar -xvf $release.tar.gz \n",
@@ -594,7 +594,7 @@
                                         [
                                             "#!/usr/bin/env bash -e \n",
                                             "cd ~ubuntu \n",
-                                            "release=\"7.0.1\" \n",
+                                            "release=\"7.0.2\" \n",
                                             "cd install-datastax-ubuntu-$release/bin \n",
                                             "privkey=$(readlink -f ~ubuntu/.ssh/lcm.pem) \n",
                                             "sleep 1m \n",
@@ -646,7 +646,8 @@
                                         "",
                                         [
                                             "#!/usr/bin/env bash -e \n",
-                                            "release=\"7.0.1\" \n",
+                                            "echo 'Post install/setup actions...' \n",
+                                            "release=\"7.0.2\" \n",
                                             "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete\" \"",
                                             {
                                                 "Ref": "OpsCenterWaitHandle"
@@ -683,10 +684,7 @@
                                             },
                                             "' \n",
                                             "echo 'Blocking execution till LCM jobs finish...' \n",
-                                            "./lcm/waitForJobs.py --num ",
-                                            {
-                                                "Ref": "NumberDCs"
-                                            },
+                                            "./lcm/waitForJobs.py ",
                                             " --opscpw '",
                                             {
                                                 "Ref": "OpsCPassword"

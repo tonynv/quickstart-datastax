@@ -593,7 +593,7 @@
                                             "sleep 15s \n",
                                             "done \n",
                                             "cat .ssh/lcm.pem.pub >> .ssh/authorized_keys \n",
-                                            "release=\"7.0.1\" \n",
+                                            "release=\"7.0.2\" \n",
                                             "export OPSC_VERSION='6.5.0' \n",
                                             "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.tar.gz \n",
                                             "tar -xvf $release.tar.gz \n",
