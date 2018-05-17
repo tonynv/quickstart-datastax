@@ -42,13 +42,19 @@
         "InstanceType": {
             "Description": "Node EC2 instance type",
             "Type": "String",
-            "Default": "m4.large",
+            "Default": "m5.large",
             "AllowedValues": [
                 "t2.medium",
                 "m4.large",
                 "m4.xlarge",
                 "m4.2xlarge",
                 "m4.4xlarge",
+                "m4.10xlarge",
+                "m5.large",
+                "m5.xlarge",
+                "m5.2xlarge",
+                "m5.4xlarge",
+                "m5.12xlarge",
                 "c4.large",
                 "c4.xlarge",
                 "c4.2xlarge",
@@ -151,6 +157,24 @@
                 "Arch": "HVM64"
             },
             "m4.10xlarge": {
+                "Arch": "HVM64"
+            },
+            "m5.large": {
+                "Arch": "HVM64"
+            },
+            "m5.xlarge": {
+                "Arch": "HVM64"
+            },
+            "m5.2xlarge": {
+                "Arch": "HVM64"
+            },
+            "m5.4xlarge": {
+                "Arch": "HVM64"
+            },
+            "m5.12xlarge": {
+                "Arch": "HVM64"
+            },
+            "m5.24xlarge": {
                 "Arch": "HVM64"
             },
             "c1.medium": {
@@ -312,6 +336,24 @@
                 "Arch": "NATHVM64"
             },
             "m4.10xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "m5.large": {
+                "Arch": "NATHVM64"
+            },
+            "m5.xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "m5.2xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "m5.4xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "m5.12xlarge": {
+                "Arch": "NATHVM64"
+            },
+            "m5.24xlarge": {
                 "Arch": "NATHVM64"
             },
             "c1.medium": {

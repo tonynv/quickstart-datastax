@@ -148,7 +148,7 @@
         "Instances": {
             "Description": "EC2 instance type for the nodes in each DSE data center, separated by commas. The number of instance types must match the NumberDCs parameter.",
             "Type": "CommaDelimitedList",
-            "Default": "m4.large"
+            "Default": "m5.large"
         },
         "VolumeSizes": {
             "Description": "The EBS volume size, in GiB, for the nodes in each data center, separated by commas. The number of volume sizes in this array must match the NumberDCs parameter.",
