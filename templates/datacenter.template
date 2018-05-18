@@ -586,7 +586,7 @@
                     },
                     "setup_disk": {
                         "commands": {
-                            "01_add_node": {
+                            "01_setup_disk": {
                                 "command": {
                                     "Fn::Join": [
                                         "",
