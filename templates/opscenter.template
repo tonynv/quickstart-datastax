@@ -547,10 +547,11 @@
                                             "./os/extra_packages.sh \n",
                                             "./os/install_java.sh \n",
                                             "./opscenter/install.sh $cloud_type \n",
-                                            "./opscenter/set_opsc_pw_https.sh ",
+                                            "./opscenter/set_opsc_pw_https.sh '",
                                             {
                                                 "Ref": "OpsCPassword"
-                                            }
+                                            },
+                                            "' \n"
                                         ]
                                     ]
                                 }
