@@ -49,7 +49,7 @@
                     "default": "Key Name"
                 },
                 "DSEVersion": {
-                  "default": "DSE version, 5.1.9 or 6.0.0 supported."
+                  "default": "DSE version"
                 },
                 "DSAcademyUser": {
                     "default": "DataStax Academy Username"
