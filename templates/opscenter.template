@@ -32,6 +32,10 @@
             "Description": "InstanceProfile for OpsC instance",
             "Type": "String"
         },
+        "DSEVersion": {
+            "Type": "String",
+            "Description": "DSE version to install."
+        },
         "DSAcademyUser": {
             "Type": "String",
             "Description": "User for academy.datastax.com account"
@@ -68,346 +72,27 @@
         }
     },
     "Mappings": {
-        "AWSInstanceType2Arch": {
-            "t1.micro": {
-                "Arch": "PV64"
-            },
-            "t2.nano": {
-                "Arch": "HVM64"
-            },
-            "t2.micro": {
-                "Arch": "HVM64"
-            },
-            "t2.small": {
-                "Arch": "HVM64"
-            },
-            "t2.medium": {
-                "Arch": "HVM64"
-            },
-            "t2.large": {
-                "Arch": "HVM64"
-            },
-            "m1.small": {
-                "Arch": "PV64"
-            },
-            "m1.medium": {
-                "Arch": "PV64"
-            },
-            "m1.large": {
-                "Arch": "PV64"
-            },
-            "m1.xlarge": {
-                "Arch": "PV64"
-            },
-            "m2.xlarge": {
-                "Arch": "PV64"
-            },
-            "m2.2xlarge": {
-                "Arch": "PV64"
-            },
-            "m2.4xlarge": {
-                "Arch": "PV64"
-            },
-            "m3.medium": {
-                "Arch": "HVM64"
-            },
-            "m3.large": {
-                "Arch": "HVM64"
-            },
-            "m3.xlarge": {
-                "Arch": "HVM64"
-            },
-            "m3.2xlarge": {
-                "Arch": "HVM64"
-            },
-            "m4.large": {
-                "Arch": "HVM64"
-            },
-            "m4.xlarge": {
-                "Arch": "HVM64"
-            },
-            "m4.2xlarge": {
-                "Arch": "HVM64"
-            },
-            "m4.4xlarge": {
-                "Arch": "HVM64"
-            },
-            "m4.10xlarge": {
-                "Arch": "HVM64"
-            },
-            "c1.medium": {
-                "Arch": "PV64"
-            },
-            "c1.xlarge": {
-                "Arch": "PV64"
-            },
-            "c3.large": {
-                "Arch": "HVM64"
-            },
-            "c3.xlarge": {
-                "Arch": "HVM64"
-            },
-            "c3.2xlarge": {
-                "Arch": "HVM64"
-            },
-            "c3.4xlarge": {
-                "Arch": "HVM64"
-            },
-            "c3.8xlarge": {
-                "Arch": "HVM64"
-            },
-            "c4.large": {
-                "Arch": "HVM64"
-            },
-            "c4.xlarge": {
-                "Arch": "HVM64"
-            },
-            "c4.2xlarge": {
-                "Arch": "HVM64"
-            },
-            "c4.4xlarge": {
-                "Arch": "HVM64"
-            },
-            "c4.8xlarge": {
-                "Arch": "HVM64"
-            },
-            "g2.2xlarge": {
-                "Arch": "HVMG2"
-            },
-            "g2.8xlarge": {
-                "Arch": "HVMG2"
-            },
-            "r3.large": {
-                "Arch": "HVM64"
-            },
-            "r3.xlarge": {
-                "Arch": "HVM64"
-            },
-            "r3.2xlarge": {
-                "Arch": "HVM64"
-            },
-            "r3.4xlarge": {
-                "Arch": "HVM64"
-            },
-            "r3.8xlarge": {
-                "Arch": "HVM64"
-            },
-            "i2.xlarge": {
-                "Arch": "HVM64"
-            },
-            "i2.2xlarge": {
-                "Arch": "HVM64"
-            },
-            "i2.4xlarge": {
-                "Arch": "HVM64"
-            },
-            "i2.8xlarge": {
-                "Arch": "HVM64"
-            },
-            "d2.xlarge": {
-                "Arch": "HVM64"
-            },
-            "d2.2xlarge": {
-                "Arch": "HVM64"
-            },
-            "d2.4xlarge": {
-                "Arch": "HVM64"
-            },
-            "d2.8xlarge": {
-                "Arch": "HVM64"
-            },
-            "hi1.4xlarge": {
-                "Arch": "HVM64"
-            },
-            "hs1.8xlarge": {
-                "Arch": "HVM64"
-            },
-            "cr1.8xlarge": {
-                "Arch": "HVM64"
-            },
-            "cc2.8xlarge": {
-                "Arch": "HVM64"
-            }
-        },
-        "AWSInstanceType2NATArch": {
-            "t1.micro": {
-                "Arch": "NATPV64"
-            },
-            "t2.nano": {
-                "Arch": "NATHVM64"
-            },
-            "t2.micro": {
-                "Arch": "NATHVM64"
-            },
-            "t2.small": {
-                "Arch": "NATHVM64"
-            },
-            "t2.medium": {
-                "Arch": "NATHVM64"
-            },
-            "t2.large": {
-                "Arch": "NATHVM64"
-            },
-            "m1.small": {
-                "Arch": "NATPV64"
-            },
-            "m1.medium": {
-                "Arch": "NATPV64"
-            },
-            "m1.large": {
-                "Arch": "NATPV64"
-            },
-            "m1.xlarge": {
-                "Arch": "NATPV64"
-            },
-            "m2.xlarge": {
-                "Arch": "NATPV64"
-            },
-            "m2.2xlarge": {
-                "Arch": "NATPV64"
-            },
-            "m2.4xlarge": {
-                "Arch": "NATPV64"
-            },
-            "m3.medium": {
-                "Arch": "NATHVM64"
-            },
-            "m3.large": {
-                "Arch": "NATHVM64"
-            },
-            "m3.xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "m3.2xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "m4.large": {
-                "Arch": "NATHVM64"
-            },
-            "m4.xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "m4.2xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "m4.4xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "m4.10xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "c1.medium": {
-                "Arch": "NATPV64"
-            },
-            "c1.xlarge": {
-                "Arch": "NATPV64"
-            },
-            "c3.large": {
-                "Arch": "NATHVM64"
-            },
-            "c3.xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "c3.2xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "c3.4xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "c3.8xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "c4.large": {
-                "Arch": "NATHVM64"
-            },
-            "c4.xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "c4.2xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "c4.4xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "c4.8xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "g2.2xlarge": {
-                "Arch": "NATHVMG2"
-            },
-            "g2.8xlarge": {
-                "Arch": "NATHVMG2"
-            },
-            "r3.large": {
-                "Arch": "NATHVM64"
-            },
-            "r3.xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "r3.2xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "r3.4xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "r3.8xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "i2.xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "i2.2xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "i2.4xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "i2.8xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "d2.xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "d2.2xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "d2.4xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "d2.8xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "hi1.4xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "hs1.8xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "cr1.8xlarge": {
-                "Arch": "NATHVM64"
-            },
-            "cc2.8xlarge": {
-                "Arch": "NATHVM64"
-            }
-        },
         "AWSAMIRegionMap": {
             "AMI": {
-                "US1604HVM": "ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-20180205"
+                "US1604HVM": "ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-20180522"
             },
             "ap-southeast-2": {
-                "US1604HVM": "ami-e1c43f83"
+                "US1604HVM": "ami-963cecf4"
+            },
+            "eu-central-1": {
+                "US1604HVM": "ami-c7e0c82c"
             },
             "eu-west-1": {
-                "US1604HVM": "ami-c1167eb8"
+                "US1604HVM": "ami-58d7e821"
             },
             "us-east-1": {
-                "US1604HVM": "ami-0b383171"
+                "US1604HVM": "ami-a4dc46db"
             },
             "us-east-2": {
-                "US1604HVM": "ami-4f80b52a"
+                "US1604HVM": "ami-6a003c0f"
             },
             "us-west-2": {
-                "US1604HVM": "ami-c62eaabe"
+                "US1604HVM": "ami-db710fa3"
             }
         }
     },
@@ -532,18 +217,19 @@
                                             "#!/usr/bin/env bash -e \n",
                                             "cloud_type=\"aws\" \n",
                                             "cd ~ubuntu \n",
-                                            "release=\"6.1.0\" \n",
-                                            "export OPSC_VERSION='6.1.5' \n",
+                                            "release=\"7.0.3\" \n",
+                                            "export OPSC_VERSION='6.5.0' \n",
                                             "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.tar.gz \n",
                                             "tar -xvf $release.tar.gz \n",
                                             "cd install-datastax-ubuntu-$release/bin \n",
                                             "./os/extra_packages.sh \n",
                                             "./os/install_java.sh \n",
                                             "./opscenter/install.sh $cloud_type \n",
-                                            "./opscenter/set_opsc_pw_https.sh ",
+                                            "./opscenter/set_opsc_pw_https.sh '",
                                             {
                                                 "Ref": "OpsCPassword"
-                                            }
+                                            },
+                                            "' \n"
                                         ]
                                     ]
                                 }
@@ -587,7 +273,7 @@
                                         [
                                             "#!/usr/bin/env bash -e \n",
                                             "cd ~ubuntu \n",
-                                            "release=\"6.1.0\" \n",
+                                            "release=\"7.0.3\" \n",
                                             "cd install-datastax-ubuntu-$release/bin \n",
                                             "privkey=$(readlink -f ~ubuntu/.ssh/lcm.pem) \n",
                                             "sleep 1m \n",
@@ -597,7 +283,11 @@
                                                 "Ref": "ClusterName"
                                             },
                                             "' ",
-                                            " --dsever '5.1.6'",
+                                            " --dsever '",
+                                            {
+                                              "Ref": "DSEVersion"
+                                            },
+                                            "' ",
                                             " --repouser '",
                                             {
                                                 "Ref": "DSAcademyUser"
@@ -606,6 +296,11 @@
                                             " --repopw '",
                                             {
                                                 "Ref": "DSAcademyPW"
+                                            },
+                                            "' ",
+                                            " --dbpasswd '",
+                                            {
+                                                "Ref": "DBPassword"
                                             },
                                             "' ",
                                             " --privkey $privkey",
@@ -630,7 +325,8 @@
                                         "",
                                         [
                                             "#!/usr/bin/env bash -e \n",
-                                            "release=\"6.1.0\" \n",
+                                            "echo 'Post install/setup actions...' \n",
+                                            "release=\"7.0.3\" \n",
                                             "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete\" \"",
                                             {
                                                 "Ref": "OpsCenterWaitHandle"
@@ -639,65 +335,56 @@
                                             "cd ~ubuntu/install-datastax-ubuntu-$release/bin \n",
                                             "echo 'Triggering install...' \n",
                                             "csize=$(( ",
-                                                {
-                                                    "Fn::Join": [
-                                                        "+",
-                                                        {
-                                                            "Fn::Split": [
-                                                                ",",
-                                                                {
-                                                                    "Ref": "DCSizes"
-                                                                }
-                                                            ]
-                                                        }
-                                                    ]
-                                                },
-                                                " )) \n",
-                                                "echo csize=$csize \n",
-                                                "./lcm/triggerInstall.py ",
-                                                " --clustername '",
-                                                {
-                                                    "Ref": "ClusterName"
-                                                },
-                                                "' ",
-                                                " --clustersize $csize ",
-                                                " --dclevel ",
-                                                " --dbpasswd '",
-                                                {
-                                                    "Ref": "DBPassword"
-                                                },
-                                                "' ",
-                                                " --opscpw '",
-                                                {
-                                                    "Ref": "OpsCPassword"
-                                                },
-                                                "' \n",
-                                                "echo 'Blocking execution till LCM jobs finish...' \n",
-                                                "./lcm/waitForJobs.py --num ",
-                                                {
-                                                    "Ref": "NumberDCs"
-                                                },
-                                                " --opscpw '",
-                                                {
-                                                    "Ref": "OpsCPassword"
-                                                },
-                                                "' \n",
-                                                "./lcm/alterKeyspaces.py ",
-                                                " --opscpw '",
-                                                {
-                                                    "Ref": "OpsCPassword"
-                                                },
-                                                "' \n",
-                                                "echo 'Removing lcm.pem.pub from bucket...' \n",
-                                                "aws s3 rm s3://",
-                                                {
-                                                    "Ref": "S3Bucket"
-                                                },
-                                                "/lcm.pem.pub --region ",
-                                                {
-                                                    "Ref": "AWS::Region"
-                                                },
-                                                " \n"
+                                            {
+                                                "Fn::Join": [
+                                                    "+",
+                                                    {
+                                                        "Fn::Split": [
+                                                            ",",
+                                                            {
+                                                                "Ref": "DCSizes"
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            " )) \n",
+                                            "echo csize=$csize \n",
+                                            "./lcm/triggerInstall.py ",
+                                            " --clustername '",
+                                            {
+                                                "Ref": "ClusterName"
+                                            },
+                                            "' ",
+                                            " --clustersize $csize ",
+                                            " --opscpw '",
+                                            {
+                                                "Ref": "OpsCPassword"
+                                            },
+                                            "' \n",
+                                            "echo 'Blocking execution till LCM jobs finish...' \n",
+                                            "./lcm/waitForJobs.py ",
+                                            " --opscpw '",
+                                            {
+                                                "Ref": "OpsCPassword"
+                                            },
+                                            "' \n",
+                                            "./lcm/alterKeyspaces.py ",
+                                            " --opscpw '",
+                                            {
+                                                "Ref": "OpsCPassword"
+                                            },
+                                            "' \n",
+                                            "echo 'Removing lcm.pem.pub from bucket...' \n",
+                                            "aws s3 rm s3://",
+                                            {
+                                                "Ref": "S3Bucket"
+                                            },
+                                            "/lcm.pem.pub --region ",
+                                            {
+                                                "Ref": "AWS::Region"
+                                            },
+                                            " \n"
                                         ]
                                     ]
                                 }
