@@ -14,7 +14,7 @@ You can also use the AWS CloudFormation templates as a starting point for your o
 
 ![Quick Start architecture for data warehouse modernization on AWS](https://d0.awsstatic.com/partner-network/QuickStart/datasheets/dse-on-aws-architecture.png)
 
-For architectural details, best practices, step-by-step instructions, and customization options, see the [deployment guide](https://s3.amazonaws.com/quickstart-reference/datastax/latest/doc/datastax-enterprise-on-the-aws-cloud.pdf).
+For architectural details, best practices, step-by-step instructions, and customization options, see the [deployment guide](https://fwd.aws/VP83q).
 
 To post feedback, submit feature ideas, or report bugs, use the **Issues** section of this GitHub repo.
 
