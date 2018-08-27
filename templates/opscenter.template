@@ -217,13 +217,13 @@
                                             "#!/usr/bin/env bash -e \n",
                                             "cloud_type=\"aws\" \n",
                                             "cd ~ubuntu \n",
-                                            "release=\"7.0.3\" \n",
-                                            "export OPSC_VERSION='6.5.0' \n",
+                                            "release=\"7.1.0\" \n",
+                                            "export OPSC_VERSION='6.5.2' \n",
                                             "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.tar.gz \n",
                                             "tar -xvf $release.tar.gz \n",
                                             "cd install-datastax-ubuntu-$release/bin \n",
                                             "./os/extra_packages.sh \n",
-                                            "./os/install_java.sh \n",
+                                            "./os/install_java.sh -o \n",
                                             "./opscenter/install.sh $cloud_type \n",
                                             "./opscenter/set_opsc_pw_https.sh '",
                                             {
@@ -273,7 +273,7 @@
                                         [
                                             "#!/usr/bin/env bash -e \n",
                                             "cd ~ubuntu \n",
-                                            "release=\"7.0.3\" \n",
+                                            "release=\"7.1.0\" \n",
                                             "cd install-datastax-ubuntu-$release/bin \n",
                                             "privkey=$(readlink -f ~ubuntu/.ssh/lcm.pem) \n",
                                             "sleep 1m \n",
@@ -306,6 +306,8 @@
                                             " --privkey $privkey",
                                             " --user ubuntu",
                                             " --datapath \"/data/cassandra\"",
+                                            " --nojava",
+                                            " --verbose",
                                             " --opscpw '",
                                             {
                                                 "Ref": "OpsCPassword"
@@ -326,7 +328,7 @@
                                         [
                                             "#!/usr/bin/env bash -e \n",
                                             "echo 'Post install/setup actions...' \n",
-                                            "release=\"7.0.3\" \n",
+                                            "release=\"7.1.0\" \n",
                                             "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete\" \"",
                                             {
                                                 "Ref": "OpsCenterWaitHandle"
