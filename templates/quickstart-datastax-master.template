@@ -148,7 +148,7 @@
         "Instances": {
             "Description": "EC2 instance type for the nodes in each DSE data center, separated by commas. The number of instance types must match the NumberDCs parameter.",
             "Type": "CommaDelimitedList",
-            "Default": "m4.large"
+            "Default": "m4.xlarge"
         },
         "VolumeSizes": {
             "Description": "The EBS volume size, in GiB, for the nodes in each data center, separated by commas. The number of volume sizes in this array must match the NumberDCs parameter.",
@@ -164,6 +164,18 @@
             "Description": "The name of the DSE cluster. This is the name used by DSE OpsCenter.",
             "Type": "String",
             "Default": "DSE Cluster"
+        },
+        "OpsCenterInstanceType": {
+            "Description": "Node EC2 instance type",
+            "Type": "String",
+            "Default": "m4.xlarge",
+            "AllowedValues": [
+                "t2.medium",
+                "m4.large",
+                "m4.xlarge",
+                "m4.2xlarge",
+            ],
+            "ConstraintDescription": "must be a valid EC2 instance type."
         },
         "QSS3BucketName": {
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
@@ -456,7 +468,9 @@
                     "S3Bucket": {
                         "Ref": "S3Bucket"
                     },
-                    "InstanceType": "t2.medium"
+                    "InstanceType": {
+                      "Ref": "OpsCenterInstanceType"
+                    }
                 }
             },
             "DependsOn": "VPCstack"

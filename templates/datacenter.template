@@ -42,7 +42,7 @@
         "InstanceType": {
             "Description": "Node EC2 instance type",
             "Type": "String",
-            "Default": "m4.large",
+            "Default": "m4.xlarge",
             "AllowedValues": [
                 "t2.medium",
                 "m4.large",
@@ -273,7 +273,7 @@
                                             "sleep 15s \n",
                                             "done \n",
                                             "cat .ssh/lcm.pem.pub >> .ssh/authorized_keys \n",
-                                            "release=\"dev\" \n",
+                                            "release=\"7.1.0\" \n",
                                             "export OPSC_VERSION='6.7.0' \n",
                                             "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.tar.gz \n",
                                             "tar -xvf $release.tar.gz \n",
