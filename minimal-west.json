@@ -1,0 +1,44 @@
+[
+  {
+    "ParameterKey": "KeyName",
+    "ParameterValue": "dse-quickstart-keypair"
+  },
+  {
+    "ParameterKey": "AccessLocation",
+    "ParameterValue": "0.0.0.0/0"
+  },
+  {
+    "ParameterKey": "AvailabilityZones",
+    "ParameterValue": "us-west-2a,us-west-2b,us-west-2c"
+  },
+  {
+  "ParameterKey": "QSS3BucketName",
+  "ParameterValue": "scotth-test"
+  },
+  {
+  "ParameterKey": "DSEVersion",
+  "ParameterValue": "6.0.4"
+  },
+  {
+  "ParameterKey": "QSS3KeyPrefix",
+  "ParameterValue": "quickstart-datastax/"
+  },
+  {
+    "ParameterKey": "DSAcademyUser",
+    "ParameterValue": "collin.poczatek+awstesting@gmail.com"
+  },
+  {
+    "ParameterKey": "DSAcademyPW",
+    "ParameterValue": "Cassandra1"
+  },
+  {
+    "ParameterKey": "DBPassword",
+    "ParameterValue": "foobar123!"
+  },
+  {
+    "ParameterKey": "OpsCPassword",
+    "ParameterValue": "asdf456$"
+  }
+
+
+]

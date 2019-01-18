@@ -143,8 +143,8 @@
         "DSEVersion": {
             "Type": "String",
             "Description": "DSE version to install.",
-            "Default": "6.0.0",
-            "AllowedValues": ["5.1.9","6.0.0"]
+            "Default": "6.0.4",
+            "AllowedValues": ["5.1.9","6.0.4","6.7.0"]
         },
         "DSAcademyUser": {
             "Type": "String",
