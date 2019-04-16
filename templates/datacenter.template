@@ -89,25 +89,25 @@
     "Mappings": {
         "AWSAMIRegionMap": {
             "AMI": {
-                "US1604HVM": "ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-20180627"
+                "US1604HVM": "ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-20190406"
             },
             "ap-southeast-2": {
-                "US1604HVM": "ami-47c21a25"
+                "US1604HVM": "ami-074a2888bf09cab0a"
             },
             "eu-central-1": {
-                "US1604HVM": "ami-de8fb135"
+                "US1604HVM": "ami-05710338b6a5013d1"
             },
             "eu-west-1": {
-                "US1604HVM": "ami-2a7d75c0"
+                "US1604HVM": "ami-0e219142c0bee4a6e"
             },
             "us-east-1": {
-                "US1604HVM": "ami-759bc50a"
+                "US1604HVM": "ami-028d6461780695a43"
             },
             "us-east-2": {
-                "US1604HVM": "ami-5e8bb23b"
+                "US1604HVM": "ami-0dae3d101cd772fae"
             },
             "us-west-2": {
-                "US1604HVM": "ami-ba602bc2"
+                "US1604HVM": "ami-09b42c38b449cfa59"
             }
         }
     },
@@ -272,12 +272,13 @@
                                             "sleep 15s \n",
                                             "done \n",
                                             "cat .ssh/lcm.pem.pub >> .ssh/authorized_keys \n",
-                                            "release=\"7.0.3\" \n",
-                                            "export OPSC_VERSION='6.5.0' \n",
+                                            "release=\"7.1.0\" \n",
+                                            "export OPSC_VERSION='6.5.2' \n",
                                             "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.tar.gz \n",
                                             "tar -xvf $release.tar.gz \n",
                                             "cd install-datastax-ubuntu-$release/bin \n",
                                             "./os/extra_packages.sh \n",
+                                            "./os/install_java.sh -o \n",
                                             "privip=$(curl http://169.254.169.254/latest/meta-data/local-ipv4) \n",
                                             "nodeid=$(curl http://169.254.169.254/latest/meta-data/instance-id) \n",
                                             "rack=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone) \n",
