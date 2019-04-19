@@ -12,3 +12,9 @@
 
 #generated stacks to teardown file
 teardown.txt
+
+# run files
+run-west.sh
+run-west2.sh
+minimal-west.json
+minimal-west2.json

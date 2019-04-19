@@ -1,7 +1,7 @@
 [
   {
     "ParameterKey": "KeyName",
-    "ParameterValue": "dse-quickstart-keypair"
+    "ParameterValue": "scotth-keypair-us-west-1"
   },
   {
     "ParameterKey": "AccessLocation",
@@ -9,7 +9,7 @@
   },
   {
     "ParameterKey": "AvailabilityZones",
-    "ParameterValue": "us-west-2a,us-west-2b,us-west-2c"
+    "ParameterValue": "us-west-1a,us-west-1b"
   },
   {
   "ParameterKey": "QSS3BucketName",
@@ -17,7 +17,7 @@
   },
   {
   "ParameterKey": "DSEVersion",
-  "ParameterValue": "6.0.4"
+  "ParameterValue": "6.7.1"
   },
   {
   "ParameterKey": "QSS3KeyPrefix",
