@@ -1,6 +1,6 @@
 [{
   "ParameterKey": "KeyName",
-  "ParameterValue": "tonynv"
+  "ParameterValue": "taskcat-key"
 }, {
   "ParameterKey": "AvailabilityZones",
   "ParameterValue": "$[taskcat_genaz_3]"
