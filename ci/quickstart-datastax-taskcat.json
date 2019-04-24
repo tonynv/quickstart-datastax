@@ -21,7 +21,7 @@
   "ParameterValue": "dc0"
 }, {
   "ParameterKey": "Instances",
-  "ParameterValue": "t2.medium"
+  "ParameterValue": "m4.large"
 }, {
   "ParameterKey": "VolumeSizes",
   "ParameterValue": "256"
