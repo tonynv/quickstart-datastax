@@ -144,7 +144,7 @@
             "Type": "String",
             "Description": "DSE version to install.",
             "Default": "6.7.1",
-            "AllowedValues": ["5.1.11","6.7.0"]
+            "AllowedValues": ["5.1.11","6.7.1"]
         },
         "DSAcademyUser": {
             "Type": "String",
