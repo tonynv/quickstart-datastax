@@ -356,7 +356,7 @@
                             "Ref": "AvailabilityZones"
                         }]
                     },
-                    "NumberOfAZs": 3,
+                    "NumberOfAZs": "3",
                     "CreatePrivateSubnets": "true",
                     "KeyPairName": {
                         "Ref": "KeyName"
@@ -373,36 +373,36 @@
                 },
                 "SecurityGroupIngress": [{
                     "IpProtocol": "tcp",
-                    "FromPort": "22",
-                    "ToPort": "22",
+                    "FromPort": 22,
+                    "ToPort": 22,
                     "CidrIp": {
                         "Ref": "AccessLocation"
                     }
                 }, {
                 "IpProtocol": "tcp",
-                "FromPort": "8443",
-                "ToPort": "8443",
+                "FromPort": 8443,
+                "ToPort": 8443,
                 "CidrIp": {
                     "Ref": "AccessLocation"
                 }
                 }, {
                 "IpProtocol": "tcp",
-                "FromPort": "8888",
-                "ToPort": "8888",
+                "FromPort": 8888,
+                "ToPort": 8888,
                 "CidrIp": {
                     "Fn::GetAtt": ["VPCstack", "Outputs.VPCCIDR"]
                 }
                 }, {
                 "IpProtocol": "tcp",
-                "FromPort": "22",
-                "ToPort": "22",
+                "FromPort": 22,
+                "ToPort": 22,
                 "CidrIp": {
                     "Fn::GetAtt": ["VPCstack", "Outputs.VPCCIDR"]
                 }
                 }, {
                 "IpProtocol": "tcp",
-                "FromPort": "61620",
-                "ToPort": "61620",
+                "FromPort": 61620,
+                "ToPort": 61620,
                 "CidrIp": {
                     "Fn::GetAtt": ["VPCstack", "Outputs.VPCCIDR"]
                 }
