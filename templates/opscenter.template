@@ -20,10 +20,6 @@
             "Type": "String",
             "Default": "DSE Cluster"
         },
-        "NumberDCs": {
-            "Type": "Number",
-            "Description": "Number of datacenters"
-        },
         "DCSizes": {
             "Description": "The number of nodes to create for each DSE data center, separated by commas. The number of sizes in this array must match the NumberDCs parameter.",
             "Type": "String"
@@ -67,7 +63,7 @@
                 "t2.medium",
                 "m4.large",
                 "m4.xlarge",
-                "m4.2xlarge",
+                "m4.2xlarge"
             ],
             "ConstraintDescription": "must be a valid EC2 instance type."
         }

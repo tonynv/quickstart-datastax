@@ -173,7 +173,7 @@
                 "t2.medium",
                 "m4.large",
                 "m4.xlarge",
-                "m4.2xlarge",
+                "m4.2xlarge"
             ],
             "ConstraintDescription": "must be a valid EC2 instance type."
         },
@@ -438,9 +438,6 @@
                     },
                     "ClusterName": {
                         "Ref": "ClusterName"
-                    },
-                    "NumberDCs": {
-                        "Ref": "NumberDCs"
                     },
                     "DCSizes": {
                         "Fn::Join": [",", {

@@ -74,7 +74,7 @@
             "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
         },
         "AvailabilityZones": {
-            "Type": "CommaDelimitedList",
+            "Type": "List<AWS::EC2::AvailabilityZone::Name>",
             "Description": "List of AZs in VPC"
         },
         "VPC": {
