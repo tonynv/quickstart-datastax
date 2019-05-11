@@ -1,6 +1,6 @@
 [{
   "ParameterKey": "KeyName",
-  "ParameterValue": "taskcat-key"
+  "ParameterValue": "raks-aws"
 }, {
   "ParameterKey": "AvailabilityZones",
   "ParameterValue": "$[taskcat_genaz_3]"
