@@ -144,8 +144,9 @@
                     "PauseTime": "PT35M",
                     "WaitOnResourceSignals": true
                 }
-            }
-        },
+            },
+            "DependsOn": "DSESecurityGroup"
+    },
         "CassandraLaunchConfig": {
             "Type": "AWS::AutoScaling::LaunchConfiguration",
             "Metadata": {
