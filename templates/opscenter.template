@@ -241,7 +241,7 @@
                                         "",
                                         [
                                             "#!/usr/bin/env bash -e \n",
-                                            "apt-get -y install awscli \n",
+                                            "pip install awscli \n",
                                             "cd ~ubuntu/.ssh/ \n",
                                             "ssh-keygen -t rsa -N '' -f lcm.pem \n",
                                             "chown ubuntu:ubuntu lcm.pem* \n",
@@ -373,6 +373,12 @@
                                                 "Ref": "OpsCPassword"
                                             },
                                             "' \n",
+                                            "echo 'listing contents from bucket before delete...' \n",
+                                            "aws s3 ls s3://",
+                                            {
+                                                "Ref": "S3Bucket"
+                                            },
+                                            " \n",
                                             "echo 'Removing lcm.pem.pub from bucket...' \n",
                                             "aws s3 rm s3://",
                                             {
@@ -382,7 +388,18 @@
                                             {
                                                 "Ref": "AWS::Region"
                                             },
-                                            " \n"
+                                            " \n",
+                                            "l=1;while [ $l -le 5 ]; do \n",
+                                                "echo 'check if file exists in the bucket after delete...' \n",
+                                                "wordcount=`aws s3 ls s3://",
+                                                {
+                                                    "Ref": "S3Bucket"
+                                                },
+                                                "/lcm.pem.pub|wc -l`",
+                                                " \n",
+                                                "echo fileexists=${wordcount} \n",
+                                                "if test ${wordcount} -eq 0 ; then break; fi \n",
+                                            "l=$(( $l + 1 ));done \n"
                                         ]
                                     ]
                                 }
