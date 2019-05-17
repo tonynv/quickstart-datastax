@@ -260,19 +260,18 @@
             "Properties": {
                 "PolicyName": "s3-access",
                 "PolicyDocument": {
-                    "Statement": [{
-                        "Action": [
-                            "s3:GetObject",
-                            "s3:DeleteObject",
-                            "s3:PutObject"
-                        ],
-                        "Resource": {
-                            "Fn::Join": ["", ["arn:aws:s3:::", {
-                                "Ref": "S3Bucket"
-                            }, "/*"]]
+                    "Statement": [
+                        {
+                        "Effect": "Allow",
+                        "Action": ["s3:GetObject", "s3:DeleteObject", "s3:PutObject"],
+                        "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "S3Bucket"}, "/*"]]}
                         },
-                        "Effect": "Allow"
-                    }]
+                        {
+                            "Effect": "Allow",
+                            "Action": ["s3:ListBucket"],
+                            "Resource": {"Fn::Join": ["", ["arn:aws:s3:::", {"Ref": "S3Bucket"}]]}
+                        }
+                    ]
                 },
                 "Roles": [{
                     "Ref": "S3RoleOpsC"
@@ -797,6 +796,12 @@
             "Value": {
                 "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterURL"]
             }
+        },
+        "OpsCenterPublicIP": {
+            "Value": {
+                "Fn::GetAtt": ["OpsCenterstack", "Outputs.OpsCenterPublicIP"]
+            },
+            "Description": "Public IP for OpsCenter"
         },
         "VPCstackRef": {
             "Value": {
