@@ -255,7 +255,8 @@
                                         "",
                                         [
                                             "#!/usr/bin/env bash -e \n",
-                                            "apt-get -y install awscli unzip\n",
+                                            "apt-get -y install unzip \n",
+                                            "pip install awscli \n",
                                             "cd ~ubuntu \n",
                                             "n=1 \n",
                                             "until [ $n -ge 8 ] \n",
@@ -369,38 +370,20 @@
                                 "#!/bin/bash -xe\n",
                                 "apt-get update\n",
                                 "apt-get -y install python python-setuptools python-pip\n",
-                                "n=1 \n",
-                                "until [ $n -ge 8 ] \n",
-                                "do \n",
-                                "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz && break \n",
-                                "echo \"pip install cfn-bootstrap try $n failed, retry...\" \n",
-                                "n=$[$n+1] \n",
-                                "done \n",
+                                "pip install --retries 10 https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz \n",
                                 "ln -s /usr/local/init/ubuntu/cfn-hup /etc/init.d/cfn-hup \n",
                                 "chmod 775 /usr/local/init/ubuntu/cfn-hup \n",
                                 "update-rc.d cfn-hup defaults \n",
                                 "/usr/local/bin/cfn-init -v ",
-                                "         --stack ",
-                                {
-                                    "Ref": "AWS::StackId"
-                                },
+                                "         --stack ", {"Ref": "AWS::StackId"},
                                 "         --resource CassandraLaunchConfig ",
                                 "         --configsets full_install ",
-                                "         --region ",
-                                {
-                                    "Ref": "AWS::Region"
-                                },
+                                "         --region ", {"Ref": "AWS::Region"},
                                 "\n",
                                 "/usr/local/bin/cfn-signal -e $? ",
-                                "         --stack ",
-                                {
-                                    "Ref": "AWS::StackId"
-                                },
+                                "         --stack ", {"Ref": "AWS::StackId"},
                                 "         --resource CassandraGroup ",
-                                "         --region ",
-                                {
-                                    "Ref": "AWS::Region"
-                                },
+                                "         --region ", {"Ref": "AWS::Region"},
                                 "\n"
                             ]
                         ]
