@@ -146,7 +146,7 @@
                 }
             },
             "DependsOn": "DSESecurityGroup"
-    },
+        },
         "CassandraLaunchConfig": {
             "Type": "AWS::AutoScaling::LaunchConfiguration",
             "Metadata": {
@@ -375,15 +375,27 @@
                                 "chmod 775 /usr/local/init/ubuntu/cfn-hup \n",
                                 "update-rc.d cfn-hup defaults \n",
                                 "/usr/local/bin/cfn-init -v ",
-                                "         --stack ", {"Ref": "AWS::StackId"},
+                                "         --stack ",
+                                {
+                                    "Ref": "AWS::StackId"
+                                },
                                 "         --resource CassandraLaunchConfig ",
                                 "         --configsets full_install ",
-                                "         --region ", {"Ref": "AWS::Region"},
+                                "         --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
                                 "\n",
                                 "/usr/local/bin/cfn-signal -e $? ",
-                                "         --stack ", {"Ref": "AWS::StackId"},
+                                "         --stack ",
+                                {
+                                    "Ref": "AWS::StackId"
+                                },
                                 "         --resource CassandraGroup ",
-                                "         --region ", {"Ref": "AWS::Region"},
+                                "         --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
                                 "\n"
                             ]
                         ]
