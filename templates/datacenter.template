@@ -272,7 +272,7 @@
                                             " && break \n",
                                             "echo \"S3 download try $n failed, sleeping...\" \n",
                                             "n=$[$n+1] \n",
-                                            "sleep 15s \n",
+                                            "sleep 5s \n",
                                             "done \n",
                                             "cat .ssh/lcm.pem.pub >> .ssh/authorized_keys \n",
                                             "release=\"7.3.0\" \n",

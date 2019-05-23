@@ -120,7 +120,7 @@
                 "Handle": {
                     "Ref": "OpsCenterWaitHandle"
                 },
-                "Timeout": "1200"
+                "Timeout": "3600"
             }
         },
         "OpsCenterWaitHandle": {
