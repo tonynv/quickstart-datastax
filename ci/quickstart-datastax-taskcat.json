@@ -14,9 +14,6 @@
   "ParameterKey": "OpsCPassword",
   "ParameterValue": "$[taskcat_genpass_8S]"
 }, {
-  "ParameterKey": "NumberDCs",
-  "ParameterValue": "1"
-}, {
   "ParameterKey": "DataCenters",
   "ParameterValue": "dc0"
 }, {
@@ -25,9 +22,6 @@
 }, {
   "ParameterKey": "VolumeSizes",
   "ParameterValue": "256"
-},{
-  "ParameterKey": "DCSizes",
-  "ParameterValue": "3"
 },{
   "ParameterKey": "DSAcademyUser",
   "ParameterValue": "collin.poczatek+awstesting@gmail.com"

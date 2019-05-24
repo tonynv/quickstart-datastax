@@ -133,7 +133,7 @@
             },
             "CreationPolicy": {
                 "ResourceSignal": {
-                    "Timeout": "PT35M",
+                    "Timeout": "PT90M",
                     "Count": "1"
                 }
             },
@@ -141,7 +141,7 @@
                 "AutoScalingRollingUpdate": {
                     "MinInstancesInService": 1,
                     "MaxBatchSize": 1,
-                    "PauseTime": "PT35M",
+                    "PauseTime": "PT90M",
                     "WaitOnResourceSignals": true
                 }
             },

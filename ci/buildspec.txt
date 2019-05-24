@@ -1,0 +1,86 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Entered the install phase...
+      - apt-get update -y
+      - sudo apt-get install zip gzip tar -y
+      - pip3 install --upgrade pip
+      - ln -s /usr/local/bin/pip /usr/bin/pip
+  pre_build:
+    commands:
+      - echo Entered the pre_build phase...
+      - echo Current directory is $CODEBUILD_SRC_DIR
+      - ls -la
+      - export dirname=${PWD##*/}
+      - echo Directory name $dirname
+      - cd ..
+      - mv $dirname $PROJECTNAME
+      - ls -la
+      - cd $PROJECTNAME
+      - git config --global url."https://github.com/".insteadOf "git@github.com:"
+      - git init
+      - git remote add origin https://$GITHUBTOKEN@github.com/$GITHUBUSER/$PROJECTNAME.git
+      - git fetch
+      - git checkout -ft origin/$SOURCEBRANCH
+      - git submodule init
+      - git submodule update --recursive
+      - ls -lR
+      - cd ..
+      - echo Installing Taskcat using pip3...
+      - pip install taskcat==0.8.33
+      - echo Verifying Taskcat installation...
+      - taskcat
+      - echo Configuring aws cli...
+      - aws configure set default.region us-west-2
+  build:
+    commands:
+      - echo Entered the build phase...
+      - taskcat -n -c $PROJECTNAME/ci/taskcat.yml
+      - ls -1 taskcat_outputs
+      - ls -1 taskcat_outputs | while read LOG; do cat taskcat_outputs/${LOG}; done
+      - echo Zipping and uploading report to $ARTIFACT_BUCKET S3 bucket
+      - zip -r taskcat_report.zip taskcat_outputs
+      - aws s3 cp taskcat_report.zip s3://$ARTIFACT_BUCKET/taskcat_reports/$CODEBUILD_BUILD_ID.zip
+      - echo Deleting the stack
+      - |
+        AWS_REGION=$(aws ec2 describe-regions --output text | awk '{print $3}' | xargs)
+        for each in ${AWS_REGION}
+        do 
+        	echo $each
+        	aws cloudformation list-stacks --no-paginate --stack-status-filter CREATE_COMPLETE CREATE_IN_PROGRESS --region $each --query 'StackSummaries[].[StackName,StackStatus,ParentId]' --output text | grep "^tCaT-tag-datastax-" | awk '$3=="None"' | while read -r line
+        	do
+        		stackname=`echo $line|awk {'print $1'}`
+        		stackstatus=`echo $line|awk {'print $2'}`
+        		if [ "stackstatus" = "CREATE_IN_PROGRESS" ]; then
+        			echo 'In Progress - waiting for stack :' $stackname
+        			aws cloudformation wait stack-create-complete --stack-name $stackname
+        		fi
+                while :
+                do 
+                	bucketname=`aws s3 ls --output text | grep -i $stackname | awk '{print $3}'`
+                	echo $bucketname
+                	echo 'check if file exists in the bucket after delete...'
+                	wordcount=`aws s3 ls s3://$bucketname/lcm.pem.pub|wc -l`
+                	echo fileexists in $bucketname=${wordcount} 
+                	if test ${wordcount} -eq 0 
+                	then 
+                		break
+                	else
+                		sleep 10
+                	fi
+                done
+        		echo 'deleting stack :' $stackname
+        		aws cloudformation delete-stack --region $each --stack-name $stackname
+        	done
+        done
+        
+        if $(grep -Fq "CREATE_FAILED" taskcat_outputs/index.html)
+        then
+          echo Quickstart FAILED!
+          exit 1
+        else
+          echo Quickstart Passed!
+          exit 0
+        fi

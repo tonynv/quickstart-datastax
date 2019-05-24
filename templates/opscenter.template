@@ -20,9 +20,13 @@
             "Type": "String",
             "Default": "DSE Cluster"
         },
-        "DCSizes": {
-            "Description": "The number of nodes to create for each DSE data center, separated by commas. The number of sizes in this array must match the NumberDCs parameter.",
-            "Type": "String"
+        "DC0Size": {
+            "Description": "The number of nodes to create in the 1st DSE data center.",
+            "Type": "Number"
+        },
+        "DC1Size": {
+            "Description": "The number of nodes to create in the 2nd DSE data center.",
+            "Type": "Number"
         },
         "Profile": {
             "Description": "InstanceProfile for OpsC instance",
@@ -56,7 +60,7 @@
             "Type": "String"
         },
         "InstanceType": {
-            "Description": "Node EC2 instance type",
+            "Description": "OpsCenter EC2 instance type",
             "Type": "String",
             "Default": "m4.xlarge",
             "AllowedValues": [
@@ -65,7 +69,7 @@
                 "m4.xlarge",
                 "m4.2xlarge"
             ],
-            "ConstraintDescription": "must be a valid EC2 instance type."
+            "ConstraintDescription": "Must be a valid EC2 instance type."
         }
     },
     "Mappings": {
@@ -120,7 +124,7 @@
                 "Handle": {
                     "Ref": "OpsCenterWaitHandle"
                 },
-                "Timeout": "3600"
+                "Timeout": "5400"
             }
         },
         "OpsCenterWaitHandle": {
@@ -336,14 +340,12 @@
                                             {
                                                 "Fn::Join": [
                                                     "+",
+                                                    [{
+                                                        "Ref": "DC0Size"
+                                                    },
                                                     {
-                                                        "Fn::Split": [
-                                                            ",",
-                                                            {
-                                                                "Ref": "DCSizes"
-                                                            }
-                                                        ]
-                                                    }
+                                                        "Ref": "DC1Size"
+                                                    }]
                                                 ]
                                             },
                                             " )) \n",
