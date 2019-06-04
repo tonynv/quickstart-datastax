@@ -1,41 +1,74 @@
-[{
-  "ParameterKey": "KeyName",
-  "ParameterValue": "raks-aws"
-}, {
-  "ParameterKey": "AvailabilityZones",
-  "ParameterValue": "$[taskcat_genaz_3]"
-}, {
-  "ParameterKey": "ClusterName",
-  "ParameterValue": "mycluster"
-}, {
-  "ParameterKey": "DBPassword",
-  "ParameterValue": "$[taskcat_genpass_8S]"
-}, {
-  "ParameterKey": "OpsCPassword",
-  "ParameterValue": "$[taskcat_genpass_8S]"
-}, {
-  "ParameterKey": "DataCenters",
-  "ParameterValue": "dc0"
-}, {
-  "ParameterKey": "Instances",
-  "ParameterValue": "m4.large"
-}, {
-  "ParameterKey": "VolumeSizes",
-  "ParameterValue": "256"
-},{
-  "ParameterKey": "DSAcademyUser",
-  "ParameterValue": "collin.poczatek+awstesting@gmail.com"
-}, {
-  "ParameterKey": "DSAcademyPW",
-  "ParameterValue": "Cassandra1"
-},{
-  "ParameterKey": "AccessLocation",
-  "ParameterValue": "10.0.0.0/16"
-},{
-  "ParameterKey": "QSS3BucketName",
-  "ParameterValue": "$[taskcat_autobucket]"
-},{
-  "ParameterKey": "QSS3KeyPrefix",
-  "ParameterValue": "quickstart-datastax/"
-}]
-
+[
+  {
+    "ParameterKey": "KeyName",
+    "ParameterValue": "raks-aws"
+  },
+  {
+    "ParameterKey": "AvailabilityZones",
+    "ParameterValue": "$[taskcat_genaz_3]"
+  },
+  {
+    "ParameterKey": "ClusterName",
+    "ParameterValue": "mycluster"
+  },
+  {
+    "ParameterKey": "DBPassword",
+    "ParameterValue": "$[taskcat_genpass_8S]"
+  },
+  {
+    "ParameterKey": "OpsCPassword",
+    "ParameterValue": "$[taskcat_genpass_8S]"
+  },
+  {
+    "ParameterKey": "DSAcademyUser",
+    "ParameterValue": "collin.poczatek+awstesting@gmail.com"
+  },
+  {
+    "ParameterKey": "DSAcademyPW",
+    "ParameterValue": "Cassandra1"
+  },
+  {
+    "ParameterKey": "AccessLocation",
+    "ParameterValue": "10.0.0.0/16"
+  },
+  {
+    "ParameterKey": "QSS3BucketName",
+    "ParameterValue": "$[taskcat_autobucket]"
+  },
+  {
+    "ParameterKey": "QSS3KeyPrefix",
+    "ParameterValue": "quickstart-datastax/"
+  },
+  {
+    "ParameterKey": "DC0Size",
+    "ParameterValue": "3"
+  },
+  {
+    "ParameterKey": "DC0Name",
+    "ParameterValue": "DataCenter1"
+  },
+  {
+    "ParameterKey": "DC0Instance",
+    "ParameterValue": "m4.xlarge"
+  },
+  {
+    "ParameterKey": "DC0VolumeSize",
+    "ParameterValue": "1024"
+  },
+  {
+    "ParameterKey": "DC1Size",
+    "ParameterValue": "0"
+  },
+  {
+    "ParameterKey": "DC1Name",
+    "ParameterValue": "DataCenter2"
+  },
+  {
+    "ParameterKey": "DC1Instance",
+    "ParameterValue": "m4.xlarge"
+  },
+  {
+    "ParameterKey": "DC1VolumeSize",
+    "ParameterValue": "1024"
+  }
+]
