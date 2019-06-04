@@ -31,6 +31,8 @@
   - [Send Us Feedback](#send-us-feedback)
   - [Document Revisions](#document-revisions)
 
+
+
 This Quick Start deployment guide was created by Amazon Web Services (AWS) in partnership with DataStax, Inc.
 
 # Overview
@@ -39,7 +41,7 @@ This Quick Start reference deployment guide provides step-by-step instructions f
 
 DataStax Enterprise (DSE) is the always-on data platform for cloud applications powered by the industry&#39;s best version of Apache Cassandra. DSE is designed to handle big data workloads across multiple nodes with no single point of failure. DSE addresses the problem of failures by employing a peer-to-peer distributed system across homogeneous nodes where data is distributed among all nodes in the cluster. DSE offers advanced functionality designed to accelerate your ability to create intelligent and compelling cloud applications. Integrated within each node of DSE is powerful indexing, search, analytics, and graph functionality, provided by combining Cassandra with Apache Solr, Apache Spark, and DSE Graph. You can write data once, and access it using a variety of workloads or access patterns, all from a single cohesive solution.
 
-[Quick Starts](http://aws.amazon.com/quickstart/) are automated reference deployments that use AWS CloudFormation templates to launch, configure, and run the AWS compute, network, storage, and other services required to deploy a specific workload on AWS.
+[Quick Starts](https://aws.amazon.com/quickstart/?quickstart-all.q=dse) are automated reference deployments that use AWS CloudFormation templates to launch, configure, and run the AWS compute, network, storage, and other services required to deploy a specific workload on AWS.
 
 This Quick Start is for users who need an easily deployed DSE cluster for development or testing purposes
 
@@ -49,8 +51,9 @@ You are responsible for the cost of the AWS services used while running this Qui
 
 The AWS CloudFormation template for this Quick Start includes configuration parameters that you can customize. Some of these settings, such as instance type, will affect the cost of deployment. For cost estimates, see the pricing pages for each AWS service you will be using.
 
-This Quick Start includes a limited no-fee license from DataStax. As described in section 1.4 of [DataStax Enterprise Terms](http://www.datastax.com/enterprise-termshttp:/www.datastax.com/enterprise-terms), the limited license is for development or non-production use.  To use the Quick Start to build a production environment, you&#39;ll need to acquire a DataStax subscription license.
+This Quick Start includes a limited no-fee license from DataStax. As described in section 1.4 of [DataStax Enterprise Terms](http://www.datastax.com/enterprise-terms), the limited license is for development or non-production use.  To use the Quick Start to build a production environment, you&#39;ll need to acquire a DataStax subscription license.
 &nbsp;
+
 # Architecture
 
 Deploying this Quick Start for a new virtual private cloud (VPC) with **default parameters** builds the following DataStax Enterprise environment in the AWS Cloud.
@@ -66,14 +69,14 @@ The Quick Start sets up the following components. (The template that deploys the
 - An Internet gateway to allow access to the Internet.\*
 - Managed NAT gateways to allow outbound Internet access for resources in the private subnets.\*
 - One EC2 instance running DSE OpsCenter, which is the DSE cluster management web console.
-- Additional EC2 instances for DSE data centers and nodes, depending on your Quick Start parameter settings. (A DSE data center is a logical grouping of nodes for workload separation, as explained in the next section.) For example, if you set the **Number of Data Centers** parameter to 3 and **Data Center Sizes** parameter to 5 nodes, the Quick Start will create 15 EC2 instances. By default, the Quick Start creates a single data center with three nodes.
+- Additional EC2 instances for DSE data centers and nodes, depending on your Quick Start parameter settings. (A DSE data center is a logical grouping of nodes for workload separation, as explained in the next section.) For example, if you set the **1st Data Center Size** parameter to 9 and **2nd Data Center Size** parameter to 6 nodes, the Quick Start will create 15 EC2 instances. By default, the Quick Start creates a single data center with three nodes.
 - One Amazon Elastic Block Store (Amazon EBS) data volume per node instance deployed.
 
 ## DSE Data Centers and Nodes
 
 DSE data centers are logical groupings of individual nodes and can be either physical or virtual. This Quick Start supports multiple DSE data centers for workload separation. Using separate data centers prevents Cassandra transactions from being affected by other workloads.
 
-DSE stores data replicas on multiple nodes to ensure reliability and fault tolerance. A replication strategy determines the nodes where replicas are placed. The replication strategy is defined per keyspace, and is set during keyspace creation. This Quick Start places nodes into DSE _racks_, where each rack is an AWS Availability Zone. This architecture allows for the use of a replication strategy called [NetworkTopologyStrategy](http://docs.datastax.com/en/cassandra/2.1/cassandra/architecture/architectureDataDistributeReplication_c.html), which will place a copy of each row of data in each rack or Availability Zone.
+DSE stores data replicas on multiple nodes to ensure reliability and fault tolerance. A replication strategy determines the nodes where replicas are placed. The replication strategy is defined per keyspace, and is set during keyspace creation. This Quick Start places nodes into DSE _racks_, where each rack is an AWS Availability Zone. This architecture allows for the use of a replication strategy called [NetworkTopologyStrategy](https://docs.datastax.com/en/dse/6.0/dse-arch/datastax_enterprise/dbArch/archDataDistributeReplication.html#archDataDistributeReplication__nts), which will place a copy of each row of data in each rack or Availability Zone.
 &nbsp;
 
 # Prerequisites
@@ -101,7 +104,7 @@ You&#39;ll also need an account on [academy.datastax.com](http://academy.datasta
 
 This Quick Start provides two deployment options:
 
-- **Deploy DSE into a new VPC** (end-to-end deployment). This option builds a new AWS environment consisting of the VPC, subnets, NAT gateways, security groups, and other infrastructure components, and then deploys DSEinto this new VPC.
+- **Deploy DSE into a new VPC** (end-to-end deployment). This option builds a new AWS environment consisting of the VPC, subnets, NAT gateways, security groups, and other infrastructure components, and then deploys DSE into this new VPC.
 - **Deploy DSE into an existing VPC**. This option provisions DSE in your existing AWS infrastructure.
 
 The Quick Start provides separate templates for these options. It also lets you configure CIDR blocks, instance types, and DSE settings, as discussed later in this guide.
@@ -130,7 +133,7 @@ The Quick Start provides separate templates for these options. It also lets you 
 | :-----------------------------------------: | :-----------------------------------------------: |
 |       [Launch](https://fwd.aws/mR5pP)       |          [Launch](https://fwd.aws/eq4AJ)          |
 
-> **Important**     If you&#39;re deploying DSE into an existing VPC, make sure that your VPC has two (and preferably three) private subnets in different Availability Zones for the node instances. These subnets require [NAT gateways or NAT instances](http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/vpc-nat.html) in their route tables, to allow the instances to download packages and software without exposing them to the Internet. You&#39;ll also need the domain name option configured in the DHCP options, as explained in the [Amazon VPC documentation](http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_DHCP_Options.html). You&#39;ll be prompted for your VPC settings when you launch the Quick Start.
+> **Important**     If you&#39;re deploying DSE into an existing VPC, make sure that your VPC has two (and preferably three) private subnets in different Availability Zones for the node instances. These subnets require [NAT gateways](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) or [NAT instances](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_NAT_Instance.html) in their route tables, to allow the instances to download packages and software without exposing them to the Internet. You&#39;ll also need the domain name option configured in the DHCP options, as explained in the [Amazon VPC documentation](http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_DHCP_Options.html). You&#39;ll be prompted for your VPC settings when you launch the Quick Start.
 
 Each deployment takes about 20-30 minutes to complete, depending on the size of the DSE cluster to deploy.
 
@@ -148,36 +151,57 @@ In the following tables, parameters are listed by category and described separat
 
 [View template](https://fwd.aws/DyGDb)
 
-_VPC Network Configuration:_
+_**VPC Network Configuration:**_
 
 | Parameter label (name) | Default | Description |
 | --- | --- | --- |
 | Availability Zones (AvailabilityZones) | _Requires input_ | The list of Availability Zones to use for the subnets in the VPC. The Quick Start uses three Availability Zones from your list and preserves the logical order you specify. |
 | Permitted IP range (AccessLocation) | _Requires input_ | The CIDR IP range that is permitted to access the DSE OpsCenter web console or SSH to the EC2 instance for the console. We recommend that you set this value to a trusted IP range. For example, you might want to grant only your corporate network access to the software. |
 
-_DataStax Setup:_
+_**DataStax Setup:**_
 
 | Parameter label (name) | Default | Description |
 | --- | --- | --- |
+| Cluster Name (ClusterName) | DSE Cluster | The name of the DSE cluster. This is the name used by DSE OpsCenter. |
 | Key Name (KeyPairName) | _Requires input_ | Public/private key pair, which allows you to connect securely to your instance after it launches. When you created an AWS account, this is the key pair you created in your preferred region. |
 | DataStax Academy Username (DSAcademyUser) | _Requires input_ | User name for your academy.datastax.com account, from step 2. |
 | DataStax Academy Password (DSAcademyPW) | _Requires input_ | Password for your academy.datastax.com account, from step 2. |
-| DSE Version(DSEVersion) | 6.0.0 | DSE version to install. |
+| DSE Version(DSEVersion) | 6.7.1 | DSE version to install. |
 | Database Password (DBPassword) | _Requires input_ | The password for the default Cassandra user. |
-| OpsCenter Password (OpsCPassword) | _Requires input_ | Password for default DSE OpsCenter administrator. |
-| Number of Data Centers (NumberDCs) | 1 | The number of DSE data centers to create. Using multiple data centers enables you to separate your workloads by type. (For example, you could use a different data center for analytics workloads.) You can specify 1-4 data centers. The number of values you specify for the next four parameters must be consistent with this setting. |
-| Data Center Names (DataCenters) | DC0 | The list of data center names to create, separated by commas. The number of names must match the **Number of Data Centers** parameter. For example, if you choose to create two data centers, you could set this parameter to DC0,DC1. |
-| Instance Types (Instances) | m4.large | EC2 instance type for the nodes in each DSE data center, separated by commas. The number of instance types must match the **Number of Data Centers** parameter. For example, if you choose to create two data centers, you could set this parameter to m4.large,m4.xlarge. |
-| Data Center Sizes (DCSizes) | 3 | The number of nodes to create for each DSE data center, separated by commas. The number of sizes in this array must match the **Number of Data Centers** parameter. For example, if you choose to create two data centers with 2 nodes for the first data center and 4 nodes for the second data center, you would set this parameter to 2,4. |
-| Volume Sizes (VolumeSizes) | 1024 | The EBS volume size, in GiB, for the nodes in each data center, separated by commas. The number of volume sizes in this array must match the **Number of Data Centers** parameter. For example, if you choose to create two data centers with 1024 GiB for the nodes in the first data center and 2048 GiB for the nodes in the second data center, you would set this parameter to 1024,2048. |
-| Cluster Name (ClusterName) | DSE Cluster | The name of the DSE cluster. This is the name used by DSE OpsCenter. |
 
-_AWS Quick Start Configuration:_
+_**OpsCenter Setup:**_
+
+| Parameter label (name)                          | Default          | Description                                                  |
+| ----------------------------------------------- | ---------------- | ------------------------------------------------------------ |
+| OpsCenter Instance Type (OpsCenterInstanceType) | m4.2xlarge       | EC2 instance type for the OpsCenter node in the DSE data center. |
+| OpsCenter Password (OpsCPassword)               | *Requires input* | Password for default DSE OpsCenter administrator.            |
+
+_**1st Datacenter & Node Setup:**_
+
+| Parameter label (name)       |  Default  | Description                                                  |
+| ---------------------------- | :-------: | ------------------------------------------------------------ |
+| Data Center Size(DC0Size)    |     3     | The number of nodes to create in the 1st DSE datacenter.     |
+| Data Center Name (DC0Name)   |    DC0    | Name of the 1st Data Center.                                 |
+| Instance Types(DC0Instance)  | m4.xlarge | EC2 instance type for the nodes in the 1st DSE datacenter.   |
+| Volume Sizes (DC0VolumeSize) |   1024    | The EBS volume size, in GiB, for the nodes in 1st DSE datacenter. |
+
+_**2nd Data Center & Node Setup:**_
+
+| Parameter label (name)       | Default | Description                                                  |
+| ---------------------------- | :-----: | ------------------------------------------------------------ |
+| Data Center Size(DC1Size)    |    0    | The number of nodes to create in the 2nd DSE datacenter. Select 0 if you need only 1 Data Center. If you want to split your workloads with different set of nodes, you can choose to deploy a 2nd Data Center. The 2nd Data Center can have different configuration i.e instance type, volume size etc. for the nodes. |
+| Data Center Name (DC1Name)   |         | Name of the 2nd Data Center.                                 |
+| Instance Types(DC1Instance)  |         | EC2 instance type for the nodes in the 2nd DSE datacenter.   |
+| Volume Sizes (DC1VolumeSize) |         | The EBS volume size, in GiB, for the nodes in 2nd DSE datacenter. |
+
+_**AWS Quick Start Configuration:**_
 
 | Parameter label (name) | Default | Description |
 | --- | --- | --- |
 | Quick Start S3 Bucket Name (QSS3BucketName) | quickstart-reference | S3 bucket where the Quick Start templates and scripts are installed. Use this parameter to specify the S3 bucket name you&#39;ve created for your copy of Quick Start assets, if you decide to customize or extend the Quick Start for your own use. The bucket name can include numbers, lowercase letters, uppercase letters, and hyphens, but should not start or end with a hyphen. |
 | Quick Start S3 Key Prefix (QSS3KeyPrefix) | datastax/latest/ | The [S3 key name prefix](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html) used to simulate a folder for your copy of Quick Start assets, if you decide to customize or extend the Quick Start for your own use. This prefix can include numbers, lowercase letters, uppercase letters, hyphens, and forward slashes. |
+
+
 
 - **Option 2: Parameters for deploying DSE into an existing VPC**
 
@@ -223,7 +247,7 @@ _AWS Quick Start Configuration:_
 3. Choose **Create** to deploy the stack.
 4. Monitor the status of the stack.
 
-This deployment uses nested stacks. In addition to the root stack, you&#39;ll see a VPC stack (if you choose to deploy the Quick Start into a new VPC), an DSE OpsCenter stack, and one or more data center stacks. When the status of the root stack is **CREATE\_COMPLETE** , the installation of DSE OpsCenter is complete, all node instances have been created, and DSE has been installed and configured on all nodes by OpsCenter&#39;s [Lifecycle Manager](https://docs.datastax.com/en/latest-opsc/opsc/LCM/opscLCM.html).
+This deployment uses nested stacks. In addition to the root stack, you&#39;ll see a VPC stack (if you choose to deploy the Quick Start into a new VPC), a DSE OpsCenter stack and one or more data center stacks. When the status of the root stack is **CREATE\_COMPLETE** , the installation of DSE OpsCenter is complete, all node instances have been created, and DSE has been installed and configured on all nodes by OpsCenter&#39;s [Lifecycle Manager](https://docs.datastax.com/en/latest-opsc/opsc/LCM/opscLCM.html).
 
 1. Use the _OpsCenterURL_ displayed in the **Outputs** tab for the stack to view the DSE OpsCenter console. OpsCenter uses a self-signed SSL certificate, so you will need to accept the certificate exception. After this you can log in with the user name _admin_ and the password you specified in the **OpsCPassword** parameter when you launched the Quick Start.
 
@@ -289,8 +313,9 @@ The Solr console is then accessible at _http://127.0.0.1:8983/solr/_.  When you&
 
 ## Step 5. Back up Your Data
 
-OpsCenter supports backing up data on the instances themselves or to Amazon Simple Storage Service (Amazon S3). To add an Amazon S3 backup location, see the [OpsCenter User Guide](https://docs.datastax.com/en/latest-opsc/opsc/online_help/services/opscBackupServiceAddS3Location.html).
+OpsCenter supports backing up data on the instances themselves, see [Adding a local file system backup location](https://docs.datastax.com/en/opscenter/6.7/opsc/online_help/services/opscBackupServiceAddLocalFSLocation.html) or to Amazon Simple Storage Service  Amazon S3 backup location, see [Adding an Amazon S3 backup location](https://docs.datastax.com/en/opscenter/6.7/opsc/online_help/services/opscBackupServiceAddS3Location.html)
 &nbsp;
+
 # Troubleshooting
 
 **Q.** I encountered a CREATE\_FAILED error when I launched the Quick Start. What should I do?
@@ -330,6 +355,8 @@ Another possible cause of failure is an incorrect value for the **DSAcademyUser*
 [http://docs.datastax.com/](http://docs.datastax.com/)
 - DataStax Academy online courses and tutorials
 [https://academy.datastax.com/](https://academy.datastax.com/)
+- DSE OpsCenter User Guide
+<https://docs.datastax.com/en/landing_page/doc/landing_page/docList.html#docList__opscenter>
 
 **Quick Start reference deployments**
 
