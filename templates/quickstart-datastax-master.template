@@ -16,6 +16,7 @@
                 "default": "Datastax Setup"
             },
             "Parameters": [
+                "ClusterName",
                 "KeyName",
                 "DSAcademyUser",
                 "DSAcademyPW",
@@ -32,19 +33,27 @@
             ]
             }, {
             "Label": {
-                "default": "Datacenter & Node Setup"
+                "default": "1st Datacenter & Node Setup"
             },
             "Parameters": [
-                "ClusterName",
-                "DataCenters",
-                "Instances",
                 "DC0Size",
-                "DC1Size",
-                "VolumeSizes"
+                "DC0Name",
+                "DC0Instance",
+                "DC0VolumeSize"
             ]
             }, {
             "Label": {
-                "default": "AWS Quick Start Configuration"
+                "default": "2nd Datacenter & Node Setup"
+            },
+            "Parameters": [
+                "DC1Size",
+                "DC1Name",
+                "DC1Instance",
+                "DC1VolumeSize"
+            ]
+            }, {    
+            "Label": {
+            "default": "AWS Quick Start Configuration"
             },
             "Parameters": [
                 "QSS3BucketName",
@@ -70,29 +79,38 @@
                 "DBPassword": {
                     "default": "Database Password"
                 },
-                "DataCenters": {
-                    "default": "Data Center Names"
-                },
                 "DSAcademyPW": {
                     "default": "DataStax Academy Password"
                 },
                 "OpsCPassword": {
                     "default": "OpsCenter Password"
                 },
-                "Instances": {
-                    "default": "Instances Types"
-                },
                 "DC0Size": {
-                    "default": "Data Center 1 Size"
+                    "default": "1st Data Center Size"
+                },
+                "DC0Name": {
+                    "default": "1st Data Center Name"
+                },
+                "DC0Instance": {
+                    "default": "1st Data Center Instances Type"
+                },
+                "DC0VolumeSize": {
+                    "default": "1st Data Center Volume Size"
                 },
                 "DC1Size": {
-                    "default": "Data Center 2 Size"
+                    "default": "2nd Data Center Size"
+                },
+                "DC1Name": {
+                    "default": "2nd Data Center Name"
+                },
+                "DC1Instance": {
+                    "default": "2nd Data Center Instances Type"
+                },
+                "DC1VolumeSize": {
+                    "default": "2nd Data Center Volume Size"
                 },
                 "ClusterName": {
                     "default": "Cluster Name"
-                },
-                "VolumeSizes": {
-                    "default": "Volume Sizes"
                 },
                 "QSS3BucketName": {
                     "default": "Quick Start S3 Bucket Name"
@@ -146,11 +164,6 @@
             "Description": "Password for default DSE OpsCenter administrator.",
             "NoEcho": true
         },
-        "DataCenters": {
-            "Description": "Name of the datacenter(s). You can have 1 or 2 datacenters. The default is 1 datacenter. If you need 2 DataCenters, seperate the names with comma eg. DC0,DC1",
-            "Type": "CommaDelimitedList",
-            "Default": "DC0"
-        },
         "DC0Size": {
             "Description": "The number of nodes to create in the 1st DSE datacenter.",
             "Type": "Number",
@@ -158,22 +171,70 @@
             "AllowedValues": [3, 4, 5, 6, 7, 8, 9],
             "ConstraintDescription": "Value must be an integer from 3-9"
         },
+        "DC0Name": {
+            "Description": "Name of the 1st Data Center.",
+            "Type": "String",
+            "Default": "DC0"
+        },
+        "DC0Instance": {
+            "Description": "EC2 instance type for the nodes in each DSE datacenter.",
+            "Type": "String",
+            "AllowedValues": [
+                "t2.medium",
+                "m4.large",
+                "m4.xlarge",
+                "m4.2xlarge",
+                "m4.4xlarge",
+                "m4.10xlarge",
+                "c4.large",
+                "c4.xlarge",
+                "c4.2xlarge",
+                "c4.4xlarge",
+                "i3.xlarge",
+                "i3.2xlarge",
+                "i3.4xlarge"
+            ],
+            "Default": "m4.xlarge"
+        },
+        "DC0VolumeSize": {
+            "Description": "The EBS volume size, in GiB, for the nodes in each datacenter.",
+            "Type": "Number",
+            "Default": "1024"
+        },
+
         "DC1Size": {
-            "Description": "The number of nodes to create in the 2nd DSE datacenter. Select 0 if you need only 1 datacenter",
+            "Description": "The number of nodes to create in the 2nd DSE datacenter. Select 0 if you need only 1 Data Center. If you want to split your workloads with different set of nodes, you can choose to deploy a 2nd Data Center. The 2nd Data Center can have different configuration i.e instance type, volume size etc. for the nodes.",
             "Type": "Number",
             "Default": 0,
             "AllowedValues": [0, 3, 4, 5, 6, 7, 8, 9],
             "ConstraintDescription": "Value must be an integer from 3-9 or 0 if you dont need a second datacenter."
         },
-        "Instances": {
-            "Description": "EC2 instance type for the nodes in each DSE datacenter. If you need 2 DataCenters, seperate the EC2 instance type with comma eg. m4.xlarge,t2.medium",
-            "Type": "CommaDelimitedList",
-            "Default": "m4.xlarge"
+        "DC1Name": {
+            "Description": "Name of the 2nd Data Center.",
+            "Type": "String"
         },
-        "VolumeSizes": {
-            "Description": "The EBS volume size, in GiB, for the nodes in each datacenter. If you need 2 DataCenters, seperate the EBS volume size with comma eg. 2048,1024",
-            "Type": "List<Number>",
-            "Default": "1024"
+        "DC1Instance": {
+            "Description": "EC2 instance type for the nodes in each DSE datacenter.",
+            "Type": "String",
+            "AllowedValues": [
+                "t2.medium",
+                "m4.large",
+                "m4.xlarge",
+                "m4.2xlarge",
+                "m4.4xlarge",
+                "m4.10xlarge",
+                "c4.large",
+                "c4.xlarge",
+                "c4.2xlarge",
+                "c4.4xlarge",
+                "i3.xlarge",
+                "i3.2xlarge",
+                "i3.4xlarge"
+            ]
+        },
+        "DC1VolumeSize": {
+            "Description": "The EBS volume size, in GiB, for the nodes in 2nd datacenter.",
+            "Type": "Number"
         },
         "ClusterName": {
             "Description": "The name of the DSE cluster. This is the name used by DSE OpsCenter.",
@@ -498,22 +559,16 @@
                         "Ref": "ClusterName"
                     },
                     "DataCenterName": {
-                        "Fn::Select": ["0", {
-                            "Ref": "DataCenters"
-                        }]
+                            "Ref": "DC0Name"
                     },
                     "DataCenterSize": {
                         "Ref": "DC0Size"
                     },
                     "InstanceType": {
-                        "Fn::Select": ["0", {
-                            "Ref": "Instances"
-                        }]
+                            "Ref": "DC0Instance"
                     },
                     "VolumeSize": {
-                        "Fn::Select": ["0", {
-                            "Ref": "VolumeSizes"
-                        }]
+                            "Ref": "DC0VolumeSize"
                     },
                     "VPC": {
                         "Fn::GetAtt": ["VPCstack", "Outputs.VPCID"]
@@ -576,22 +631,16 @@
                         "Ref": "ClusterName"
                     },
                     "DataCenterName": {
-                        "Fn::Select": ["1", {
-                            "Ref": "DataCenters"
-                        }]
+                        "Ref": "DC1Name"
                     },
                     "DataCenterSize": {
                         "Ref": "DC1Size"
                     },
                     "InstanceType": {
-                        "Fn::Select": ["1", {
-                            "Ref": "Instances"
-                        }]
+                        "Ref": "DC1Instance"
                     },
                     "VolumeSize": {
-                        "Fn::Select": ["1", {
-                            "Ref": "VolumeSizes"
-                        }]
+                        "Ref": "DC1VolumeSize"
                     },
                     "VPC": {
                         "Fn::GetAtt": ["VPCstack", "Outputs.VPCID"]
