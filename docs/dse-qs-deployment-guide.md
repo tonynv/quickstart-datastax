@@ -55,7 +55,7 @@ This Quick Start includes a limited no-fee license from DataStax. As described i
 
 Deploying this Quick Start for a new virtual private cloud (VPC) with **default parameters** builds the following DataStax Enterprise environment in the AWS Cloud.
 
-![Figure 1](.\assets\arch.png)
+![Figure 1](./assets/arch.png)
 
 <p align=center><b>Figure 1: Quick Start architecture for DSE on AWS</b></p>
 
@@ -231,13 +231,13 @@ This deployment uses nested stacks. In addition to the root stack, you&#39;ll se
 
 If you selected 1 datacenter and don&#39;t see the complete cluster, as illustrated in Figure 2, see the _Troubleshooting_ section.
 
-![Figure 2](.\assets\figure2.png)
+![Figure 2](./assets/figure2.png)
 
 <p align=center><b>Figure 2: Viewing the cluster in DSE OpsCenter</b></p>
 
 If you selected 2 datacenters and don&#39;t see the complete cluster, as illustrated in Figure 3, see the _Troubleshooting_ section.
 
-![Figure 3](.\assets\figure3.png)
+![Figure 3](./assets/figure3.png)
 
 <p align=center><b>Figure 3: Viewing the cluster in DSE OpsCenter</b></p>
 
