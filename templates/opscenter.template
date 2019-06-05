@@ -64,7 +64,6 @@
             "Type": "String",
             "Default": "m4.xlarge",
             "AllowedValues": [
-                "t2.medium",
                 "m4.large",
                 "m4.xlarge",
                 "m4.2xlarge"

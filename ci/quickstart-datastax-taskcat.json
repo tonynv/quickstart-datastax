@@ -1,7 +1,7 @@
 [
   {
     "ParameterKey": "KeyName",
-    "ParameterValue": "raks-aws"
+    "ParameterValue": "taskcat-key"
   },
   {
     "ParameterKey": "AvailabilityZones",
@@ -42,33 +42,5 @@
   {
     "ParameterKey": "DC0Size",
     "ParameterValue": "3"
-  },
-  {
-    "ParameterKey": "DC0Name",
-    "ParameterValue": "DataCenter1"
-  },
-  {
-    "ParameterKey": "DC0Instance",
-    "ParameterValue": "m4.xlarge"
-  },
-  {
-    "ParameterKey": "DC0VolumeSize",
-    "ParameterValue": "1024"
-  },
-  {
-    "ParameterKey": "DC1Size",
-    "ParameterValue": "0"
-  },
-  {
-    "ParameterKey": "DC1Name",
-    "ParameterValue": "DataCenter2"
-  },
-  {
-    "ParameterKey": "DC1Instance",
-    "ParameterValue": "m4.xlarge"
-  },
-  {
-    "ParameterKey": "DC1VolumeSize",
-    "ParameterValue": "1024"
   }
 ]
