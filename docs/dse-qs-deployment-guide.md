@@ -264,7 +264,7 @@ If you selected 2 datacenters and don&#39;t see the complete cluster, as illustr
 ![Figure 3](./assets/figure3.png)
 
 <p align=center><b>Figure 3: Viewing the cluster in DSE OpsCenter</b></p>
-
+  
 ## Step 4. Test the Deployment
 
 After you deploy the DSE cluster, the quickest way to begin using the cluster is to use SSH to connect to the OpsCenter instance and then to one of the node instances. You can use either [SSH agent forwarding](https://aws.amazon.com/blogs/security/securely-connect-to-linux-instances-running-in-a-private-amazon-vpc/) or the key pair generated for DSE Lifecycle Manager (replacing the key and IP values for those of your cluster):
@@ -315,7 +315,7 @@ The Solr console is then accessible at _http://127.0.0.1:8983/solr/_.  When you&
 
 OpsCenter supports backing up data on the instances themselves, see [Adding a local file system backup location](https://docs.datastax.com/en/opscenter/6.7/opsc/online_help/services/opscBackupServiceAddLocalFSLocation.html) or to Amazon Simple Storage Service  Amazon S3 backup location, see [Adding an Amazon S3 backup location](https://docs.datastax.com/en/opscenter/6.7/opsc/online_help/services/opscBackupServiceAddS3Location.html)
 &nbsp;
-
+  
 # Troubleshooting
 
 **Q.** I encountered a CREATE\_FAILED error when I launched the Quick Start. What should I do?
@@ -338,6 +338,7 @@ Another possible cause of failure is an incorrect value for the **DSAcademyUser*
 
 **A.** We recommend that you launch the Quick Start templates from the location we&#39;ve provided or from another S3 bucket. If you deploy the templates from a local copy on your computer, you might encounter template size limitations when you create the stack. For more information about AWS CloudFormation limits, see the [AWS documentation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html).
 &nbsp;
+  
 # Additional Resources
 
 **AWS services**
@@ -363,10 +364,12 @@ Another possible cause of failure is an incorrect value for the **DSAcademyUser*
 - AWS Quick Start home page
 [https://aws.amazon.com/quickstart/](https://aws.amazon.com/quickstart/)
 &nbsp;
+
 ## Send Us Feedback
 
 You can visit our [GitHub repository](https://github.com/aws-quickstart/quickstart-datastax) to download the templates and scripts for this Quick Start, to post your comments, and to share your customizations with others.
 &nbsp;
+
 ## Document Revisions
 
 | Date | Change | In sections |
@@ -374,12 +377,13 @@ You can visit our [GitHub repository](https://github.com/aws-quickstart/quicksta
 | June 2017 | Initial publication | — |
 | May 2018 | Additional version parameter (DSEVersion) | Step 3. Launch the Quick Start |
 | Jun 2019 | Updated parameters. Added images of OpsCenter with 2 datacenters | Step 3. Launch the Quick Start |
-
+  
 &nbsp;
 &nbsp;
 &nbsp;
 &nbsp;
 © 2018, Amazon Web Services, Inc. or its affiliates, and DataStax, Inc. All rights reserved.
+  
 &nbsp;
 &nbsp;
 **<u>Notices</u>**

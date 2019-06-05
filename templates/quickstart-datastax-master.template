@@ -43,7 +43,7 @@
             ]
             }, {
             "Label": {
-                "default": "2nd Datacenter & Node Setup"
+                "default": "(Optional) 2nd Datacenter & Node Setup"
             },
             "Parameters": [
                 "DC1Size",
@@ -199,7 +199,8 @@
         "DC0VolumeSize": {
             "Description": "The EBS volume size, in GiB, for the nodes in each datacenter.",
             "Type": "Number",
-            "Default": "1024"
+            "AllowedValues": [1024, 2048],
+            "Default": 1024
         },
 
         "DC1Size": {
@@ -211,10 +212,11 @@
         },
         "DC1Name": {
             "Description": "Name of the 2nd Data Center.",
-            "Type": "String"
+            "Type": "String",
+            "Default": "DC1"
         },
         "DC1Instance": {
-            "Description": "EC2 instance type for the nodes in each DSE datacenter.",
+            "Description": "EC2 instance type for the nodes in the 2nd Data Center.",
             "Type": "String",
             "AllowedValues": [
                 "t2.medium",
@@ -230,11 +232,14 @@
                 "i3.xlarge",
                 "i3.2xlarge",
                 "i3.4xlarge"
-            ]
+            ],
+            "Default": "m4.xlarge"
         },
         "DC1VolumeSize": {
             "Description": "The EBS volume size, in GiB, for the nodes in 2nd datacenter.",
-            "Type": "Number"
+            "Type": "Number",
+            "AllowedValues": [1024, 2048],
+            "Default": 1024
         },
         "ClusterName": {
             "Description": "The name of the DSE cluster. This is the name used by DSE OpsCenter.",
@@ -246,6 +251,7 @@
             "Type": "String",
             "Default": "m4.2xlarge",
             "AllowedValues": [
+                "m4.large",
                 "m4.xlarge",
                 "m4.2xlarge"
             ],
