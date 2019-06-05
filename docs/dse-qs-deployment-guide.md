@@ -154,14 +154,14 @@ In the following tables, parameters are listed by category and described separat
 _**VPC Network Configuration:**_
 
 | Parameter label (name) | Default | Description |
-| --- | --- | --- |
+| --- | :---: | --- |
 | Availability Zones (AvailabilityZones) | _Requires input_ | The list of Availability Zones to use for the subnets in the VPC. The Quick Start uses three Availability Zones from your list and preserves the logical order you specify. |
 | Permitted IP range (AccessLocation) | _Requires input_ | The CIDR IP range that is permitted to access the DSE OpsCenter web console or SSH to the EC2 instance for the console. We recommend that you set this value to a trusted IP range. For example, you might want to grant only your corporate network access to the software. |
 
 _**DataStax Setup:**_
 
 | Parameter label (name) | Default | Description |
-| --- | --- | --- |
+| --- | :---: | --- |
 | Cluster Name (ClusterName) | DSE Cluster | The name of the DSE cluster. This is the name used by DSE OpsCenter. |
 | Key Name (KeyPairName) | _Requires input_ | Public/private key pair, which allows you to connect securely to your instance after it launches. When you created an AWS account, this is the key pair you created in your preferred region. |
 | DataStax Academy Username (DSAcademyUser) | _Requires input_ | User name for your academy.datastax.com account, from step 2. |
@@ -172,7 +172,7 @@ _**DataStax Setup:**_
 _**OpsCenter Setup:**_
 
 | Parameter label (name)                          | Default          | Description                                                  |
-| ----------------------------------------------- | ---------------- | ------------------------------------------------------------ |
+| ----------------------------------------------- | :----------------: | ------------------------------------------------------------ |
 | OpsCenter Instance Type (OpsCenterInstanceType) | m4.2xlarge       | EC2 instance type for the OpsCenter node in the DSE data center. |
 | OpsCenter Password (OpsCPassword)               | *Requires input* | Password for default DSE OpsCenter administrator.            |
 
@@ -197,7 +197,7 @@ _**2nd Data Center & Node Setup:**_
 _**AWS Quick Start Configuration:**_
 
 | Parameter label (name) | Default | Description |
-| --- | --- | --- |
+| --- | :---: | --- |
 | Quick Start S3 Bucket Name (QSS3BucketName) | quickstart-reference | S3 bucket where the Quick Start templates and scripts are installed. Use this parameter to specify the S3 bucket name you&#39;ve created for your copy of Quick Start assets, if you decide to customize or extend the Quick Start for your own use. The bucket name can include numbers, lowercase letters, uppercase letters, and hyphens, but should not start or end with a hyphen. |
 | Quick Start S3 Key Prefix (QSS3KeyPrefix) | datastax/latest/ | The [S3 key name prefix](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html) used to simulate a folder for your copy of Quick Start assets, if you decide to customize or extend the Quick Start for your own use. This prefix can include numbers, lowercase letters, uppercase letters, hyphens, and forward slashes. |
 
@@ -210,7 +210,7 @@ _**AWS Quick Start Configuration:**_
 _VPC Network Configuration:_
 
 | Parameter label (name) | Default | Description |
-| --- | --- | --- |
+| --- | :---: | --- |
 | Availability Zones (AvailabilityZones) | _Requires input_ | The list of Availability Zones to use for the subnets in the VPC. The Quick Start uses three Availability Zones from your list and preserves the logical order you specify. |
 | Permitted IP range (AccessLocation) | _Requires input_ | The CIDR IP range that is permitted to access the DSE OpsCenter web console or SSH to the EC2 instance for the console. We recommend that you set this value to a trusted IP range. For example, you might want to grant only your corporate network access to the software. |
 | Private Subnet CIDR (PrivateSubnetCIDR) | _Requires input_ | CIDR block for the private subnets in your existing VPC. |
@@ -221,7 +221,7 @@ _VPC Network Configuration:_
 _DataStax Setup:_
 
 | Parameter label (name) | Default | Description |
-| --- | --- | --- |
+| --- | :---: | --- |
 | Key Name (KeyPairName) | _Requires input_ | Public/private key pair, which allows you to connect securely to your instance after it launches. When you created an AWS account, this is the key pair you created in your preferred region. |
 | DataStax Academy Username (DSAcademyUser) | _Requires input_ | User name for your academy.datastax.com account, from step 2. |
 | DataStax Academy Password (DSAcademyPW) | _Requires input_ | Password for your academy.datastax.com account, from step 2. |
@@ -238,7 +238,7 @@ _DataStax Setup:_
 _AWS Quick Start Configuration:_
 
 | Parameter label (name) | Default | Description |
-| ---------------------- | ------- | ----------- |
+| ---------------------- | :-------: | ----------- |
 | Quick Start S3 Bucket Name (QSS3BucketName) | quickstart-reference | S3 bucket where the Quick Start templates and scripts are installed. Use this parameter to specify the S3 bucket name you&#39;ve created for your copy of Quick Start assets, if you decide to customize or extend the Quick Start for your own use. The bucket name can include numbers, lowercase letters, uppercase letters, and hyphens, but should not start or end with a hyphen. |
 | Quick Start S3 Key Prefix (QSS3KeyPrefix) | datastax/latest/ | The [S3 key name prefix](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html) used to simulate a folder for your copy of Quick Start assets, if you decide to customize or extend the Quick Start for your own use. This prefix can include numbers, lowercase letters, uppercase letters, hyphens, and forward slashes. |
 
@@ -374,6 +374,7 @@ You can visit our [GitHub repository](https://github.com/aws-quickstart/quicksta
 | June 2017 | Initial publication | — |
 | May 2018 | Additional version parameter (DSEVersion) | Step 3. Launch the Quick Start |
 | Jun 2019 | Updated parameters. Added images of OpsCenter with 2 datacenters | Step 3. Launch the Quick Start |
+
 &nbsp;
 &nbsp;
 &nbsp;
