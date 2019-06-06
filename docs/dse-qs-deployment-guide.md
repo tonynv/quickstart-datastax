@@ -76,7 +76,7 @@ The Quick Start sets up the following components. (The template that deploys the
 
 DSE data centers are logical groupings of individual nodes and can be either physical or virtual. This Quick Start supports multiple DSE data centers for workload separation. Using separate data centers prevents Cassandra transactions from being affected by other workloads.
 
-DSE stores data replicas on multiple nodes to ensure reliability and fault tolerance. A replication strategy determines the nodes where replicas are placed. The replication strategy is defined per keyspace, and is set during keyspace creation. This Quick Start places nodes into DSE _racks_, where each rack is an AWS Availability Zone. This architecture allows for the use of a replication strategy called [NetworkTopologyStrategy](https://docs.datastax.com/en/dse/6.0/dse-arch/datastax_enterprise/dbArch/archDataDistributeReplication.html#archDataDistributeReplication__nts), which will place a copy of each row of data in each rack or Availability Zone.
+DSE stores data replicas on multiple nodes to ensure reliability and fault tolerance. A replication strategy determines the nodes where replicas are placed. The replication strategy is defined per keyspace, and is set during keyspace creation. This Quick Start places nodes into DSE _racks_, where each rack is an AWS Availability Zone. This architecture allows for the use of a replication strategy called [NetworkTopologyStrategy](https://docs.datastax.com/en/dse/6.7/dse-arch/datastax_enterprise/dbArch/archDataDistributeReplication.html#archDataDistributeReplication__nts), which will place a copy of each row of data in each rack or Availability Zone.
 &nbsp;
 
 # Prerequisites
@@ -141,13 +141,9 @@ Each deployment takes about 20-30 minutes to complete, depending on the size of 
 2. On the **Select Template** page, keep the default setting for the template URL, and then choose **Next**.
 3. On the **Specify Details** page, change the stack name if needed. Review the parameters for the template. Provide values for the parameters that require input. For all other parameters, review the default settings and customize them as necessary. When you finish reviewing and customizing the parameters, choose **Next**.
 
-In the following tables, parameters are listed by category and described separately for the two deployment options:
+In the following tables, parameters are listed by category and described separately for the two deployment options. Parameters for deploying DSE into a new VPC and Parameters for deploying DSE into an existing VPC
 
-- Parameters for deploying DSE into a new VPC
-
-- Parameters for deploying DSE into an existing VPC
-
-**Option 1: Parameters for deploying DSE into a new VPC**
+- **Option 1: Parameters for deploying DSE into a new VPC**
 
 [View template](https://fwd.aws/DyGDb)
 
@@ -176,23 +172,23 @@ _**OpsCenter Setup:**_
 | OpsCenter Instance Type (OpsCenterInstanceType) | m4.2xlarge       | EC2 instance type for the OpsCenter node in the DSE data center. |
 | OpsCenter Password (OpsCPassword)               | *Requires input* | Password for default DSE OpsCenter administrator.            |
 
-_**1st Datacenter & Node Setup:**_
+_**1st Data Center & Node Setup:**_
 
 | Parameter label (name)       |  Default  | Description                                                  |
 | ---------------------------- | :-------: | ------------------------------------------------------------ |
-| Data Center Size(DC0Size)    |     3     | The number of nodes to create in the 1st DSE datacenter.     |
-| Data Center Name (DC0Name)   |    DC0    | Name of the 1st Data Center.                                 |
-| Instance Types(DC0Instance)  | m4.xlarge | EC2 instance type for the nodes in the 1st DSE datacenter.   |
-| Volume Sizes (DC0VolumeSize) |   1024    | The EBS volume size, in GiB, for the nodes in 1st DSE datacenter. |
+| Data Center Size(DC0Size)    |     3     | The number of nodes to create in the 1st DSE data center.    |
+| Data Center Name (DC0Name)   |    DC0    | Name of the 1st DSE data center.                             |
+| Instance Types(DC0Instance)  | m4.xlarge | EC2 instance type for the nodes in the 1st DSE data center.  |
+| Volume Sizes (DC0VolumeSize) |   1024    | The EBS volume size, in GiB, for the nodes in 1st DSE data center. |
 
 _**2nd Data Center & Node Setup:**_
 
 | Parameter label (name)       | Default | Description                                                  |
 | ---------------------------- | :-----: | ------------------------------------------------------------ |
-| Data Center Size(DC1Size)    |    0    | The number of nodes to create in the 2nd DSE datacenter. Select 0 if you need only 1 Data Center. If you want to split your workloads with different set of nodes, you can choose to deploy a 2nd Data Center. The 2nd Data Center can have different configuration i.e instance type, volume size etc. for the nodes. |
-| Data Center Name (DC1Name)   |         | Name of the 2nd Data Center.                                 |
-| Instance Types(DC1Instance)  |         | EC2 instance type for the nodes in the 2nd DSE datacenter.   |
-| Volume Sizes (DC1VolumeSize) |         | The EBS volume size, in GiB, for the nodes in 2nd DSE datacenter. |
+| Data Center Size(DC1Size)    |    0    | The number of nodes to create in the 2nd DSE data center. Select 0 if you need only 1 data center. If you want to split your workloads with different set of nodes, you can choose to deploy a 2nd data center. The 2nd data center can have different configuration i.e instance type, volume size etc. for the nodes. |
+| Data Center Name (DC1Name)   |         | Name of the 2nd DSE data center.                             |
+| Instance Types(DC1Instance)  |         | EC2 instance type for the nodes in the 2nd DSE data center.  |
+| Volume Sizes (DC1VolumeSize) |         | The EBS volume size, in GiB, for the nodes in 2nd DSE data center. |
 
 _**AWS Quick Start Configuration:**_
 
@@ -201,13 +197,13 @@ _**AWS Quick Start Configuration:**_
 | Quick Start S3 Bucket Name (QSS3BucketName) | quickstart-reference | S3 bucket where the Quick Start templates and scripts are installed. Use this parameter to specify the S3 bucket name you&#39;ve created for your copy of Quick Start assets, if you decide to customize or extend the Quick Start for your own use. The bucket name can include numbers, lowercase letters, uppercase letters, and hyphens, but should not start or end with a hyphen. |
 | Quick Start S3 Key Prefix (QSS3KeyPrefix) | datastax/latest/ | The [S3 key name prefix](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html) used to simulate a folder for your copy of Quick Start assets, if you decide to customize or extend the Quick Start for your own use. This prefix can include numbers, lowercase letters, uppercase letters, hyphens, and forward slashes. |
 
-
+<br/>  
 
 - **Option 2: Parameters for deploying DSE into an existing VPC**
 
 [View template](https://fwd.aws/Dz54E)
 
-_VPC Network Configuration:_
+_**VPC Network Configuration:**_
 
 | Parameter label (name) | Default | Description |
 | --- | :---: | --- |
@@ -218,7 +214,7 @@ _VPC Network Configuration:_
 | Public Subnet ID (PublicSubnetId) | _Requires input_ | ID of a public subnet in your existing VPC (e.g., subnet-b58c3d67). This is where the DSE OpsCenter instance will be deployed. |
 | VPC ID (VPCID) | _Requires input_ | ID of your existing VPC (e.g., vpc-0343606e). |
 
-_DataStax Setup:_
+_**DataStax Setup:**_
 
 | Parameter label (name) | Default | Description |
 | --- | :---: | --- |
@@ -235,7 +231,7 @@ _DataStax Setup:_
 | Volume Sizes (VolumeSizes) | 1024 | The EBS volume size, in GiB, for the nodes in each data center, separated by commas. The number of volume sizes in this array must match the **Number of Data Centers** parameter. For example, if you choose to create two data centers with 1024 GiB for the nodes in the first data center and 2048 GiB for the nodes in the second data center, you would set this parameter to 1024,2048. |
 | Cluster Name (ClusterName) | DSE Cluster | The name of the DSE cluster. This is the name used by DSE OpsCenter. |
 
-_AWS Quick Start Configuration:_
+_**AWS Quick Start Configuration:**_
 
 | Parameter label (name) | Default | Description |
 | ---------------------- | :-------: | ----------- |
@@ -253,18 +249,18 @@ This deployment uses nested stacks. In addition to the root stack, you&#39;ll se
 
 > **Important**    For production environments, we recommend that you replace the self-signed certificate with one that is issued from a trusted certificate authority (CA) .
 
-If you selected 1 datacenter and don&#39;t see the complete cluster, as illustrated in Figure 2, see the _Troubleshooting_ section.
+If you selected 1 data center and don&#39;t see the complete cluster, as illustrated in Figure 2, see the _Troubleshooting_ section.
 
 ![Figure 2](./assets/figure2.png)
 
 <p align=center><b>Figure 2: Viewing the cluster in DSE OpsCenter</b></p>
 
-If you selected 2 datacenters and don&#39;t see the complete cluster, as illustrated in Figure 3, see the _Troubleshooting_ section.
+If you selected 2 data centers and don&#39;t see the complete cluster, as illustrated in Figure 3, see the _Troubleshooting_ section.
 
 ![Figure 3](./assets/figure3.png)
 
 <p align=center><b>Figure 3: Viewing the cluster in DSE OpsCenter</b></p>
-  
+
 ## Step 4. Test the Deployment
 
 After you deploy the DSE cluster, the quickest way to begin using the cluster is to use SSH to connect to the OpsCenter instance and then to one of the node instances. You can use either [SSH agent forwarding](https://aws.amazon.com/blogs/security/securely-connect-to-linux-instances-running-in-a-private-amazon-vpc/) or the key pair generated for DSE Lifecycle Manager (replacing the key and IP values for those of your cluster):
@@ -315,7 +311,7 @@ The Solr console is then accessible at _http://127.0.0.1:8983/solr/_.  When you&
 
 OpsCenter supports backing up data on the instances themselves, see [Adding a local file system backup location](https://docs.datastax.com/en/opscenter/6.7/opsc/online_help/services/opscBackupServiceAddLocalFSLocation.html) or to Amazon Simple Storage Service  Amazon S3 backup location, see [Adding an Amazon S3 backup location](https://docs.datastax.com/en/opscenter/6.7/opsc/online_help/services/opscBackupServiceAddS3Location.html)
 &nbsp;
-  
+
 # Troubleshooting
 
 **Q.** I encountered a CREATE\_FAILED error when I launched the Quick Start. What should I do?
@@ -338,7 +334,7 @@ Another possible cause of failure is an incorrect value for the **DSAcademyUser*
 
 **A.** We recommend that you launch the Quick Start templates from the location we&#39;ve provided or from another S3 bucket. If you deploy the templates from a local copy on your computer, you might encounter template size limitations when you create the stack. For more information about AWS CloudFormation limits, see the [AWS documentation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html).
 &nbsp;
-  
+
 # Additional Resources
 
 **AWS services**
@@ -375,19 +371,19 @@ You can visit our [GitHub repository](https://github.com/aws-quickstart/quicksta
 | Date | Change | In sections |
 | --- | --- | --- |
 | June 2017 | Initial publication | — |
-| May 2018 | Additional version parameter (DSEVersion) | Step 3. Launch the Quick Start |
-| Jun 2019 | Updated parameters. Added images of OpsCenter with 2 datacenters | Step 3. Launch the Quick Start |
-  
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-© 2018, Amazon Web Services, Inc. or its affiliates, and DataStax, Inc. All rights reserved.
-  
-&nbsp;
-&nbsp;
-**<u>Notices</u>**
+| May 2018 | Additional version parameter (DSEVersion) | [Step 3. Launch the Quick Start](#step-3-launch-the-quick-start) |
+| Jun 2019 | Updated parameters. Added images of OpsCenter with 2 data centers | [Step 3. Launch the Quick Start](#step-3-launch-the-quick-start) |
 
-This document is provided for informational purposes only. It represents AWS’s current product offerings and practices as of the date of issue of this document, which are subject to change without notice. Customers are responsible for making their own independent assessment of the information in this document and any use of AWS’s products or services, each of which is provided “as is” without warranty of any kind, whether express or implied. This document does not create any warranties, representations, contractual commitments, conditions or assurances from AWS, its affiliates, suppliers or licensors. The responsibilities and liabilities of AWS to its customers are controlled by AWS agreements, and this document is not part of, nor does it modify, any agreement between AWS and its customers.
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+© 2018, Amazon Web Services, Inc. or its affiliates, and DataStax, Inc. All rights reserved.  
 
-The software included with this paper is licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at http://aws.amazon.com/apache2.0/ or in the "license" file accompanying this file. This code is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+<u>**Notices**</u>
+
+This document is provided for informational purposes only. It represents AWS’s current product offerings and practices as of the date of issue of this document, which are subject to change without notice. Customers are responsible for making their own independent assessment of the information in this document and any use of AWS’s products or services, each of which is provided “as is” without warranty of any kind, whether express or implied. This document does not create any warranties, representations, contractual commitments, conditions or assurances from AWS, its affiliates, suppliers or licensors. The responsibilities and liabilities of AWS to its customers are controlled by AWS agreements, and this document is not part of, nor does it modify, any agreement between AWS and its customers.  
+
+The software included with this paper is licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at [http://aws.amazon.com/apache2.0/](http://aws.amazon.com/apache2.0/) or in the "license" file accompanying this file. This code is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
