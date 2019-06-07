@@ -221,7 +221,7 @@ _**DataStax Setup:**_
 | Key Name (KeyPairName) | _Requires input_ | Public/private key pair, which allows you to connect securely to your instance after it launches. When you created an AWS account, this is the key pair you created in your preferred region. |
 | DataStax Academy Username (DSAcademyUser) | _Requires input_ | User name for your academy.datastax.com account, from step 2. |
 | DataStax Academy Password (DSAcademyPW) | _Requires input_ | Password for your academy.datastax.com account, from step 2. |
-| DSE Version(DSEVersion) | 6.0.0 | DSE version to install. |
+| DSE Version(DSEVersion) | 6.7.1 | DSE version to install. |
 | Database Password (DBPassword) | _Requires input_ | The password for the default Cassandra user. |
 | OpsCenter Password (OpsCPassword) | _Requires input_ | Password for default DSE OpsCenter administrator. |
 | Number of Data Centers (NumberDCs) | 1 | The number of DSE data centers to create. Using multiple data centers enables you to separate your workloads by type. (For example, you could use a different data center for analytics workloads.) You can specify 1-4 data centers. The number of values you specify for the next four parameters must be consistent with this setting. |
