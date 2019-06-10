@@ -20,13 +20,13 @@
             "Type": "String",
             "Default": "DSE Cluster"
         },
-        "NumberDCs": {
-            "Type": "Number",
-            "Description": "Number of datacenters"
+        "DC0Size": {
+            "Description": "The number of nodes to create in the 1st DSE data center.",
+            "Type": "Number"
         },
-        "DCSizes": {
-            "Description": "The number of nodes to create for each DSE data center, separated by commas. The number of sizes in this array must match the NumberDCs parameter.",
-            "Type": "String"
+        "DC1Size": {
+            "Description": "The number of nodes to create in the 2nd DSE data center.",
+            "Type": "Number"
         },
         "Profile": {
             "Description": "InstanceProfile for OpsC instance",
@@ -60,15 +60,15 @@
             "Type": "String"
         },
         "InstanceType": {
-            "Description": "Node EC2 instance type",
+            "Description": "OpsCenter EC2 instance type",
             "Type": "String",
-            "Default": "t2.medium",
+            "Default": "m4.xlarge",
             "AllowedValues": [
-                "t2.medium",
                 "m4.large",
-                "m4.xlarge"
+                "m4.xlarge",
+                "m4.2xlarge"
             ],
-            "ConstraintDescription": "must be a valid EC2 instance type."
+            "ConstraintDescription": "Must be a valid EC2 instance type."
         }
     },
     "Mappings": {
@@ -123,7 +123,7 @@
                 "Handle": {
                     "Ref": "OpsCenterWaitHandle"
                 },
-                "Timeout": "1200"
+                "Timeout": "5400"
             }
         },
         "OpsCenterWaitHandle": {
@@ -217,8 +217,8 @@
                                             "#!/usr/bin/env bash -e \n",
                                             "cloud_type=\"aws\" \n",
                                             "cd ~ubuntu \n",
-                                            "release=\"7.1.0\" \n",
-                                            "export OPSC_VERSION='6.5.2' \n",
+                                            "release=\"7.3.0\" \n",
+                                            "export OPSC_VERSION='6.7.1' \n",
                                             "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.tar.gz \n",
                                             "tar -xvf $release.tar.gz \n",
                                             "cd install-datastax-ubuntu-$release/bin \n",
@@ -244,7 +244,7 @@
                                         "",
                                         [
                                             "#!/usr/bin/env bash -e \n",
-                                            "apt-get -y install awscli \n",
+                                            "pip install awscli \n",
                                             "cd ~ubuntu/.ssh/ \n",
                                             "ssh-keygen -t rsa -N '' -f lcm.pem \n",
                                             "chown ubuntu:ubuntu lcm.pem* \n",
@@ -273,7 +273,7 @@
                                         [
                                             "#!/usr/bin/env bash -e \n",
                                             "cd ~ubuntu \n",
-                                            "release=\"7.1.0\" \n",
+                                            "release=\"7.3.0\" \n",
                                             "cd install-datastax-ubuntu-$release/bin \n",
                                             "privkey=$(readlink -f ~ubuntu/.ssh/lcm.pem) \n",
                                             "sleep 1m \n",
@@ -306,7 +306,6 @@
                                             " --privkey $privkey",
                                             " --user ubuntu",
                                             " --datapath \"/data/cassandra\"",
-                                            " --nojava",
                                             " --verbose",
                                             " --opscpw '",
                                             {
@@ -328,7 +327,7 @@
                                         [
                                             "#!/usr/bin/env bash -e \n",
                                             "echo 'Post install/setup actions...' \n",
-                                            "release=\"7.1.0\" \n",
+                                            "release=\"7.3.0\" \n",
                                             "/usr/local/bin/cfn-signal -e 0 -r \"OpsCenter Setup Complete\" \"",
                                             {
                                                 "Ref": "OpsCenterWaitHandle"
@@ -340,14 +339,12 @@
                                             {
                                                 "Fn::Join": [
                                                     "+",
+                                                    [{
+                                                        "Ref": "DC0Size"
+                                                    },
                                                     {
-                                                        "Fn::Split": [
-                                                            ",",
-                                                            {
-                                                                "Ref": "DCSizes"
-                                                            }
-                                                        ]
-                                                    }
+                                                        "Ref": "DC1Size"
+                                                    }]
                                                 ]
                                             },
                                             " )) \n",

@@ -143,8 +143,8 @@
         "DSEVersion": {
             "Type": "String",
             "Description": "DSE version to install.",
-            "Default": "6.0.0",
-            "AllowedValues": ["5.1.9","6.0.0"]
+            "Default": "6.7.1",
+            "AllowedValues": ["5.1.11","6.7.1"]
         },
         "DSAcademyUser": {
             "Type": "String",
@@ -363,36 +363,36 @@
                 },
                 "SecurityGroupIngress": [{
                     "IpProtocol": "tcp",
-                    "FromPort": "22",
-                    "ToPort": "22",
+                    "FromPort": 22,
+                    "ToPort": 22,
                     "CidrIp": {
                         "Ref": "AccessLocation"
                     }
                 }, {
                 "IpProtocol": "tcp",
-                "FromPort": "8443",
-                "ToPort": "8443",
+                "FromPort": 8443,
+                "ToPort": 8443,
                 "CidrIp": {
                     "Ref": "AccessLocation"
                 }
                 }, {
                 "IpProtocol": "tcp",
-                "FromPort": "8888",
-                "ToPort": "8888",
+                "FromPort": 8888,
+                "ToPort": 8888,
                 "CidrIp": {
                     "Ref": "PrivateSubnetCIDR"
                 }
                 }, {
                 "IpProtocol": "tcp",
-                "FromPort": "22",
-                "ToPort": "22",
+                "FromPort": 22,
+                "ToPort": 22,
                 "CidrIp": {
                     "Ref": "PrivateSubnetCIDR"
                 }
                 }, {
                 "IpProtocol": "tcp",
-                "FromPort": "61620",
-                "ToPort": "61620",
+                "FromPort": 61620,
+                "ToPort": 61620,
                 "CidrIp": {
                     "Ref": "PrivateSubnetCIDR"
                 }

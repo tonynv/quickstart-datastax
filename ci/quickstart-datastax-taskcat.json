@@ -1,47 +1,46 @@
-[{
-  "ParameterKey": "KeyName",
-  "ParameterValue": "tonynv"
-}, {
-  "ParameterKey": "AvailabilityZones",
-  "ParameterValue": "$[taskcat_genaz_3]"
-}, {
-  "ParameterKey": "ClusterName",
-  "ParameterValue": "mycluster"
-}, {
-  "ParameterKey": "DBPassword",
-  "ParameterValue": "$[taskcat_genpass_8S]"
-}, {
-  "ParameterKey": "OpsCPassword",
-  "ParameterValue": "$[taskcat_genpass_8S]"
-}, {
-  "ParameterKey": "NumberDCs",
-  "ParameterValue": "4"
-}, {
-  "ParameterKey": "DataCenters",
-  "ParameterValue": "dc0,dc1,dc2,dc3"
-}, {
-  "ParameterKey": "Instances",
-  "ParameterValue": "t2.medium,t2.medium,t2.medium,t2.medium"
-}, {
-  "ParameterKey": "VolumeSizes",
-  "ParameterValue": "256,256,256,256"
-},{
-  "ParameterKey": "DCSizes",
-  "ParameterValue": "5,4,3,2"
-},{
-  "ParameterKey": "DSAcademyUser",
-  "ParameterValue": "DSAcademyUsername"
-}, {
-  "ParameterKey": "DSAcademyPW",
-  "ParameterValue": "$[taskcat_genpass_8S]"
-},{
-  "ParameterKey": "AccessLocation",
-  "ParameterValue": "10.0.0.0/16"
-},{
-  "ParameterKey": "QSS3BucketName",
-  "ParameterValue": "$[taskcat_autobucket]"
-},{
-  "ParameterKey": "QSS3KeyPrefix",
-  "ParameterValue": "quickstart-datastax/"
-}]
-
+[
+  {
+    "ParameterKey": "KeyName",
+    "ParameterValue": "taskcat-key"
+  },
+  {
+    "ParameterKey": "AvailabilityZones",
+    "ParameterValue": "$[taskcat_genaz_3]"
+  },
+  {
+    "ParameterKey": "ClusterName",
+    "ParameterValue": "mycluster"
+  },
+  {
+    "ParameterKey": "DBPassword",
+    "ParameterValue": "$[taskcat_genpass_8S]"
+  },
+  {
+    "ParameterKey": "OpsCPassword",
+    "ParameterValue": "$[taskcat_genpass_8S]"
+  },
+  {
+    "ParameterKey": "DSAcademyUser",
+    "ParameterValue": "collin.poczatek+awstesting@gmail.com"
+  },
+  {
+    "ParameterKey": "DSAcademyPW",
+    "ParameterValue": "Cassandra1"
+  },
+  {
+    "ParameterKey": "AccessLocation",
+    "ParameterValue": "10.0.0.0/16"
+  },
+  {
+    "ParameterKey": "QSS3BucketName",
+    "ParameterValue": "$[taskcat_autobucket]"
+  },
+  {
+    "ParameterKey": "QSS3KeyPrefix",
+    "ParameterValue": "quickstart-datastax/"
+  },
+  {
+    "ParameterKey": "DC0Size",
+    "ParameterValue": "3"
+  }
+]

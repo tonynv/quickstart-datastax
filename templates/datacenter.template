@@ -42,7 +42,7 @@
         "InstanceType": {
             "Description": "Node EC2 instance type",
             "Type": "String",
-            "Default": "m4.large",
+            "Default": "m4.xlarge",
             "AllowedValues": [
                 "t2.medium",
                 "m4.large",
@@ -74,7 +74,7 @@
             "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
         },
         "AvailabilityZones": {
-            "Type": "CommaDelimitedList",
+            "Type": "List<AWS::EC2::AvailabilityZone::Name>",
             "Description": "List of AZs in VPC"
         },
         "VPC": {
@@ -133,18 +133,19 @@
             },
             "CreationPolicy": {
                 "ResourceSignal": {
-                    "Timeout": "PT35M",
+                    "Timeout": "PT90M",
                     "Count": "1"
                 }
             },
             "UpdatePolicy": {
                 "AutoScalingRollingUpdate": {
-                    "MinInstancesInService": "1",
-                    "MaxBatchSize": "1",
-                    "PauseTime": "PT35M",
-                    "WaitOnResourceSignals": "true"
+                    "MinInstancesInService": 1,
+                    "MaxBatchSize": 1,
+                    "PauseTime": "PT90M",
+                    "WaitOnResourceSignals": true
                 }
-            }
+            },
+            "DependsOn": "DSESecurityGroup"
         },
         "CassandraLaunchConfig": {
             "Type": "AWS::AutoScaling::LaunchConfiguration",
@@ -235,6 +236,7 @@
                                             "mkdir /data/cassandra/data \n",
                                             "mkdir /data/cassandra/commitlog \n",
                                             "mkdir /data/cassandra/saved_caches \n",
+                                            "mkdir /data/cassandra/dsefs \n",
                                             "useradd cassandra \n",
                                             "chown -R cassandra:cassandra /data/cassandra \n",
                                             "cp /etc/fstab /etc/fstab.bak \n",
@@ -253,7 +255,8 @@
                                         "",
                                         [
                                             "#!/usr/bin/env bash -e \n",
-                                            "apt-get -y install awscli unzip\n",
+                                            "apt-get -y install unzip \n",
+                                            "pip install awscli \n",
                                             "cd ~ubuntu \n",
                                             "n=1 \n",
                                             "until [ $n -ge 8 ] \n",
@@ -269,16 +272,15 @@
                                             " && break \n",
                                             "echo \"S3 download try $n failed, sleeping...\" \n",
                                             "n=$[$n+1] \n",
-                                            "sleep 15s \n",
+                                            "sleep 5s \n",
                                             "done \n",
                                             "cat .ssh/lcm.pem.pub >> .ssh/authorized_keys \n",
-                                            "release=\"7.1.0\" \n",
-                                            "export OPSC_VERSION='6.5.2' \n",
+                                            "release=\"7.3.0\" \n",
+                                            "export OPSC_VERSION='6.7.1' \n",
                                             "wget https://github.com/DSPN/install-datastax-ubuntu/archive/$release.tar.gz \n",
                                             "tar -xvf $release.tar.gz \n",
                                             "cd install-datastax-ubuntu-$release/bin \n",
                                             "./os/extra_packages.sh \n",
-                                            "./os/install_java.sh -o \n",
                                             "privip=$(curl http://169.254.169.254/latest/meta-data/local-ipv4) \n",
                                             "nodeid=$(curl http://169.254.169.254/latest/meta-data/instance-id) \n",
                                             "rack=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone) \n",
@@ -368,13 +370,7 @@
                                 "#!/bin/bash -xe\n",
                                 "apt-get update\n",
                                 "apt-get -y install python python-setuptools python-pip\n",
-                                "n=1 \n",
-                                "until [ $n -ge 8 ] \n",
-                                "do \n",
-                                "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz && break \n",
-                                "echo \"pip install cfn-bootstrap try $n failed, retry...\" \n",
-                                "n=$[$n+1] \n",
-                                "done \n",
+                                "pip install --retries 10 https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz \n",
                                 "ln -s /usr/local/init/ubuntu/cfn-hup /etc/init.d/cfn-hup \n",
                                 "chmod 775 /usr/local/init/ubuntu/cfn-hup \n",
                                 "update-rc.d cfn-hup defaults \n",
@@ -422,8 +418,8 @@
                 "SecurityGroupIngress": [
                     {
                         "IpProtocol": "tcp",
-                        "FromPort": "1",
-                        "ToPort": "65535",
+                        "FromPort": 1,
+                        "ToPort": 65535,
                         "CidrIp": {
                             "Ref": "SecurityCIDR"
                         }
