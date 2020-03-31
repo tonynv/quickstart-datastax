@@ -45,6 +45,7 @@ Metadata:
           default: AWS Quick Start Configuration
         Parameters:
           - QSS3BucketName
+          - QSS3BucketRegion
           - QSS3KeyPrefix
     ParameterLabels:
       AccessLocation:
@@ -83,6 +84,8 @@ Metadata:
         default: Cluster Name
       QSS3BucketName:
         default: Quick Start S3 Bucket Name
+      QSS3BucketRegion:
+        default: Quick Start S3 bucket region
       QSS3KeyPrefix:
         default: Quick Start S3 Key Prefix
       VPCId:
@@ -259,6 +262,10 @@ Parameters:
       can include numbers, lowercase letters, uppercase letters, and hyphens (-).
       It cannot start or end with a hyphen (-).
     Type: String
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: 'The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.'
+    Type: String
   QSS3KeyPrefix:
     AllowedPattern: ^[0-9a-zA-Z-/]*$
     ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
@@ -276,6 +283,7 @@ Conditions:
     - !Equals
       - !Ref 'DC1Size'
       - 0
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
 Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
@@ -388,12 +396,11 @@ Resources:
   OpsCenterstack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub
-        - https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/opscenter.template
-        - S3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
+      TemplateURL:
+        !Sub
+          - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/opscenter.template'
+          - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+            S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         KeyName: !Ref 'KeyName'
         OpsCenterSecurityGroupId: !GetAtt 'OpsCSecurityGroup.GroupId'
@@ -412,12 +419,11 @@ Resources:
   DC0stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub
-        - https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/datacenter.template
-        - S3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
+      TemplateURL:
+        !Sub
+          - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/datacenter.template'
+          - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+            S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         KeyName: !Ref 'KeyName'
         Profile: !Ref 'S3ProfileNode'
@@ -441,12 +447,11 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Condition: CreateDC1
     Properties:
-      TemplateURL: !Sub
-        - https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}templates/datacenter.template
-        - S3Region: !If
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
+      TemplateURL:
+        !Sub
+          - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/datacenter.template'
+          - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+            S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         KeyName: !Ref 'KeyName'
         Profile: !Ref 'S3ProfileNode'
